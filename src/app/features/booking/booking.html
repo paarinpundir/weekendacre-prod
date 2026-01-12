@@ -1,0 +1,193 @@
+<div class="booking">
+  <div class="container">
+    <h1 class="page-title">Book Your Experience</h1>
+    <p class="page-subtitle">Reserve your visit, accommodation, or activity</p>
+
+    <div class="booking-container">
+      <!-- Booking Type Selection -->
+      <div class="booking-card">
+        <h2>Select Booking Type</h2>
+        <div class="booking-type-selector">
+          <button 
+            class="type-btn" 
+            [class.active]="bookingType === 'Day Visit'"
+            (click)="bookingType = 'Day Visit'">
+            <span class="type-icon">🎫</span>
+            <span class="type-label">Day Visit</span>
+            <span class="type-price">₹200/person</span>
+          </button>
+          <button 
+            class="type-btn" 
+            [class.active]="bookingType === 'Room Stay'"
+            (click)="bookingType = 'Room Stay'">
+            <span class="type-icon">🏠</span>
+            <span class="type-label">Room Stay</span>
+            <span class="type-price">From ₹1,500</span>
+          </button>
+          <button 
+            class="type-btn" 
+            [class.active]="bookingType === 'Activity'"
+            (click)="bookingType = 'Activity'">
+            <span class="type-icon">🎯</span>
+            <span class="type-label">Activity</span>
+            <span class="type-price">Varies</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity Selection -->
+      @if (bookingType === 'Activity') {
+        <div class="booking-card">
+          <h2>Select Activity</h2>
+          <select [(ngModel)]="selectedActivity" class="form-select">
+            <option value="">Choose an activity...</option>
+            @for (activity of activities; track activity.id) {
+              <option [value]="activity.id">{{ activity.name }} - ₹{{ activity.price }}</option>
+            }
+          </select>
+          @if (selectedActivityData) {
+            <div class="activity-preview">
+              <h3>{{ selectedActivityData.name }}</h3>
+              <p>{{ selectedActivityData.description }}</p>
+              <div class="activity-info">
+                <span>Duration: {{ selectedActivityData.duration }} min</span>
+                <span>Age: {{ selectedActivityData.ageLimit.min }}+</span>
+                <span>Difficulty: {{ selectedActivityData.difficultyLevel }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Room Selection -->
+      @if (bookingType === 'Room Stay') {
+        <div class="booking-card">
+          <h2>Select Room</h2>
+          <div class="rooms-grid">
+            @for (room of rooms; track room.id) {
+              <div 
+                class="room-card" 
+                [class.selected]="selectedRoom === room.id"
+                (click)="selectedRoom = room.id">
+                <h3>{{ room.name }}</h3>
+                <div class="room-details">
+                  <p>Capacity: {{ room.capacity }} guests</p>
+                  <p>₹{{ room.price }}/night</p>
+                  <ul class="amenities">
+                    @for (amenity of room.amenities; track amenity) {
+                      <li>{{ amenity }}</li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Date Selection -->
+      <div class="booking-card">
+        <h2>Select Date</h2>
+        <div class="date-selection">
+          <input 
+            type="date" 
+            [(ngModel)]="selectedDate" 
+            [min]="todayDate"
+            class="form-input"
+            placeholder="Select start date">
+          
+          @if (bookingType === 'Room Stay') {
+            <input 
+              type="date" 
+              [(ngModel)]="selectedEndDate" 
+              [min]="selectedDate || todayDate"
+              class="form-input"
+              placeholder="Select end date">
+          }
+        </div>
+        
+        <button class="btn-calendar" (click)="showCalendar = !showCalendar">
+          📅 View Calendar
+        </button>
+
+        @if (showCalendar) {
+          <div class="calendar">
+            <div class="calendar-header">
+              <button (click)="previousMonth()">←</button>
+              <h3>{{ selectedMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</h3>
+              <button (click)="nextMonth()">→</button>
+            </div>
+            <div class="calendar-grid">
+              <div class="calendar-day-header">Sun</div>
+              <div class="calendar-day-header">Mon</div>
+              <div class="calendar-day-header">Tue</div>
+              <div class="calendar-day-header">Wed</div>
+              <div class="calendar-day-header">Thu</div>
+              <div class="calendar-day-header">Fri</div>
+              <div class="calendar-day-header">Sat</div>
+              
+              @for (day of getCalendarDays(); track day.getTime()) {
+                <button 
+                  class="calendar-day"
+                  [class.available]="isDateAvailable(day)"
+                  [class.unavailable]="!isDateAvailable(day)"
+                  [class.selected]="selectedDate === day.toISOString().split('T')[0]"
+                  [class.other-month]="day.getMonth() !== selectedMonth.getMonth()"
+                  [disabled]="!isDateAvailable(day)"
+                  (click)="selectDate(day)">
+                  {{ day.getDate() }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Participants -->
+      <div class="booking-card">
+        <h2>Number of Participants</h2>
+        <div class="participants-control">
+          <button (click)="decreaseParticipants()">-</button>
+          <input type="number" [(ngModel)]="participants" min="1" class="participants-input">
+          <button (click)="increaseParticipants()">+</button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="booking-card summary">
+        <h2>Booking Summary</h2>
+        <div class="summary-details">
+          <div class="summary-row">
+            <span>Type:</span>
+            <span>{{ bookingType }}</span>
+          </div>
+          @if (selectedActivityData) {
+            <div class="summary-row">
+              <span>Activity:</span>
+              <span>{{ selectedActivityData.name }}</span>
+            </div>
+          }
+          @if (selectedRoomData) {
+            <div class="summary-row">
+              <span>Room:</span>
+              <span>{{ selectedRoomData.name }}</span>
+            </div>
+          }
+          <div class="summary-row">
+            <span>Date:</span>
+            <span>{{ selectedDate || 'Not selected' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Participants:</span>
+            <span>{{ participants }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Amount:</span>
+            <span>₹{{ totalAmount }}</span>
+          </div>
+        </div>
+        <button class="btn-submit" (click)="submitBooking()">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+</div>

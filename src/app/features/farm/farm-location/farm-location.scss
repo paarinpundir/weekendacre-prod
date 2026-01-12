@@ -1,0 +1,49 @@
+.farm-location {
+  padding: 2rem 0;
+  border-bottom: 1px solid #ebebeb;
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1.5rem;
+  }
+
+  .location-info {
+    .location-text {
+      color: #222;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .map-container {
+      width: 100%;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .map-link {
+      display: inline-block;
+      color: #222;
+      text-decoration: underline;
+      font-weight: 500;
+      margin-top: 1rem;
+
+      &:hover {
+        color: #000;
+      }
+    }
+
+    .no-map {
+      padding: 3rem;
+      background: #f7f7f7;
+      border-radius: 12px;
+      text-align: center;
+      color: #717171;
+    }
+  }
+}
+
+

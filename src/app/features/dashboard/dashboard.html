@@ -1,0 +1,154 @@
+<div class="dashboard">
+  <div class="container">
+    @if (!isLoggedIn) {
+      <!-- Login Form -->
+      <div class="login-card">
+        <h1>Login to Your Dashboard</h1>
+        <p class="login-subtitle">Access your bookings and manage your account</p>
+        
+        <form (ngSubmit)="login()" class="login-form">
+          <div class="form-group">
+            <label>Email</label>
+            <input 
+              type="email" 
+              [(ngModel)]="loginEmail" 
+              name="email"
+              required
+              placeholder="your@email.com"
+              class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label>Password</label>
+            <input 
+              type="password" 
+              [(ngModel)]="loginPassword" 
+              name="password"
+              required
+              placeholder="Enter password"
+              class="form-input">
+          </div>
+          
+          <button type="submit" class="btn-login">Login</button>
+        </form>
+        
+        <p class="login-hint">
+          <strong>Demo:</strong> Use "admin@ecopark.com" / "admin123" for admin access
+        </p>
+      </div>
+    } @else {
+      <!-- Dashboard Content -->
+      <h1 class="page-title">My Dashboard</h1>
+      
+      <!-- Bookings Section -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2>My Bookings</h2>
+          <a routerLink="/booking" class="btn-new-booking">+ New Booking</a>
+        </div>
+        
+        @if (userBookings.length === 0) {
+          <div class="empty-state">
+            <p>You don't have any bookings yet.</p>
+            <a routerLink="/booking" class="btn-primary">Book Now</a>
+          </div>
+        } @else {
+          <div class="bookings-list">
+            @for (booking of userBookings; track booking.id) {
+              <div class="booking-card">
+                <div class="booking-header">
+                  <h3>{{ booking.type }}</h3>
+                  <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+                    {{ booking.status }}
+                  </span>
+                </div>
+                
+                <div class="booking-details">
+                  <div class="detail-item">
+                    <span class="detail-label">Date:</span>
+                    <span>{{ booking.date | date:'mediumDate' }}</span>
+                  </div>
+                  @if (booking.endDate) {
+                    <div class="detail-item">
+                      <span class="detail-label">End Date:</span>
+                      <span>{{ booking.endDate | date:'mediumDate' }}</span>
+                    </div>
+                  }
+                  @if (booking.participants) {
+                    <div class="detail-item">
+                      <span class="detail-label">Participants:</span>
+                      <span>{{ booking.participants }}</span>
+                    </div>
+                  }
+                  <div class="detail-item">
+                    <span class="detail-label">Amount:</span>
+                    <span class="amount">₹{{ booking.totalAmount }}</span>
+                  </div>
+                </div>
+                
+                @if (booking.status === 'Pending' || booking.status === 'Confirmed') {
+                  <button 
+                    class="btn-cancel" 
+                    (click)="cancelBooking(booking.id)">
+                    Cancel Booking
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2>Share Your Experience</h2>
+          <button 
+            class="btn-review" 
+            (click)="showReviewForm = !showReviewForm">
+            {{ showReviewForm ? 'Cancel' : 'Write Review' }}
+          </button>
+        </div>
+        
+        @if (showReviewForm) {
+          <div class="review-form">
+            <div class="form-group">
+              <label>Rating</label>
+              <div class="rating-input">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <button 
+                    type="button"
+                    class="star-btn"
+                    [class.active]="star <= reviewRating"
+                    (click)="reviewRating = star">
+                    ⭐
+                  </button>
+                }
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Review Type</label>
+              <select [(ngModel)]="reviewType" class="form-select">
+                <option value="Overall">Overall Experience</option>
+                <option value="Activity">Activity</option>
+                <option value="Accommodation">Accommodation</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Your Review</label>
+              <textarea 
+                [(ngModel)]="reviewComment" 
+                rows="4"
+                placeholder="Share your experience..."
+                class="form-textarea"></textarea>
+            </div>
+            
+            <button class="btn-submit" (click)="submitReview()">Submit Review</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

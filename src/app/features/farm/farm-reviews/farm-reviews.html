@@ -1,0 +1,42 @@
+<div class="farm-reviews">
+  <div class="reviews-header">
+    <div class="rating-summary">
+      <div class="overall-rating">
+        <span class="rating-value">★{{ overallRating || '4.8' }}</span>
+        <span class="review-count-text">· {{ reviewCount || 0 }} reviews</span>
+      </div>
+    </div>
+  </div>
+
+  @if (reviews && reviews.length > 0) {
+    <div class="reviews-list">
+      @for (review of reviews; track review.id || $index) {
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                {{ (review.userName || 'G').charAt(0).toUpperCase() }}
+              </div>
+              <div class="reviewer-details">
+                <div class="reviewer-name">{{ review.userName || 'Guest' }}</div>
+                <div class="review-date">{{ formatDate(review.date) }}</div>
+              </div>
+            </div>
+            <div class="review-rating">
+              {{ getRatingStars(review.rating || 5) }}
+            </div>
+          </div>
+          <div class="review-content">
+            <p>{{ review.comment }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="no-reviews">
+      <p>No reviews yet. Be the first to review this farm!</p>
+    </div>
+  }
+</div>
+
+

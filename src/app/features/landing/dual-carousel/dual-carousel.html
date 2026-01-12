@@ -1,0 +1,36 @@
+<section class="dual-carousel">
+  <div class="carousel-container">
+    @if (slides && slides.length > 0) {
+      <div class="carousel-wrapper" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+        <button class="carousel-btn prev" (click)="prevSlide()" aria-label="Previous slide">‹</button>
+        
+        <div class="carousel-slide" 
+             [style.background-color]="slides[currentIndex]?.backgroundColor || '#f5f7fa'"
+             [style.background-image]="slides[currentIndex]?.imageUrl ? 'url(' + slides[currentIndex].imageUrl + ')' : 'none'"
+             [style.background-size]="'cover'"
+             [style.background-position]="'center'">
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <h2 class="slide-title">{{ slides[currentIndex].title }}</h2>
+            <p class="slide-subtext">{{ slides[currentIndex].subtext }}</p>
+          </div>
+        </div>
+        
+        <button class="carousel-btn next" (click)="nextSlide()" aria-label="Next slide">›</button>
+        
+        <div class="carousel-indicators">
+          @for (slide of slides; track slide.id; let i = $index) {
+            <button 
+              class="indicator" 
+              [class.active]="currentIndex === i"
+              (click)="goToSlide(i)"
+              [attr.aria-label]="'Go to slide ' + (i + 1)">
+            </button>
+          }
+        </div>
+      </div>
+      
+    }
+  </div>
+</section>
+

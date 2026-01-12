@@ -1,0 +1,9 @@
+@if (!isOnboardingPage() && !isPartnerDashboard() && !isPropertyDetailPage()) {
+  <app-header></app-header>
+}
+<main [class.no-header]="isOnboardingPage() || isPartnerDashboard() || isPropertyDetailPage()">
+  <router-outlet></router-outlet>
+</main>
+@if (!isOnboardingPage() && !isPartnerDashboard() && !isPropertyDetailPage()) {
+  <app-footer></app-footer>
+}

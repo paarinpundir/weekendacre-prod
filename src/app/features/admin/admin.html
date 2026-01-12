@@ -1,0 +1,494 @@
+<div class="admin">
+  <div class="container">
+    <h1 class="page-title">Admin Panel</h1>
+    <p class="page-subtitle">Manage activities, bookings, and park content</p>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value">{{ activities.length }}</div>
+        <div class="stat-label">Activities</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ bookings.length }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ getStatusCount('Confirmed') }}</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value">{{ getStatusCount('Pending') }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'activities'"
+        (click)="activeTab = 'activities'">
+        Activities
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'bookings'"
+        (click)="activeTab = 'bookings'">
+        Bookings
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'reviews'"
+        (click)="activeTab = 'reviews'">
+        Reviews
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'farms'"
+        (click)="activeTab = 'farms'">
+        Farms
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'partners'"
+        (click)="activeTab = 'partners'">
+        Partners
+      </button>
+    </div>
+
+    <!-- Activities Tab -->
+    @if (activeTab === 'activities') {
+      <div class="tab-content">
+        <div class="section-header">
+          <h2>Manage Activities</h2>
+          <button class="btn-add" (click)="showActivityForm = !showActivityForm">
+            {{ showActivityForm ? 'Cancel' : '+ Add Activity' }}
+          </button>
+        </div>
+
+        @if (showActivityForm) {
+          <div class="form-card">
+            <h3>Add New Activity</h3>
+            <form (ngSubmit)="addActivity()">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Name *</label>
+                  <input type="text" [(ngModel)]="newActivity.name" name="name" required class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>Category *</label>
+                  <select [(ngModel)]="newActivity.category" name="category" required class="form-select">
+                    <option value="Adventure">Adventure</option>
+                    <option value="Education">Education</option>
+                    <option value="Farming">Farming</option>
+                    <option value="Animal Care">Animal Care</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description *</label>
+                <textarea [(ngModel)]="newActivity.description" name="description" required rows="3" class="form-textarea"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Difficulty *</label>
+                  <select [(ngModel)]="newActivity.difficultyLevel" name="difficulty" required class="form-select">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                    <option value="Expert">Expert</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Price (₹) *</label>
+                  <input type="number" [(ngModel)]="newActivity.price" name="price" required min="0" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>Duration (min) *</label>
+                  <input type="number" [(ngModel)]="newActivity.duration" name="duration" required min="1" class="form-input">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Min Age *</label>
+                  <input type="number" [(ngModel)]="newActivity.ageLimit!.min" name="minAge" required min="1" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>Image URL</label>
+                  <input type="url" [(ngModel)]="newActivity.imageUrl" name="imageUrl" class="form-input">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-submit">Add Activity</button>
+            </form>
+          </div>
+        }
+
+        <div class="items-grid">
+          @for (activity of activities; track activity.id) {
+            <div class="item-card">
+              <div class="item-image" [style.background-image]="'url(' + activity.imageUrl + ')'"></div>
+              <div class="item-content">
+                <h3>{{ activity.name }}</h3>
+                <p>{{ activity.description }}</p>
+                <div class="item-meta">
+                  <span class="badge">{{ activity.category }}</span>
+                  <span class="price">₹{{ activity.price }}</span>
+                </div>
+                <button class="btn-delete" (click)="deleteActivity(activity.id)">Delete</button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Bookings Tab -->
+    @if (activeTab === 'bookings') {
+      <div class="tab-content">
+        <h2>Manage Bookings</h2>
+        <div class="bookings-table">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (booking of bookings; track booking.id) {
+                <tr>
+                  <td>{{ booking.id.substring(0, 8) }}...</td>
+                  <td>{{ booking.type }}</td>
+                  <td>{{ booking.date | date:'short' }}</td>
+                  <td>₹{{ booking.totalAmount }}</td>
+                  <td>
+                    <select 
+                      [value]="booking.status"
+                      (change)="updateBookingStatus(booking.id, $any($event.target).value)"
+                      class="status-select">
+                      <option value="Pending">Pending</option>
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="Cancelled">Cancelled</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button class="btn-small" (click)="updateBookingStatus(booking.id, 'Confirmed')">Confirm</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Reviews Tab -->
+    @if (activeTab === 'reviews') {
+      <div class="tab-content">
+        <h2>Manage Reviews</h2>
+        @if (reviews.length === 0) {
+          <p class="empty-message">No reviews yet.</p>
+        } @else {
+          <div class="reviews-list">
+            @for (review of reviews; track review.id) {
+              <div class="review-card">
+                <div class="review-header">
+                  <div>
+                    <strong>{{ review.userName }}</strong>
+                    <span class="review-type">{{ review.type }}</span>
+                  </div>
+                  <div class="rating">
+                    @for (star of [1,2,3,4,5]; track star) {
+                      <span [class.active]="star <= review.rating">⭐</span>
+                    }
+                  </div>
+                </div>
+                <p>{{ review.comment }}</p>
+                <div class="review-footer">
+                  <span>{{ review.date | date:'short' }}</span>
+                  <button class="btn-delete-small" (click)="deleteReview(review.id)">Delete</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Farms Tab -->
+    @if (activeTab === 'farms') {
+      <div class="tab-content">
+        <div class="section-header">
+          <h2>Farm Verification Management</h2>
+          <div class="stats-mini">
+            <span class="stat-mini">Total: {{ farms.length }}</span>
+            <span class="stat-mini pending">Submitted: {{ submittedFarms.length }}</span>
+            <span class="stat-mini review">Under Review: {{ underReviewFarms.length }}</span>
+            <span class="stat-mini verified">Verified: {{ verifiedFarms.length }}</span>
+          </div>
+        </div>
+
+        <!-- Submitted Farms (Pending Verification) -->
+        @if (submittedFarms.length > 0) {
+          <div class="pending-section">
+            <h3>Submitted for Verification ({{ submittedFarms.length }})</h3>
+            <div class="items-grid">
+              @for (farm of submittedFarms; track farm.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(' + getFarmImageUrl(farm) + ')'"></div>
+                  <div class="item-content">
+                    <h3>{{ farm.name }}</h3>
+                    <p>{{ farm.description.substring(0, 100) }}...</p>
+                    <div class="item-meta">
+                      <span class="badge badge-submitted">Submitted</span>
+                      <span class="location">📍 {{ farm.city }}, {{ farm.state }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewFarmDetails(farm)">Review Details</button>
+                      <button class="btn-start-review" (click)="startReview(farm.id)">Start Review</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Under Review Farms -->
+        @if (underReviewFarms.length > 0) {
+          <div class="pending-section">
+            <h3>Under Review ({{ underReviewFarms.length }})</h3>
+            <div class="items-grid">
+              @for (farm of underReviewFarms; track farm.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(' + getFarmImageUrl(farm) + ')'"></div>
+                  <div class="item-content">
+                    <h3>{{ farm.name }}</h3>
+                    <p>{{ getFarmDescription(farm) }}</p>
+                    <div class="item-meta">
+                      <span class="badge badge-review">Under Review</span>
+                      <span class="location">📍 {{ farm.city }}, {{ farm.state }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewFarmDetails(farm)">View Details</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Needs More Info Farms -->
+        @if (needsMoreInfoFarms.length > 0) {
+          <div class="pending-section">
+            <h3>Needs More Info ({{ needsMoreInfoFarms.length }})</h3>
+            <div class="items-grid">
+              @for (farm of needsMoreInfoFarms; track farm.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(' + getFarmImageUrl(farm) + ')'"></div>
+                  <div class="item-content">
+                    <h3>{{ farm.name }}</h3>
+                    <p>{{ getFarmDescription(farm) }}</p>
+                    <div class="item-meta">
+                      <span class="badge badge-info">Needs More Info</span>
+                      <span class="location">📍 {{ farm.city }}, {{ farm.state }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewFarmDetails(farm)">View Details</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Verified Farms -->
+        <div class="section-header">
+          <h3>Verified Farms ({{ verifiedFarms.length }})</h3>
+        </div>
+        <div class="items-grid">
+          @for (farm of verifiedFarms; track farm.id) {
+            <div class="item-card">
+              <div class="item-image" [style.background-image]="'url(' + getFarmImageUrl(farm) + ')'"></div>
+              <div class="item-content">
+                <h3>{{ farm.name }}</h3>
+                <p>{{ getFarmDescription(farm) }}</p>
+                <div class="item-meta">
+                  <span class="badge badge-verified">✓ Verified</span>
+                  <span class="location">📍 {{ farm.city }}, {{ farm.state }}</span>
+                </div>
+                <div class="item-actions">
+                  <a [routerLink]="['/farms', farm.id]" class="btn-view">View</a>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Farm Detail Modal -->
+    @if (selectedFarm) {
+      <div class="modal-overlay" (click)="closeFarmDetails()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>{{ selectedFarm.name }}</h2>
+            <button class="modal-close" (click)="closeFarmDetails()">×</button>
+          </div>
+          
+          <div class="modal-body">
+            <div class="farm-detail-section">
+              <h3>Basic Information</h3>
+              <p><strong>Description:</strong> {{ selectedFarm.description }}</p>
+              <p><strong>Location:</strong> {{ selectedFarm.address }}, {{ selectedFarm.city }}, {{ selectedFarm.state }}</p>
+              @if (selectedFarm.latitude && selectedFarm.longitude) {
+                <p><strong>GPS:</strong> {{ selectedFarm.latitude }}, {{ selectedFarm.longitude }}</p>
+              }
+            </div>
+            
+            <div class="farm-detail-section">
+              <h3>Farm Details</h3>
+              <p><strong>Soil Type:</strong> {{ selectedFarm.soilType || 'Not specified' }}</p>
+              <p><strong>Production:</strong> {{ getProductionList(selectedFarm) }}</p>
+              <p><strong>Farm Size:</strong> {{ selectedFarm.farmSize || 'Not specified' }} acres</p>
+              <p><strong>Amenities:</strong> {{ getAmenitiesList(selectedFarm) }}</p>
+            </div>
+            
+            @if (selectedFarm.images && selectedFarm.images.length > 0) {
+              <div class="farm-detail-section">
+                <h3>Photos ({{ selectedFarm.images.length }})</h3>
+                <div class="farm-photos-grid">
+                  @for (image of selectedFarm.images; track $index) {
+                    <img [src]="image" alt="Farm photo" class="farm-photo">
+                  }
+                </div>
+              </div>
+            }
+            
+            <div class="farm-detail-section">
+              <h3>Review Actions</h3>
+              <div class="review-actions">
+                <div class="form-group">
+                  <label>Review Notes (Optional)</label>
+                  <textarea [(ngModel)]="reviewNotes" class="form-textarea" rows="3" placeholder="Add any notes about this farm..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label>Reason for "Needs More Info"</label>
+                  <textarea [(ngModel)]="needsMoreInfoReason" class="form-textarea" rows="2" placeholder="What information is missing?"></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                  <button class="btn btn-success" (click)="approveFarm(selectedFarm.id)">✓ Approve & Verify</button>
+                  <button class="btn btn-warning" (click)="markNeedsMoreInfo(selectedFarm.id)">⚠ Needs More Info</button>
+                  <button class="btn btn-danger" (click)="rejectFarm(selectedFarm.id)">✗ Reject</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Partners Tab -->
+    @if (activeTab === 'partners') {
+      <div class="tab-content">
+        <div class="section-header">
+          <h2>Manage Partners</h2>
+          <div class="stats-mini">
+            <span class="stat-mini">Total: {{ partners.length }}</span>
+            <span class="stat-mini pending">Pending: {{ pendingPartners.length }}</span>
+          </div>
+        </div>
+
+        @if (pendingPartners.length > 0) {
+          <div class="pending-section">
+            <h3>Pending Verification</h3>
+            <div class="partners-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Partner Name</th>
+                    <th>Email</th>
+                    <th>Farms</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (partner of pendingPartners; track partner.id) {
+                    <tr>
+                      <td>{{ partner.name }}</td>
+                      <td>{{ partner.email }}</td>
+                      <td>{{ partner.farmsCount }}</td>
+                      <td><span class="badge pending">Pending</span></td>
+                      <td>
+                        <button class="btn-verify" (click)="verifyPartner(partner.id)">Verify</button>
+                        <button class="btn-reject" (click)="rejectPartner(partner.id)">Reject</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <div class="section-header">
+          <h3>All Partners</h3>
+        </div>
+        <div class="partners-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Partner Name</th>
+                <th>Email</th>
+                <th>Farms</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (partner of partners; track partner.id) {
+                <tr>
+                  <td>{{ partner.name }}</td>
+                  <td>{{ partner.email }}</td>
+                  <td>{{ partner.farmsCount }}</td>
+                  <td>
+                    <span class="badge" [class.verified]="partner.status === 'verified'" [class.pending]="partner.status === 'pending'">
+                      {{ partner.status === 'verified' ? '✓ Verified' : partner.status === 'pending' ? 'Pending' : 'Rejected' }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (partner.status === 'pending') {
+                      <button class="btn-verify" (click)="verifyPartner(partner.id)">Verify</button>
+                      <button class="btn-reject" (click)="rejectPartner(partner.id)">Reject</button>
+                    } @else {
+                      <span class="text-muted">-</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>

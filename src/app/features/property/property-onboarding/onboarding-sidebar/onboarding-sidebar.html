@@ -1,0 +1,39 @@
+<div class="onboarding-sidebar">
+  <div class="sidebar-header">
+    <h2>Property Onboarding</h2>
+    <p class="sidebar-subtitle">Complete all steps to finish</p>
+  </div>
+  
+  <div class="sidebar-steps">
+    @for (step of steps; track step.index) {
+      <div 
+        class="sidebar-step" 
+        [class.active]="currentStep === step.index"
+        [class.completed]="step.completed"
+        [class.disabled]="!step.accessible"
+        (click)="goToStep(step.index)"
+      >
+        <div class="step-indicator">
+          @if (step.completed) {
+            <span class="check-icon">✓</span>
+          } @else {
+            <span class="step-number">{{ step.index + 1 }}</span>
+          }
+        </div>
+        <div class="step-info">
+          <div class="step-title">{{ step.title }}</div>
+          <div class="step-desc">{{ step.description }}</div>
+        </div>
+      </div>
+    }
+  </div>
+  
+  @if (hasSavedProgress) {
+    <div class="sidebar-footer">
+      <button type="button" class="btn-clear-sidebar" (click)="onClearProgress()">
+        Start Fresh
+      </button>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,92 @@
+.onboarding-confirmation {
+  min-height: 80vh;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  
+  .confirmation-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    padding: 3rem;
+    text-align: center;
+    
+    .confirmation-icon {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      color: #2d3748;
+      margin-bottom: 1rem;
+    }
+    
+    .confirmation-message {
+      font-size: 1.125rem;
+      color: #4a5568;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .next-steps {
+      text-align: left;
+      background: #f7fafc;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+      
+      h3 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+      }
+      
+      ul {
+        list-style: none;
+        padding: 0;
+        
+        li {
+          padding: 0.75rem 0;
+          padding-left: 1.5rem;
+          position: relative;
+          color: #4a5568;
+          line-height: 1.6;
+          
+          &::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+          }
+          
+          strong {
+            color: #2d3748;
+          }
+        }
+      }
+    }
+    
+    .confirmation-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      
+      .btn {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+    }
+  }
+}
+

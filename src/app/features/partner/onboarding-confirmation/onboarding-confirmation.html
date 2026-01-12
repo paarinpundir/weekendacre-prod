@@ -1,0 +1,41 @@
+<div class="onboarding-confirmation">
+  <div class="container">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="#48bb78" stroke-width="2" fill="none"/>
+          <path d="M8 12l2 2 4-4" stroke="#48bb78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      
+      <h1>Farm Submitted Successfully!</h1>
+      <p class="confirmation-message">
+        Your farm profile has been submitted for verification. Our team will review your submission and get back to you soon.
+      </p>
+      
+      <div class="next-steps">
+        <h3>What happens next?</h3>
+        <ul>
+          <li>
+            <strong>Review Process:</strong> Our admin team will review your farm details and photos
+          </li>
+          <li>
+            <strong>Physical Verification:</strong> We may schedule a visit to verify soil type, crops, amenities, and farm layout
+          </li>
+          <li>
+            <strong>Status Updates:</strong> You'll receive notifications about your farm's verification status
+          </li>
+          <li>
+            <strong>Approval:</strong> Once verified, your farm will be listed and visible to guests
+          </li>
+        </ul>
+      </div>
+      
+      <div class="confirmation-actions">
+        <button class="btn btn-primary" (click)="goToDashboard()">Go to Dashboard</button>
+        <a routerLink="/" class="btn btn-secondary">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+

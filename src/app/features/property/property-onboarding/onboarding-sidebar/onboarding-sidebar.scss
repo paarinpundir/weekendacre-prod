@@ -1,0 +1,145 @@
+.onboarding-sidebar {
+  width: 320px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  
+  .sidebar-header {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+    color: white;
+    
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .sidebar-subtitle {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+  
+  .sidebar-steps {
+    flex: 1;
+    padding: 1rem 0;
+    
+    .sidebar-step {
+      display: flex;
+      align-items: flex-start;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+      
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      
+      &:not(.disabled):hover {
+        background: #f8f9fa;
+      }
+      
+      &.active {
+        background: #e8f5e9;
+        border-left-color: var(--color-primary, #2d5016);
+        
+        .step-indicator {
+          background: var(--color-primary, #2d5016);
+          color: white;
+        }
+        
+        .step-title {
+          color: var(--color-primary, #2d5016);
+          font-weight: 600;
+        }
+      }
+      
+      &.completed {
+        .step-indicator {
+          background: #4caf50;
+          color: white;
+        }
+      }
+      
+      .step-indicator {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        
+        .check-icon {
+          font-size: 1.2rem;
+        }
+      }
+      
+      .step-info {
+        flex: 1;
+        
+        .step-title {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #222;
+          margin-bottom: 0.25rem;
+        }
+        
+        .step-desc {
+          font-size: 0.85rem;
+          color: #717171;
+        }
+      }
+    }
+  }
+  
+  .sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    
+    .btn-clear-sidebar {
+      width: 100%;
+      padding: 0.75rem;
+      background: transparent;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      color: #717171;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: #f5f5f5;
+        border-color: #b0b0b0;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+}
+

@@ -1,0 +1,40 @@
+<section class="membership-registration">
+  <div class="container">
+    <h2 class="section-title">Membership & Registration</h2>
+    
+    <div class="membership-types">
+      <h3 class="subsection-title">Membership Types</h3>
+      <div class="membership-cards">
+        @for (type of membershipTypes; track type.id) {
+          <div class="membership-card">
+            <h4 class="membership-name">{{ type.name }}</h4>
+            @if (type.description) {
+              <p class="membership-description">{{ type.description }}</p>
+            }
+            @if (type.price) {
+              <div class="membership-price">{{ type.price }}</div>
+            }
+            @if (type.features && type.features.length > 0) {
+              <ul class="membership-features">
+                @for (feature of type.features; track feature) {
+                  <li>{{ feature }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="registration-cta">
+      <a routerLink="/partner/signup" class="btn-register">Register for Membership</a>
+    </div>
+
+    <div class="farm-owner-section">
+      <h3 class="farm-owner-title">{{ farmOwnerTitle }}</h3>
+      <p class="farm-owner-text">{{ farmOwnerText }}</p>
+      <a [routerLink]="farmOwnerLink" class="btn-farm-owner">Become a Partner</a>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,45 @@
+<div class="farm-card">
+  <a [routerLink]="['/farms', farm.id]" class="farm-card-link">
+    <div class="farm-image-container">
+      <img [src]="getPrimaryImage()" [alt]="farm.name" class="farm-image">
+      @if (showGuestFavourite && farm.isVerified) {
+        <div class="badge guest-favourite">Guest favourite</div>
+      }
+      <button class="heart-button" (click)="$event.preventDefault(); $event.stopPropagation();">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="farm-content">
+      <div class="farm-header">
+        <h3 class="farm-title">{{ farm.name }}</h3>
+        @if (farm.isVerified) {
+          <span class="verified-badge">✓ Verified</span>
+        }
+      </div>
+      
+      <p class="farm-location">{{ farm.city }}, {{ farm.state }}</p>
+      
+      <div class="farm-meta">
+        <div class="farm-rating">
+          <span class="star">★</span>
+          <span class="rating-value">{{ farm.rating || 0 }}</span>
+        </div>
+        <div class="farm-price">
+          <span class="price-amount">₹{{ farm.pricePerDay || 0 }}</span>
+          <span class="price-period">/night</span>
+        </div>
+      </div>
+      
+      @if (farm.production && farm.production.length > 0) {
+        <div class="farm-production">
+          <span class="production-label">Produces:</span>
+          <span class="production-items">{{ farm.production.slice(0, 2).join(', ') }}</span>
+        </div>
+      }
+    </div>
+  </a>
+</div>
+

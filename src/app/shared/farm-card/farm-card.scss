@@ -1,0 +1,184 @@
+.farm-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .farm-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .farm-image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+
+    .farm-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .farm-image {
+      transform: scale(1.05);
+    }
+
+    .badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #222;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+
+      &.guest-favourite {
+        background: linear-gradient(135deg, #ff385c 0%, #e61e4d 100%);
+        color: white;
+      }
+    }
+
+    .heart-button {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 2;
+      color: #222;
+
+      &:hover {
+        background: white;
+        transform: scale(1.1);
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        fill: none;
+      }
+    }
+  }
+
+  .farm-content {
+    padding: 1rem;
+
+    .farm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      gap: 0.5rem;
+
+      .farm-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #222;
+        margin: 0;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .verified-badge {
+        font-size: 0.75rem;
+        color: #00a699;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    }
+
+    .farm-location {
+      font-size: 0.875rem;
+      color: #717171;
+      margin: 0 0 0.75rem 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .farm-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      .farm-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+
+        .star {
+          color: #ff385c;
+          font-size: 0.875rem;
+        }
+
+        .rating-value {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #222;
+        }
+      }
+
+      .farm-price {
+        display: flex;
+        align-items: baseline;
+        gap: 0.25rem;
+
+        .price-amount {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #222;
+        }
+
+        .price-period {
+          font-size: 0.875rem;
+          color: #717171;
+        }
+      }
+    }
+
+    .farm-production {
+      font-size: 0.75rem;
+      color: #717171;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #ebebeb;
+
+      .production-label {
+        font-weight: 600;
+        margin-right: 0.25rem;
+      }
+
+      .production-items {
+        color: #222;
+      }
+    }
+  }
+}
+

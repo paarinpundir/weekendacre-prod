@@ -1,0 +1,49 @@
+.farm-amenities {
+  padding: 2rem 0;
+  border-bottom: 1px solid #ebebeb;
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1.5rem;
+  }
+
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+
+    .amenity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .amenity-icon {
+        font-size: 1.5rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      .amenity-name {
+        color: #222;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .no-amenities {
+    color: #717171;
+    font-style: italic;
+  }
+}
+
+@media (max-width: 768px) {
+  .farm-amenities {
+    .amenities-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+

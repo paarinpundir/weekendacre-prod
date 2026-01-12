@@ -1,0 +1,59 @@
+<div class="farm-booking-widget">
+  <div class="booking-card">
+    <div class="price-section">
+      <div class="price-row">
+        <span class="price">₹{{ farm.pricePerDay || 0 }}</span>
+        <span class="price-label">/ night</span>
+      </div>
+      @if (checkIn && checkOut) {
+        <div class="total-price">
+          <span>₹{{ getPriceForNights() }} for {{ getNights() }} {{ getNights() === 1 ? 'night' : 'nights' }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="booking-form">
+      <div class="form-group">
+        <label>CHECK-IN</label>
+        <input type="date" [(ngModel)]="checkIn" class="form-input" [min]="getTodayDate()">
+      </div>
+
+      <div class="form-group">
+        <label>CHECKOUT</label>
+        <input type="date" [(ngModel)]="checkOut" class="form-input" [min]="checkIn || getTodayDate()">
+      </div>
+
+      <div class="form-group">
+        <label>GUESTS</label>
+        <select [(ngModel)]="guests" class="form-input">
+          @for (num of [1,2,3,4,5,6,7,8,9,10]; track num) {
+            <option [value]="num">{{ num }} {{ num === 1 ? 'guest' : 'guests' }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-reserve" (click)="onBookNow()" [disabled]="!checkIn || !checkOut">
+      Reserve
+    </button>
+
+    <p class="booking-note">You won't be charged yet</p>
+
+    <div class="booking-features">
+      <div class="feature-item">
+        <span class="feature-icon">✓</span>
+        <span>Free cancellation before check-in</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">✓</span>
+        <span>Instant confirmation</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">✓</span>
+        <span>24/7 support</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+

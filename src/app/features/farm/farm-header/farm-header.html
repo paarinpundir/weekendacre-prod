@@ -1,0 +1,56 @@
+<div class="farm-header">
+  <div class="header-top">
+    <h1 class="farm-title">{{ farm.name }}</h1>
+    <div class="header-actions">
+      <button class="action-btn" title="Share">
+        <span>🔗</span> Share
+      </button>
+      <button class="action-btn" title="Save">
+        <span>❤️</span> Save
+      </button>
+    </div>
+  </div>
+
+  <div class="farm-meta">
+    <div class="meta-left">
+      <div class="location-info">
+        <span class="location-text">{{ farm.address }}, {{ farm.city }}, {{ farm.state }}</span>
+        @if (farm.isVerified) {
+          <span class="verified-badge">
+            <span class="checkmark">✓</span> Verified
+          </span>
+        }
+      </div>
+
+      <div class="rating-info">
+        @if (showGuestFavourite) {
+          <div class="guest-favourite-badge">
+            <span class="badge-icon">🏆</span>
+            <span>Guest favourite</span>
+          </div>
+        }
+        <div class="rating">
+          <span class="star-icon">★</span>
+          <span class="rating-value">{{ farm.rating || '4.8' }}</span>
+          <span class="review-count">({{ farm.reviewCount || 0 }} reviews)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="farm-type">
+    <span>Eco Farm in {{ farm.city }}, {{ farm.state }}</span>
+  </div>
+
+  <div class="farm-capacity">
+    <span>{{ (farm.amenities && farm.amenities.length) || 0 }} amenities</span>
+    <span>·</span>
+    <span>{{ farm.farmSize }} acres</span>
+    @if (farm.production && farm.production.length > 0) {
+      <span>·</span>
+      <span>{{ farm.production.join(', ') }}</span>
+    }
+  </div>
+</div>
+
+

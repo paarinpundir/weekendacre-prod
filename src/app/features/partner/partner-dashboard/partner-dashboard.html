@@ -1,0 +1,215 @@
+<div class="partner-dashboard">
+  <!-- Left Sidebar -->
+  <div class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">GreenTrail</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul class="nav-menu">
+        <li class="nav-item" [class.active]="activeMenu === 'properties'">
+          <a (click)="setActiveMenu('properties')" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Properties</span>
+          </a>
+        </li>
+        <li class="nav-item" [class.active]="activeMenu === 'bookings'">
+          <a (click)="setActiveMenu('bookings')" class="nav-link">
+            <span class="nav-icon">📅</span>
+            <span class="nav-text">Bookings</span>
+          </a>
+        </li>
+        <li class="nav-item" [class.active]="activeMenu === 'dashboard'">
+          <a (click)="setActiveMenu('dashboard')" class="nav-link">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item" [class.active]="activeMenu === 'settings'">
+          <a (click)="setActiveMenu('settings')" class="nav-link">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">Settings</span>
+          </a>
+        </li>
+        <li class="nav-item" [class.active]="activeMenu === 'help'">
+          <a (click)="setActiveMenu('help')" class="nav-link">
+            <span class="nav-icon">❓</span>
+            <span class="nav-text">Help & Support</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Main Content Area -->
+  <div class="dashboard-main">
+    <!-- Floating User Menu -->
+    <div class="user-menu-container">
+      <button class="user-menu-trigger" (click)="toggleUserMenu()">
+        <div class="user-avatar-small">{{ getUserInitials() }}</div>
+      </button>
+      @if (showUserMenu) {
+        <div class="user-menu-dropdown">
+          <div class="user-menu-header">
+            <div class="user-avatar-menu">{{ getUserInitials() }}</div>
+            <div class="user-info-menu">
+              <div class="user-name-menu">{{ getUserName() }}</div>
+              <div class="user-role-menu">{{ getUserRole() }}</div>
+            </div>
+          </div>
+          <div class="user-menu-divider"></div>
+          <a class="user-menu-item" (click)="goToProfile(); closeUserMenu()">
+            <span class="menu-item-icon">👤</span>
+            <span>Profile</span>
+          </a>
+          <a class="user-menu-item" (click)="logout(); closeUserMenu()">
+            <span class="menu-item-icon">🚪</span>
+            <span>Logout</span>
+          </a>
+        </div>
+      }
+    </div>
+    
+    <!-- Content Area -->
+    <div class="dashboard-content">
+      @if (activeMenu === 'properties') {
+        @if (false) {
+          <div class="loading-state">
+            <p>Loading properties...</p>
+          </div>
+        } @else if (properties.length === 0) {
+          <div class="empty-properties">
+            <div class="empty-content">
+              <div class="empty-icon">🏡</div>
+              <h2>You haven't onboarded any property yet, {{ getUserName() }}</h2>
+              <p>Get started by onboarding your first property to begin managing your farm listings</p>
+              <p class="user-info-text">Logged in as: {{ getUserName() }} ({{ currentUser?.email }})</p>
+            </div>
+            <div class="empty-action-right">
+              <button class="btn-primary" (click)="addNewProperty()">
+                + Onboard a Property
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="properties-section">
+            <div class="section-header">
+              <h1>My Properties</h1>
+              <button class="btn-add-new" (click)="addNewProperty()">
+                + Add New Property
+              </button>
+            </div>
+            <div class="properties-list">
+              @for (property of properties; track property.id) {
+                <div class="property-card">
+                  <div class="property-header">
+                    <h3>{{ property.property_name }}</h3>
+                    @if (property.onboarding_step !== undefined && property.onboarding_step < 5) {
+                      <span class="property-badge in-progress">Step {{ property.onboarding_step + 1 }}/6</span>
+                    } @else if (property.onboarding_step !== undefined && property.onboarding_step >= 5) {
+                      <span class="property-badge completed">Completed</span>
+                    } @else {
+                      <span class="property-badge draft">Draft</span>
+                    }
+                  </div>
+                  <p class="property-address">{{ property.address }}</p>
+                  <div class="property-meta">
+                    <span class="meta-item">
+                      <span class="meta-label">Property Code:</span>
+                      <span class="meta-value">{{ property.property_code || 'N/A' }}</span>
+                    </span>
+                    <span class="meta-item">
+                      <span class="meta-label">Property ID:</span>
+                      <span class="meta-value" [title]="property.id">{{ getShortPropertyId(property.id) }}</span>
+                    </span>
+                    <span class="meta-item">
+                      <span class="meta-label">Current Step:</span>
+                      <span class="meta-value">
+                        @if (property.onboarding_step !== undefined && property.onboarding_step !== null && property.onboarding_step < 5) {
+                          {{ getStepName(property.onboarding_step) }} ({{ property.onboarding_step + 1 }}/6)
+                        } @else if (property.onboarding_step !== undefined && property.onboarding_step !== null && property.onboarding_step >= 5) {
+                          {{ getStepName(5) }} - Completed
+                        } @else {
+                          Not Started
+                        }
+                      </span>
+                    </span>
+                    <span class="meta-item">
+                      <span class="meta-label">Area:</span>
+                      <span class="meta-value">{{ property.total_land_area }} acres</span>
+                    </span>
+                    <span class="meta-item">
+                      <span class="meta-label">Status:</span>
+                      <span class="meta-value">{{ property.state === 601 ? 'Draft' : 'Active' }}</span>
+                    </span>
+                  </div>
+                  <div class="property-actions">
+                    @if (property.onboarding_step !== undefined && property.onboarding_step < 5) {
+                      <button class="btn-continue" (click)="continueOnboarding(property)">
+                        Continue Onboarding (Step {{ property.onboarding_step + 1 }}/6)
+                      </button>
+                    } @else {
+                      <button class="btn-view" (click)="viewProperty(property)">
+                        View Details
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      } @else if (activeMenu === 'bookings') {
+        <div class="section-placeholder">
+          <h2>Bookings</h2>
+          <p>Booking management coming soon...</p>
+        </div>
+      } @else if (activeMenu === 'dashboard') {
+        <div class="partner-info-section">
+          <h1>Partner Information</h1>
+          <div class="partner-info-card">
+            <div class="info-row">
+              <span class="info-label">Name:</span>
+              <span class="info-value">{{ getUserName() }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">ID:</span>
+              <span class="info-value">{{ currentUser?.id || 'N/A' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ currentUser?.email || 'N/A' }}</span>
+            </div>
+            @if (currentUser?.phone) {
+              <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span class="info-value">{{ currentUser.phone }}</span>
+              </div>
+            }
+            <div class="info-row">
+              <span class="info-label">Role:</span>
+              <span class="info-value">{{ getUserRole() }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Total Properties:</span>
+              <span class="info-value">{{ properties.length }}</span>
+            </div>
+          </div>
+        </div>
+      } @else if (activeMenu === 'settings') {
+        <div class="section-placeholder">
+          <h2>Settings</h2>
+          <p>Settings page coming soon...</p>
+        </div>
+      } @else if (activeMenu === 'help') {
+        <div class="section-placeholder">
+          <h2>Help & Support</h2>
+          <p>Help center coming soon...</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

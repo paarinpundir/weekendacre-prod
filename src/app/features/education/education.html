@@ -1,0 +1,93 @@
+<div class="education">
+  <div class="container">
+    <h1 class="page-title">Farm Education Center</h1>
+    <p class="page-subtitle">Learn about nature, farming, animals, and sustainability</p>
+
+    <div class="education-grid">
+      @for (section of educationSections; track section.id) {
+        <div class="education-card">
+          <div class="card-header">
+            <span class="section-icon">{{ section.icon }}</span>
+            <h2>{{ section.title }}</h2>
+          </div>
+          <p class="section-description">{{ section.description }}</p>
+          
+          @if (section.videos) {
+            <div class="content-list">
+              <h3>Videos</h3>
+              <ul>
+                @for (video of section.videos; track video.title) {
+                  <li>
+                    <span class="play-icon">▶️</span>
+                    <div>
+                      <strong>{{ video.title }}</strong>
+                      <span class="duration">{{ video.duration }}</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (section.articles) {
+            <div class="content-list">
+              <h3>Articles</h3>
+              <ul>
+                @for (article of section.articles; track article.title) {
+                  <li>
+                    <span class="article-icon">📄</span>
+                    <div>
+                      <strong>{{ article.title }}</strong>
+                      <span class="read-time">{{ article.readTime }}</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (section.content) {
+            <div class="content-list">
+              <ul>
+                @for (item of section.content; track item.title) {
+                  <li>
+                    <span class="content-icon">{{ item.type === 'video' ? '▶️' : '📄' }}</span>
+                    <strong>{{ item.title }}</strong>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (section.posts) {
+            <div class="content-list">
+              <h3>Latest Posts</h3>
+              <ul>
+                @for (post of section.posts; track post.title) {
+                  <li>
+                    <div>
+                      <strong>{{ post.title }}</strong>
+                      <div class="post-meta">
+                        <span>{{ post.date }}</span>
+                        <span>by {{ post.author }}</span>
+                      </div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          <button class="btn-explore">Explore More</button>
+        </div>
+      }
+    </div>
+
+    <!-- Call to Action -->
+    <div class="cta-section">
+      <h2>Want to Learn Hands-On?</h2>
+      <p>Join our workshops and experience farming, animal care, and sustainability practices in person.</p>
+      <a routerLink="/booking" class="btn-cta">Book a Workshop</a>
+    </div>
+  </div>
+</div>

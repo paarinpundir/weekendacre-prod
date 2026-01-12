@@ -1,0 +1,370 @@
+<div class="partner-onboarding">
+  <div class="onboarding-container">
+    <!-- Header -->
+    <div class="onboarding-header">
+      <div class="header-left">
+        <a routerLink="/" class="logo-link">
+          <span class="logo-icon">🌿</span>
+          <span class="logo-text">GreenTrail</span>
+        </a>
+      </div>
+      <div class="header-right">
+        <a routerLink="/" class="header-btn">Save & exit</a>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        @for (step of [1,2,3,4,5,6,7]; track step) {
+          <div class="progress-segment" [class.active]="currentStep >= step" [class.completed]="currentStep > step"></div>
+        }
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="onboarding-content">
+      @if (showSuccess) {
+        <div class="success-message">
+          <div class="success-icon">✓</div>
+          <h2>Your listing is being submitted!</h2>
+          <p>We're processing your farm listing. You'll receive a confirmation email shortly.</p>
+        </div>
+      } @else {
+        <!-- Step 0: What would you like to host? -->
+        @if (currentStep === 0) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <div class="host-type-selection">
+              <div class="host-type-card" (click)="selectHostType('farm')" [class.selected]="selectedHostType === 'farm'">
+                <div class="host-type-icon">🌾</div>
+                <h3>Farm</h3>
+                <p>Share your working farm with guests who want to experience authentic farm life</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 1: Which of these best describes your place? -->
+        @if (currentStep === 1) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <div class="place-type-grid">
+              @for (placeType of placeTypes; track placeType.id) {
+                <div class="place-type-card" 
+                     (click)="selectPlaceType(placeType.id)" 
+                     [class.selected]="selectedPlaceType === placeType.id">
+                  <div class="place-type-icon">{{ placeType.icon }}</div>
+                  <h3>{{ placeType.label }}</h3>
+                  <p>{{ placeType.description }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Where's your place located? -->
+        @if (currentStep === 2) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <form [formGroup]="locationForm" class="location-form">
+              <div class="form-group">
+                <label>Address *</label>
+                <input type="text" formControlName="address" class="form-input" placeholder="Enter your address">
+                @if (locationForm.get('address')?.invalid && locationForm.get('address')?.touched) {
+                  <div class="error-message">Address is required</div>
+                }
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Village</label>
+                  <input type="text" formControlName="village" class="form-input" placeholder="Village name">
+                </div>
+                <div class="form-group">
+                  <label>District *</label>
+                  <input type="text" formControlName="district" class="form-input" placeholder="District">
+                  @if (locationForm.get('district')?.invalid && locationForm.get('district')?.touched) {
+                    <div class="error-message">District is required</div>
+                  }
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>City *</label>
+                  <input type="text" formControlName="city" class="form-input" placeholder="City">
+                  @if (locationForm.get('city')?.invalid && locationForm.get('city')?.touched) {
+                    <div class="error-message">City is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label>State *</label>
+                  <input type="text" formControlName="state" class="form-input" placeholder="State">
+                  @if (locationForm.get('state')?.invalid && locationForm.get('state')?.touched) {
+                    <div class="error-message">State is required</div>
+                  }
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Zip Code *</label>
+                  <input type="text" formControlName="zipCode" class="form-input" placeholder="Zip Code">
+                  @if (locationForm.get('zipCode')?.invalid && locationForm.get('zipCode')?.touched) {
+                    <div class="error-message">Zip Code is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label>Country *</label>
+                  <input type="text" formControlName="country" class="form-input" value="India" readonly>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>GPS Coordinates (Optional)</label>
+                <div class="location-inputs">
+                  <input type="number" formControlName="latitude" step="0.000001" class="form-input" placeholder="Latitude">
+                  <input type="number" formControlName="longitude" step="0.000001" class="form-input" placeholder="Longitude">
+                  <button type="button" class="btn btn-outline" (click)="getCurrentLocation()">📍 Use Current Location</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Step 3: Share some basics about your place -->
+        @if (currentStep === 3) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <form [formGroup]="basicsForm" class="basics-form">
+              <div class="basics-section">
+                <h3>Capacity</h3>
+                <div class="counter-group">
+                  <div class="counter-item">
+                    <label>Guests</label>
+                    <div class="counter-controls">
+                      <button type="button" class="counter-btn" (click)="decrementGuests()">−</button>
+                      <span class="counter-value">{{ basicsForm.get('guests')?.value }}</span>
+                      <button type="button" class="counter-btn" (click)="incrementGuests()">+</button>
+                    </div>
+                  </div>
+                  <div class="counter-item">
+                    <label>Bedrooms</label>
+                    <div class="counter-controls">
+                      <button type="button" class="counter-btn" (click)="decrementBedrooms()">−</button>
+                      <span class="counter-value">{{ basicsForm.get('bedrooms')?.value }}</span>
+                      <button type="button" class="counter-btn" (click)="incrementBedrooms()">+</button>
+                    </div>
+                  </div>
+                  <div class="counter-item">
+                    <label>Beds</label>
+                    <div class="counter-controls">
+                      <button type="button" class="counter-btn" (click)="decrementBeds()">−</button>
+                      <span class="counter-value">{{ basicsForm.get('beds')?.value }}</span>
+                      <button type="button" class="counter-btn" (click)="incrementBeds()">+</button>
+                    </div>
+                  </div>
+                  <div class="counter-item">
+                    <label>Bathrooms</label>
+                    <div class="counter-controls">
+                      <button type="button" class="counter-btn" (click)="decrementBathrooms()">−</button>
+                      <span class="counter-value">{{ basicsForm.get('bathrooms')?.value }}</span>
+                      <button type="button" class="counter-btn" (click)="incrementBathrooms()">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="basics-section">
+                <h3>Farm Details</h3>
+                <div class="form-group">
+                  <label>Farm Size (acres) *</label>
+                  <input type="number" formControlName="farmSize" class="form-input" min="0.1" step="0.1" placeholder="e.g., 10">
+                  @if (basicsForm.get('farmSize')?.invalid && basicsForm.get('farmSize')?.touched) {
+                    <div class="error-message">Farm size is required</div>
+                  }
+                </div>
+                
+                <div class="form-group">
+                  <label>Soil Type *</label>
+                  <select formControlName="soilType" class="form-input">
+                    <option value="">Select Soil Type</option>
+                    @for (soil of soilTypes; track soil.value) {
+                      <option [value]="soil.value">{{ soil.label }}</option>
+                    }
+                  </select>
+                  @if (basicsForm.get('soilType')?.invalid && basicsForm.get('soilType')?.touched) {
+                    <div class="error-message">Soil type is required</div>
+                  }
+                </div>
+                
+                <div class="form-group">
+                  <label>What is produced on the farm? *</label>
+                  <div class="checkbox-grid">
+                    @for (option of productionOptionsList; track option) {
+                      <label class="checkbox-item" [class.selected]="isProductionSelected(option)">
+                        <input type="checkbox" [checked]="isProductionSelected(option)" (change)="toggleProduction(option)">
+                        <span>{{ option }}</span>
+                      </label>
+                    }
+                  </div>
+                  @if (productionArray.length === 0 && basicsForm.get('production')?.touched) {
+                    <div class="error-message">At least one production item is required</div>
+                  }
+                </div>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Step 4: Tell guests what your place has to offer -->
+        @if (currentStep === 4) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <div class="amenities-section">
+              <h3>What about these guest favourites?</h3>
+              <div class="amenities-grid">
+                @for (amenity of amenitiesList; track amenity.id) {
+                  <div class="amenity-card" 
+                       (click)="toggleAmenity(amenity.id)" 
+                       [class.selected]="isAmenitySelected(amenity.id)">
+                    <div class="amenity-icon">{{ amenity.icon }}</div>
+                    <span>{{ amenity.label }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 5: Add some photos of your place -->
+        @if (currentStep === 5) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <div class="photos-section">
+              <div class="photo-upload-area">
+                <input type="file" multiple accept="image/jpeg,image/png" (change)="onFileSelected($event)" style="display: none;" #fileInput>
+                <button type="button" class="btn btn-outline btn-large" (click)="fileInput.click()">
+                  📷 Upload Photos ({{ getTotalUploadedPhotos() }} / 10)
+                </button>
+                <small>JPG / PNG, Min 1200px width, Max 5 MB per file</small>
+                @if (getTotalUploadedPhotos() < getRequiredPhotosCount()) {
+                  <div class="error-message">Minimum {{ getRequiredPhotosCount() }} photos are required</div>
+                }
+              </div>
+              
+              <div class="photo-grid">
+                @for (photo of uploadedPhotos; track $index) {
+                  <div class="photo-card">
+                    <img [src]="photo.preview" alt="Farm Photo" class="photo-preview">
+                    <select [(ngModel)]="photo.category" class="photo-category-select">
+                      <option [ngValue]="null">Select Category</option>
+                      @for (cat of photoCategories; track cat.key) {
+                        <option [value]="cat.key">{{ cat.label }}</option>
+                      }
+                    </select>
+                    <button type="button" class="btn-remove-photo" (click)="removePhoto($index)">×</button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 6: Create your listing title and description -->
+        @if (currentStep === 6) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <form [formGroup]="titleDescriptionForm" class="title-description-form">
+              <div class="form-group">
+                <label>Listing Title *</label>
+                <input type="text" formControlName="title" class="form-input" placeholder="e.g., Beautiful Eco Farm with Organic Produce">
+                <small>{{ titleDescriptionForm.get('title')?.value?.length || 0 }} / 50 characters</small>
+                @if (titleDescriptionForm.get('title')?.invalid && titleDescriptionForm.get('title')?.touched) {
+                  <div class="error-message">Title must be between 10 and 50 characters</div>
+                }
+              </div>
+              
+              <div class="form-group">
+                <label>Description *</label>
+                <textarea formControlName="description" class="form-textarea" rows="8" placeholder="Describe your farm, what makes it special, activities guests can enjoy..."></textarea>
+                <small>{{ titleDescriptionForm.get('description')?.value?.length || 0 }} / 500 characters (100-500 words recommended)</small>
+                @if (titleDescriptionForm.get('description')?.invalid && titleDescriptionForm.get('description')?.touched) {
+                  <div class="error-message">Description must be between 100 and 500 characters</div>
+                }
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Step 7: Review your listing -->
+        @if (currentStep === 7) {
+          <div class="step-content">
+            <h1 class="step-title">{{ getStepTitle() }}</h1>
+            <p class="step-description">{{ getStepDescription() }}</p>
+            
+            <div class="review-section">
+              <div class="review-card">
+                <h3>Place Type</h3>
+                <p>{{ getPlaceTypeLabel() }}</p>
+              </div>
+              
+              <div class="review-card">
+                <h3>Location</h3>
+                <p>{{ locationForm.get('address')?.value }}, {{ locationForm.get('city')?.value }}, {{ locationForm.get('state')?.value }}</p>
+              </div>
+              
+              <div class="review-card">
+                <h3>Basics</h3>
+                <p>{{ basicsForm.get('guests')?.value }} guests · {{ basicsForm.get('bedrooms')?.value }} bedrooms · {{ basicsForm.get('beds')?.value }} beds · {{ basicsForm.get('bathrooms')?.value }} bathrooms</p>
+                <p>Farm Size: {{ basicsForm.get('farmSize')?.value }} acres</p>
+                <p>Production: {{ productionArray.value.join(', ') }}</p>
+              </div>
+              
+              <div class="review-card">
+                <h3>Amenities</h3>
+                <p>{{ getSelectedAmenitiesLabel() }}</p>
+              </div>
+              
+              <div class="review-card">
+                <h3>Photos</h3>
+                <p>{{ getTotalUploadedPhotos() }} photos uploaded</p>
+              </div>
+              
+              <div class="review-card">
+                <h3>Title & Description</h3>
+                <p><strong>{{ titleDescriptionForm.get('title')?.value }}</strong></p>
+                <p>{{ titleDescriptionForm.get('description')?.value }}</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Navigation Buttons -->
+        <div class="onboarding-footer">
+          <button class="btn btn-text" (click)="prevStep()" [disabled]="currentStep === 0">Back</button>
+          @if (currentStep < totalSteps) {
+            <button class="btn btn-primary" (click)="nextStep()" [disabled]="!isCurrentStepValid()">Next</button>
+          } @else {
+            <button class="btn btn-primary" (click)="submitOnboarding()">Publish Listing</button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

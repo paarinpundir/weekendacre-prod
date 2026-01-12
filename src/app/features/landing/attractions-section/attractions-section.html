@@ -1,0 +1,21 @@
+<div class="attractions-section">
+  <div class="container">
+    <h2 class="section-title">Awesome Attractions</h2>
+    
+    @if (attractions && attractions.length > 0) {
+      <div class="attractions-grid">
+        @for (attraction of attractions; track attraction.id) {
+          <div class="attraction-card" (click)="onAttractionClick(attraction)">
+            <div class="attraction-icon">{{ attraction.icon || '✨' }}</div>
+            <h3 class="attraction-title">{{ attraction.title }}</h3>
+            @if (attraction.description) {
+              <p class="attraction-description">{{ attraction.description }}</p>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="no-attractions">No attractions listed</p>
+    }
+  </div>
+</div>

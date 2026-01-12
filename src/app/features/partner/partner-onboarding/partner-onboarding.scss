@@ -1,0 +1,621 @@
+.partner-onboarding {
+  min-height: 100vh;
+  background: #ffffff;
+  
+  .onboarding-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  // Header
+  .onboarding-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #ebebeb;
+
+    .header-left {
+      .logo-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: #222;
+        font-weight: 600;
+        font-size: 1.25rem;
+
+        .logo-icon {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .header-right {
+      .header-btn {
+        background: transparent;
+        border: 1px solid #ddd;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        color: #222;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #222;
+        }
+      }
+    }
+  }
+
+  // Progress Bar
+  .progress-container {
+    padding: 2rem 0 1rem;
+
+    .progress-bar {
+      display: flex;
+      gap: 0.5rem;
+      height: 4px;
+
+      .progress-segment {
+        flex: 1;
+        background: #ebebeb;
+        border-radius: 2px;
+        transition: background 0.3s;
+
+        &.active {
+          background: #222;
+        }
+
+        &.completed {
+          background: #222;
+        }
+      }
+    }
+  }
+
+  // Main Content
+  .onboarding-content {
+    padding: 3rem 0;
+    min-height: 60vh;
+
+    .step-content {
+      max-width: 800px;
+      margin: 0 auto;
+
+      .step-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+
+      .step-description {
+        font-size: 1.1rem;
+        color: #717171;
+        margin-bottom: 3rem;
+      }
+    }
+  }
+
+  // Step 0: Host Type Selection
+  .host-type-selection {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+
+    .host-type-card {
+      flex: 1;
+      min-width: 300px;
+      padding: 2.5rem;
+      border: 2px solid #ebebeb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+
+      &:hover {
+        border-color: #222;
+        transform: translateY(-2px);
+      }
+
+      &.selected {
+        border-color: #222;
+        background: #f7f7f7;
+      }
+
+      .host-type-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #717171;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  // Step 1: Place Type Selection
+  .place-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+
+    .place-type-card {
+      padding: 2rem 1.5rem;
+      border: 2px solid #ebebeb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+
+      &:hover {
+        border-color: #222;
+      }
+
+      &.selected {
+        border-color: #222;
+        background: #f7f7f7;
+      }
+
+      .place-type-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+        color: #717171;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  // Forms
+  .location-form,
+  .basics-form,
+  .title-description-form {
+    .form-group {
+      margin-bottom: 2rem;
+
+      label {
+        display: block;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #b0b0b0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #222;
+        }
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 150px;
+      }
+
+      small {
+        display: block;
+        margin-top: 0.5rem;
+        color: #717171;
+        font-size: 0.875rem;
+      }
+
+      .error-message {
+        color: #c13515;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .location-inputs {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+
+      .form-input {
+        flex: 1;
+      }
+    }
+  }
+
+  // Step 3: Basics
+  .basics-section {
+    margin-bottom: 3rem;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 1.5rem;
+    }
+
+    .counter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #ebebeb;
+
+      .counter-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        label {
+          font-weight: 600;
+          color: #222;
+          font-size: 1rem;
+        }
+
+        .counter-controls {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+
+          .counter-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #b0b0b0;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+
+            &:hover {
+              border-color: #222;
+            }
+          }
+
+          .counter-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+
+      .checkbox-item {
+        padding: 1rem;
+        border: 2px solid #ebebeb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        &:hover {
+          border-color: #222;
+        }
+
+        &.selected {
+          border-color: #222;
+          background: #f7f7f7;
+        }
+
+        input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
+
+        span {
+          color: #222;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // Step 4: Amenities
+  .amenities-section {
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 1.5rem;
+    }
+
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+
+      .amenity-card {
+        padding: 1.5rem;
+        border: 2px solid #ebebeb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        text-align: center;
+
+        &:hover {
+          border-color: #222;
+        }
+
+        &.selected {
+          border-color: #222;
+          background: #f7f7f7;
+        }
+
+        .amenity-icon {
+          font-size: 2rem;
+        }
+
+        span {
+          font-weight: 500;
+          color: #222;
+        }
+      }
+    }
+  }
+
+  // Step 5: Photos
+  .photos-section {
+    .photo-upload-area {
+      text-align: center;
+      padding: 3rem;
+      border: 2px dashed #ebebeb;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+
+      .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+      }
+
+      small {
+        display: block;
+        margin-top: 0.5rem;
+        color: #717171;
+      }
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+
+      .photo-card {
+        position: relative;
+        border: 1px solid #ebebeb;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .photo-preview {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          display: block;
+        }
+
+        .photo-category-select {
+          width: 100%;
+          padding: 0.5rem;
+          border: none;
+          border-top: 1px solid #ebebeb;
+          font-size: 0.875rem;
+        }
+
+        .btn-remove-photo {
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          border: none;
+          cursor: pointer;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+
+          &:hover {
+            background: rgba(0, 0, 0, 0.9);
+          }
+        }
+      }
+    }
+  }
+
+  // Step 7: Review
+  .review-section {
+    .review-card {
+      padding: 2rem;
+      border: 1px solid #ebebeb;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.75rem;
+      }
+
+      p {
+        color: #717171;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  // Footer Navigation
+  .onboarding-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+    border-top: 1px solid #ebebeb;
+    margin-top: 3rem;
+
+    .btn {
+      padding: 0.875rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+
+      &.btn-text {
+        background: transparent;
+        color: #222;
+        text-decoration: underline;
+
+        &:hover {
+          color: #000;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      &.btn-primary {
+        background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+        color: white;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(230, 30, 77, 0.4);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      &.btn-outline {
+        background: white;
+        border: 1px solid #222;
+        color: #222;
+
+        &:hover {
+          background: #222;
+          color: white;
+        }
+      }
+    }
+  }
+
+  // Success Message
+  .success-message {
+    text-align: center;
+    padding: 4rem 2rem;
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #00a699;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 2rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #222;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #717171;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .partner-onboarding {
+    .onboarding-container {
+      padding: 0 1rem;
+    }
+
+    .onboarding-content {
+      .step-content {
+        .step-title {
+          font-size: 1.75rem;
+        }
+      }
+    }
+
+    .host-type-selection,
+    .place-type-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr !important;
+    }
+
+    .location-inputs {
+      flex-direction: column;
+    }
+  }
+}

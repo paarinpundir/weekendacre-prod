@@ -1,0 +1,51 @@
+<div class="home">
+  <!-- Section 1: Dual Carousel (First Section) -->
+  <app-dual-carousel [slides]="carouselSlides"></app-dual-carousel>
+
+  <!-- Section 2: Experience Cards -->
+  <app-experience-cards [cards]="experienceCards"></app-experience-cards>
+
+  <!-- Section 2.5: Properties Listing -->
+  <section class="properties-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Explore Our Properties</h2>
+        <p class="section-subtitle">Discover farm stays and eco-adventure experiences</p>
+      </div>
+      @if (loadingProperties) {
+        <div class="loading-properties">
+          <div class="spinner"></div>
+          <p>Loading properties...</p>
+        </div>
+      } @else if (properties.length > 0) {
+        <div class="properties-grid">
+          @for (property of properties; track property.id) {
+            <app-property-card [property]="property"></app-property-card>
+          }
+        </div>
+      } @else {
+        <div class="no-properties">
+          <p>No properties available at the moment. Check back soon!</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Section 3: Membership Section -->
+  <app-membership-section></app-membership-section>
+
+  <!-- Section 4: Attractions -->
+  <app-attractions-section 
+    [attractions]="attractions"
+    (attractionClick)="onAttractionClick($event)">
+  </app-attractions-section>
+
+  <!-- Section 5: Upcoming Events -->
+  <app-events-section [events]="events"></app-events-section>
+
+  <!-- Section 6: Membership & Registration -->
+  <app-membership-registration [membershipTypes]="membershipTypes"></app-membership-registration>
+
+  <!-- Section 7: Contact Us -->
+  <app-contact-section></app-contact-section>
+</div>

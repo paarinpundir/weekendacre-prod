@@ -1,0 +1,90 @@
+<div class="activities">
+  <div class="container">
+    <h1 class="page-title">Adventure Activity Explorer</h1>
+    <p class="page-subtitle">Discover exciting activities for all ages and skill levels</p>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Search activities..." 
+          [(ngModel)]="searchTerm"
+          class="search-input">
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <div class="filter-group">
+        <label>Category:</label>
+        <select [(ngModel)]="selectedCategory" class="filter-select">
+          @for (category of categories; track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Difficulty:</label>
+        <select [(ngModel)]="selectedDifficulty" class="filter-select">
+          @for (difficulty of difficulties; track difficulty) {
+            <option [value]="difficulty">{{ difficulty }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Activities Grid -->
+    <div class="activities-grid">
+      @for (activity of filteredActivities; track activity.id) {
+        <div class="activity-card">
+          <div class="activity-image" [style.background-image]="'url(' + activity.imageUrl + ')'">
+            @if (activity.videoUrl) {
+              <div class="video-badge">📹 Video Available</div>
+            }
+          </div>
+          <div class="activity-content">
+            <div class="activity-header">
+              <h3>{{ activity.name }}</h3>
+              <span class="badge badge-{{ activity.difficultyLevel.toLowerCase() }}">
+                {{ activity.difficultyLevel }}
+              </span>
+            </div>
+            <p class="activity-description">{{ activity.description }}</p>
+            
+            <div class="activity-details">
+              <div class="detail-item">
+                <span class="detail-icon">👥</span>
+                <span>Age: {{ activity.ageLimit.min }}+ 
+                  @if (activity.ageLimit.max) {
+                    - {{ activity.ageLimit.max }}
+                  }
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⏱️</span>
+                <span>{{ activity.duration }} min</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">🏷️</span>
+                <span>{{ activity.category }}</span>
+              </div>
+            </div>
+
+            <div class="activity-footer">
+              <div class="price">₹{{ activity.price }}</div>
+              <a routerLink="/booking" [queryParams]="{activity: activity.id}" class="btn-book">
+                Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (filteredActivities.length === 0) {
+      <div class="no-results">
+        <p>No activities found matching your criteria.</p>
+      </div>
+    }
+  </div>
+</div>

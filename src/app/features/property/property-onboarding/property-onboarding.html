@@ -1,0 +1,1174 @@
+<div class="property-onboarding">
+  <!-- Sidebar Navigation Component -->
+  <app-onboarding-sidebar
+    [currentStep]="currentStep"
+    [steps]="stepsList"
+    [hasSavedProgress]="hasSavedProgress()"
+    (stepSelected)="onStepSelected($event)"
+    (clearProgress)="onClearProgress()"
+  ></app-onboarding-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="onboarding-main">
+    <!-- Resume Notice -->
+    @if (hasSavedProgress()) {
+      <div class="resume-notice">
+        <span>📝 You have a saved draft. Continuing from where you left off...</span>
+        <button type="button" class="btn-clear" (click)="clearSavedProgressAndRestart()">Start Fresh</button>
+      </div>
+    }
+
+    <!-- Step Content -->
+    <div class="step-content">
+      <h2 class="step-title">{{ getStepTitle() }}</h2>
+      <p class="step-description">{{ getStepDescription() }}</p>
+
+      <form [formGroup]="propertyForm" (ngSubmit)="nextStep()">
+        <!-- Step 0: Basic Information -->
+        @if (currentStep === 0) {
+          <div class="form-section">
+            <div class="form-group">
+              <label for="property_name">Farm Name / Property Name *</label>
+              <input 
+                type="text" 
+                id="property_name" 
+                formControlName="property_name"
+                placeholder="e.g., Green Valley Organic Farm"
+                [class.error]="propertyForm.get('property_name')?.invalid && propertyForm.get('property_name')?.touched"
+              />
+              @if (propertyForm.get('property_name')?.invalid && propertyForm.get('property_name')?.touched) {
+                <span class="error-message">Property name is required (3-255 characters)</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="owner_name">Owner Name *</label>
+              <input 
+                type="text" 
+                id="owner_name" 
+                formControlName="owner_name"
+                placeholder="Enter owner's full name"
+                [class.error]="propertyForm.get('owner_name')?.invalid && propertyForm.get('owner_name')?.touched"
+              />
+              @if (propertyForm.get('owner_name')?.invalid && propertyForm.get('owner_name')?.touched) {
+                <span class="error-message">Owner name is required</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="contact_person">Contact Person *</label>
+              <input 
+                type="text" 
+                id="contact_person" 
+                formControlName="contact_person"
+                placeholder="Name of the contact person"
+                [class.error]="propertyForm.get('contact_person')?.invalid && propertyForm.get('contact_person')?.touched"
+              />
+              @if (propertyForm.get('contact_person')?.invalid && propertyForm.get('contact_person')?.touched) {
+                <span class="error-message">Contact person name is required</span>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phone_number">Phone Number *</label>
+                <input 
+                  type="tel" 
+                  id="phone_number" 
+                  formControlName="phone_number"
+                  placeholder="10 digit phone number"
+                  maxlength="10"
+                  [class.error]="propertyForm.get('phone_number')?.invalid && propertyForm.get('phone_number')?.touched"
+                />
+                @if (propertyForm.get('phone_number')?.invalid && propertyForm.get('phone_number')?.touched) {
+                  <span class="error-message">Valid 10-digit phone number is required</span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="whatsapp_number">WhatsApp Number</label>
+                <input 
+                  type="tel" 
+                  id="whatsapp_number" 
+                  formControlName="whatsapp_number"
+                  placeholder="10 digit WhatsApp number"
+                  maxlength="10"
+                  [class.error]="propertyForm.get('whatsapp_number')?.invalid && propertyForm.get('whatsapp_number')?.touched"
+                />
+                @if (propertyForm.get('whatsapp_number')?.invalid && propertyForm.get('whatsapp_number')?.touched) {
+                  <span class="error-message">Valid 10-digit number required</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email_id">Email ID *</label>
+              <input 
+                type="email" 
+                id="email_id" 
+                formControlName="email_id"
+                placeholder="example@email.com"
+                [class.error]="propertyForm.get('email_id')?.invalid && propertyForm.get('email_id')?.touched"
+              />
+              @if (propertyForm.get('email_id')?.invalid && propertyForm.get('email_id')?.touched) {
+                <span class="error-message">Valid email address is required</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="address">Full Address *</label>
+              <textarea 
+                id="address" 
+                formControlName="address"
+                rows="3"
+                placeholder="Enter complete address including village, district, state, and PIN code"
+                [class.error]="propertyForm.get('address')?.invalid && propertyForm.get('address')?.touched"
+              ></textarea>
+              @if (propertyForm.get('address')?.invalid && propertyForm.get('address')?.touched) {
+                <span class="error-message">Address is required (minimum 10 characters)</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Location Coordinates</label>
+              <div class="coordinates-group">
+                <input 
+                  type="number" 
+                  formControlName="latitude"
+                  placeholder="Latitude"
+                  step="any"
+                />
+                <input 
+                  type="number" 
+                  formControlName="longitude"
+                  placeholder="Longitude"
+                  step="any"
+                />
+                <button type="button" class="btn-secondary" (click)="getCurrentLocation()">
+                  📍 Get Current Location
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 1: Land Details -->
+        @if (currentStep === 1) {
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="total_land_area">Total Land Area *</label>
+                <input 
+                  type="number" 
+                  id="total_land_area" 
+                  formControlName="total_land_area"
+                  placeholder="e.g., 5.5"
+                  step="0.1"
+                  min="0.1"
+                  [class.error]="propertyForm.get('total_land_area')?.invalid && propertyForm.get('total_land_area')?.touched"
+                />
+                @if (propertyForm.get('total_land_area')?.invalid && propertyForm.get('total_land_area')?.touched) {
+                  <span class="error-message">Land area is required (minimum 0.1)</span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="land_area_unit">Unit *</label>
+                <select 
+                  id="land_area_unit" 
+                  formControlName="land_area_unit"
+                  [class.error]="propertyForm.get('land_area_unit')?.invalid && propertyForm.get('land_area_unit')?.touched"
+                >
+                  @for (unit of landAreaUnits; track unit.value) {
+                    <option [value]="unit.value">{{ unit.label }}</option>
+                  }
+                </select>
+                @if (propertyForm.get('land_area_unit')?.invalid && propertyForm.get('land_area_unit')?.touched) {
+                  <span class="error-message">Unit is required</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="years_in_operation">Years in Operation</label>
+              <input 
+                type="number" 
+                id="years_in_operation" 
+                formControlName="years_in_operation"
+                placeholder="e.g., 10"
+                min="0"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ownership_type">Ownership Type *</label>
+              <select id="ownership_type" formControlName="ownership_type">
+                @for (type of ownershipTypes; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="proof_of_ownership">Proof of Ownership *</label>
+              <div class="file-upload-area" 
+                   (dragover)="onDragOver($event)" 
+                   (dragleave)="onDragLeave($event)"
+                   (drop)="onFileDrop($event)"
+                   [class.dragover]="isDragging"
+                   (click)="fileInput.click()">
+                <input 
+                  type="file" 
+                  #fileInput
+                  id="proof_of_ownership" 
+                  (change)="onFileSelected($event)"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  style="display: none;"
+                />
+                @if (!proofOfOwnershipFile && !proofOfOwnershipPreview) {
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">📄</div>
+                    <p class="upload-text">Drag and drop your document here</p>
+                    <p class="upload-subtext">or click to browse</p>
+                    <p class="upload-formats">Supported: PDF, JPG, PNG, DOC, DOCX</p>
+                  </div>
+                } @else {
+                  <div class="uploaded-file">
+                    <div class="file-info">
+                      <span class="file-icon">📄</span>
+                      <div class="file-details">
+                        <span class="file-name">{{ proofOfOwnershipFile?.name || 'Document uploaded' }}</span>
+                        <span class="file-size">{{ getFileSize(proofOfOwnershipFile?.size) }}</span>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove" (click)="removeProofOfOwnership(); $event.stopPropagation()">
+                      ✕
+                    </button>
+                  </div>
+                }
+              </div>
+              <input 
+                type="hidden" 
+                formControlName="proof_of_ownership"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Business Details -->
+        @if (currentStep === 2) {
+          <div class="form-section">
+            <div class="form-group">
+              <label for="gst_number">GST Number</label>
+              <input 
+                type="text" 
+                id="gst_number" 
+                formControlName="gst_number"
+                placeholder="e.g., 29ABCDE1234F1Z5"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="pan_number">PAN Number</label>
+              <input 
+                type="text" 
+                id="pan_number" 
+                formControlName="pan_number"
+                placeholder="e.g., ABCDE1234F"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="aadhar_number">Aadhar Number</label>
+              <input 
+                type="text" 
+                id="aadhar_number" 
+                formControlName="aadhar_number"
+                placeholder="e.g., 1234 5678 9012"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- Step 3: Facilities -->
+        @if (currentStep === 3) {
+          <div class="form-section">
+            @if (facilities.length === 0) {
+              <div class="loading-state">
+                <p>Loading facilities...</p>
+              </div>
+            } @else {
+              <div class="facilities-grid">
+                @for (facility of facilities; track facility.id) {
+                  <label class="facility-card" [class.selected]="isFacilitySelected(facility.code)">
+                    <div class="facility-checkbox">
+                      <input 
+                        type="checkbox" 
+                        [checked]="isFacilitySelected(facility.code)"
+                        (change)="toggleFacility(facility.code)"
+                      />
+                      <span class="checkmark"></span>
+                    </div>
+                    <div class="facility-content">
+                      <span class="facility-name">{{ facility.name }}</span>
+                    </div>
+                  </label>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 4: Staff & Team Details -->
+        @if (currentStep === 4) {
+          <div class="form-section">
+            <h3>Staff and Team Details</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="num_full_time_staff">Number of Full-Time Staff</label>
+                <input 
+                  type="number" 
+                  id="num_full_time_staff" 
+                  formControlName="num_full_time_staff"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="num_part_time_staff">Number of Part-Time Staff</label>
+                <input 
+                  type="number" 
+                  id="num_part_time_staff" 
+                  formControlName="num_part_time_staff"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  formControlName="hospitality_trained_staff"
+                />
+                <span>Hospitality Trained Staff Available</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  formControlName="english_speaking_farm_guide"
+                />
+                <span>English Speaking Farm Guide Available</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  formControlName="cooking_staff_available"
+                />
+                <span>Cooking Staff Available</span>
+              </label>
+            </div>
+          </div>
+        }
+
+        <!-- Step 5: Additional Information -->
+        @if (currentStep === 5) {
+          <div class="form-section">
+            <h3>Additional Information</h3>
+            
+            <div class="form-group">
+              <label for="water_availability_issues">Water Availability Issues</label>
+              <textarea 
+                id="water_availability_issues" 
+                formControlName="water_availability_issues"
+                rows="3"
+                placeholder="Describe any water availability issues..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="labour_shortage">Labour Shortage</label>
+              <textarea 
+                id="labour_shortage" 
+                formControlName="labour_shortage"
+                rows="3"
+                placeholder="Describe any labour shortage issues..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="pest_disease">Pest/Disease Information</label>
+              <textarea 
+                id="pest_disease" 
+                formControlName="pest_disease"
+                rows="3"
+                placeholder="Describe pest/disease management..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="constraints">Constraints</label>
+              <textarea 
+                id="constraints" 
+                formControlName="constraints"
+                rows="3"
+                placeholder="List any constraints or limitations..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="limitations">Limitations</label>
+              <textarea 
+                id="limitations" 
+                formControlName="limitations"
+                rows="3"
+                placeholder="Describe any limitations..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="additional_notes">Additional Notes</label>
+              <textarea 
+                id="additional_notes" 
+                formControlName="additional_notes"
+                rows="4"
+                placeholder="Any additional information..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="unique_features">Unique Features</label>
+              <textarea 
+                id="unique_features" 
+                formControlName="unique_features"
+                rows="3"
+                placeholder="Describe unique features of your farm..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="concerns">Concerns from Farmer Side</label>
+              <textarea 
+                id="concerns" 
+                formControlName="concerns"
+                rows="3"
+                placeholder="Any concerns or considerations..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="previous_partnership">Previous Partnership Experience</label>
+              <textarea 
+                id="previous_partnership" 
+                formControlName="previous_partnership"
+                rows="3"
+                placeholder="Describe previous partnership experiences..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="farm_owner_suggestions">Suggestions by Farm Owner</label>
+              <textarea 
+                id="farm_owner_suggestions" 
+                formControlName="farm_owner_suggestions"
+                rows="3"
+                placeholder="Any suggestions or recommendations..."
+              ></textarea>
+            </div>
+          </div>
+        }
+
+        <!-- Step 6: Crops & Produce -->
+        @if (currentStep === 6) {
+          <div class="form-section">
+            <h3>Crops and Produce</h3>
+            <p class="section-description">Add details about each crop you grow</p>
+            
+            <div class="dynamic-list">
+              @for (crop of crops; track $index; let cropIndex = $index) {
+                <div class="dynamic-item">
+                  <div class="item-header">
+                    <h4>Crop {{ cropIndex + 1 }}</h4>
+                    <button type="button" class="btn-remove-item" (click)="removeCrop(cropIndex)">Remove</button>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Crop Name</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="crop.crop_name"
+                      [ngModelOptions]="{standalone: true}"
+                      placeholder="e.g., Wheat, Rice, Vegetables"
+                    />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Area Under Cultivation (acres)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="crop.area_under_cultivation"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Expected Monthly Quantity (kg)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="crop.expected_monthly_quantity"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Seasonal Availability</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="crop.seasonal_availability"
+                      [ngModelOptions]="{standalone: true}"
+                      placeholder="e.g., Year-round, Monsoon, Winter"
+                    />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Current Selling Price (₹/kg)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="crop.current_selling_price"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Minimum Quantity to Commit (kg)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="crop.minimum_quantity_to_commit"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Packing Reference</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="crop.packing_reference"
+                      [ngModelOptions]="{standalone: true}"
+                      placeholder="e.g., 5kg bags, 10kg boxes"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        [(ngModel)]="crop.ability_to_deliver"
+                        [ngModelOptions]="{standalone: true}"
+                      />
+                      <span>Ability to Deliver</span>
+                    </label>
+                  </div>
+
+                  @if (crop.ability_to_deliver) {
+                    <div class="form-group">
+                      <label>Pickup Point</label>
+                      <input 
+                        type="text" 
+                        [(ngModel)]="crop.pickup_point"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Location for pickup"
+                      />
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Preferred Delivery Days</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="crop.preferred_delivery_days"
+                          [ngModelOptions]="{standalone: true}"
+                          placeholder="e.g., Monday, Wednesday, Friday"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label>Type of Vehicle</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="crop.type_of_vehicle"
+                          [ngModelOptions]="{standalone: true}"
+                          placeholder="e.g., Truck, Van, Auto"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Distance from NCR (km)</label>
+                        <input 
+                          type="number" 
+                          [(ngModel)]="crop.distance_from_ncr"
+                          [ngModelOptions]="{standalone: true}"
+                          placeholder="0"
+                          step="0.1"
+                          min="0"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label>Time to Deliver (hours)</label>
+                        <input 
+                          type="text" 
+                          [(ngModel)]="crop.time_to_deliver"
+                          [ngModelOptions]="{standalone: true}"
+                          placeholder="e.g., 2-3 hours"
+                        />
+                      </div>
+                    </div>
+                  }
+
+                  <div class="form-group">
+                    <label>Packing Material</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="crop.packing_material"
+                      [ngModelOptions]="{standalone: true}"
+                      placeholder="e.g., Jute bags, Plastic boxes"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Organic Inputs Used</label>
+                    <div class="options-grid">
+                      @for (input of organicInputs; track input.code) {
+                        <label class="option-label" [class.selected]="isOrganicInputSelected(cropIndex, input.code)">
+                          <input 
+                            type="checkbox" 
+                            [checked]="isOrganicInputSelected(cropIndex, input.code)"
+                            (change)="toggleOrganicInput(cropIndex, input.code)"
+                          />
+                          <span>{{ input.name }}</span>
+                        </label>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+              
+              @if (crops.length === 0) {
+                <div class="empty-state">
+                  <p>No crops added yet. Click the button below to add your first crop.</p>
+                </div>
+              }
+              
+              <button type="button" class="btn-add-item" (click)="addCrop()">
+                + Add Crop
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Step 7: Stay Facilities -->
+        @if (currentStep === 7) {
+          <div class="form-section">
+            <h3>Stay Facilities</h3>
+            <p class="section-description">Add details about rooms and accommodation</p>
+            
+            <div class="dynamic-list">
+              @for (facility of stayFacilities; track $index; let facilityIndex = $index) {
+                <div class="dynamic-item">
+                  <div class="item-header">
+                    <h4>Room {{ facilityIndex + 1 }}</h4>
+                    <button type="button" class="btn-remove-item" (click)="removeStayFacility(facilityIndex)">Remove</button>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Room Type *</label>
+                    <select [(ngModel)]="facility.room_type" [ngModelOptions]="{standalone: true}">
+                      <option value="">Select Room Type</option>
+                      @for (type of roomTypes; track type.value) {
+                        <option [value]="type.value">{{ type.label }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Number of Rooms</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="facility.number_of_rooms"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="1"
+                        min="1"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Max Guest Capacity</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="facility.max_guest_capacity"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Bathroom Type</label>
+                    <div class="checkbox-group">
+                      <label class="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="facility.bathrooms_attached"
+                          [ngModelOptions]="{standalone: true}"
+                        />
+                        <span>Attached Bathroom</span>
+                      </label>
+                      <label class="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="facility.bathrooms_shared"
+                          [ngModelOptions]="{standalone: true}"
+                        />
+                        <span>Shared Bathroom</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        [(ngModel)]="facility.hot_water"
+                        [ngModelOptions]="{standalone: true}"
+                      />
+                      <span>Hot Water Available</span>
+                    </label>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Check-in Time</label>
+                      <input 
+                        type="time" 
+                        [(ngModel)]="facility.check_in_time"
+                        [ngModelOptions]="{standalone: true}"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Check-out Time</label>
+                      <input 
+                        type="time" 
+                        [(ngModel)]="facility.check_out_time"
+                        [ngModelOptions]="{standalone: true}"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Guest Safety Measures</label>
+                    <textarea 
+                      [(ngModel)]="facility.guest_safety"
+                      [ngModelOptions]="{standalone: true}"
+                      rows="3"
+                      placeholder="Describe guest safety measures..."
+                    ></textarea>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Hygiene/Cleaning Rating (1-5)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="facility.hygiene_cleaning_rating"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Toilet Hygiene Rating (1-5)</label>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="facility.toilet_hygiene_rating"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="0"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Pathway Safety</label>
+                    <textarea 
+                      [(ngModel)]="facility.pathway_safety"
+                      [ngModelOptions]="{standalone: true}"
+                      rows="2"
+                      placeholder="Describe pathway safety measures..."
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Animal Safety Measures</label>
+                    <textarea 
+                      [(ngModel)]="facility.animal_safety_measures"
+                      [ngModelOptions]="{standalone: true}"
+                      rows="2"
+                      placeholder="Describe animal safety measures..."
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Emergency Plans</label>
+                    <textarea 
+                      [(ngModel)]="facility.emergency_plans"
+                      [ngModelOptions]="{standalone: true}"
+                      rows="3"
+                      placeholder="Describe emergency plans and procedures..."
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Safety & Security</label>
+                    <div class="checkbox-group">
+                      <label class="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="facility.first_aid_kit"
+                          [ngModelOptions]="{standalone: true}"
+                        />
+                        <span>First Aid Kit Available</span>
+                      </label>
+                      <label class="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="facility.cctv"
+                          [ngModelOptions]="{standalone: true}"
+                        />
+                        <span>CCTV Available</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Room Amenities</label>
+                    <textarea 
+                      [(ngModel)]="facility.amenities"
+                      [ngModelOptions]="{standalone: true}"
+                      rows="3"
+                      placeholder="List room amenities (comma separated or one per line)..."
+                    ></textarea>
+                  </div>
+                </div>
+              }
+              
+              @if (stayFacilities.length === 0) {
+                <div class="empty-state">
+                  <p>No rooms added yet. Click the button below to add your first room.</p>
+                </div>
+              }
+              
+              <button type="button" class="btn-add-item" (click)="addStayFacility()">
+                + Add Room
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Step 8: Experiences & Activities -->
+        @if (currentStep === 8) {
+          <div class="form-section">
+            <h3>Experiences and Activities</h3>
+            <p class="section-description">Select all activities you offer</p>
+            
+            <div class="activities-grid">
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_farm_walk" />
+                <span>Farm Walk</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_vegetable_harvesting" />
+                <span>Vegetable Harvesting</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_animal_interaction" />
+                <span>Animal Interaction</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_organic_farming_workshop" />
+                <span>Organic Farming Workshop</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_composting_demo" />
+                <span>Composting Demo</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_pottery" />
+                <span>Pottery</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_nature_trail" />
+                <span>Nature Trail</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_rural_games" />
+                <span>Rural Games</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_bonfire" />
+                <span>Bonfire</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_outdoor_seating" />
+                <span>Outdoor Seating</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_picnic_spots" />
+                <span>Picnic Spots</span>
+              </label>
+              <label class="activity-checkbox">
+                <input type="checkbox" formControlName="experience_kids_activities" />
+                <span>Kids Activities</span>
+              </label>
+            </div>
+          </div>
+        }
+
+        <!-- Step 9: Photos & Media -->
+        @if (currentStep === 9) {
+          <div class="form-section">
+            <h3>Photos and Media</h3>
+            <p class="section-description">Upload property images (minimum 3 for home page). Select image type for each photo.</p>
+            
+            <div class="photo-upload-section">
+              <div class="photo-upload-area" 
+                   (dragover)="onDragOver($event)" 
+                   (dragleave)="onDragLeave($event)"
+                   (drop)="onPhotoDrop($event)"
+                   [class.dragover]="isDragging"
+                   (click)="photoInput.click()">
+                <input 
+                  type="file" 
+                  #photoInput
+                  multiple
+                  accept="image/*"
+                  (change)="onPhotoSelected($event)"
+                  style="display: none;"
+                />
+                @if (uploadedImages.length === 0) {
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">📷</div>
+                    <p class="upload-text">Drag and drop photos here</p>
+                    <p class="upload-subtext">or click to browse</p>
+                    <p class="upload-formats">Minimum 3 photos required. Supported: JPG, PNG, WebP</p>
+                  </div>
+                } @else {
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">📷</div>
+                    <p class="upload-text">Add More Photos</p>
+                    <p class="upload-subtext">Click to add more images</p>
+                    <p class="upload-formats">{{ uploadedImages.length }} photo(s) uploaded</p>
+                  </div>
+                }
+              </div>
+              
+              @if (uploadedImages.length > 0) {
+                <div class="photo-grid">
+                  @for (image of uploadedImages; track $index) {
+                    <div class="photo-card">
+                      <div class="photo-preview">
+                        <img [src]="image.preview" [alt]="image.name" />
+                        <button type="button" class="btn-remove-photo" (click)="removePhoto($index)">✕</button>
+                      </div>
+                      <div class="photo-info">
+                        <p class="photo-name" [title]="image.name">{{ image.name.length > 20 ? (image.name.substring(0, 20) + '...') : image.name }}</p>
+                        <select 
+                          [(ngModel)]="image.typeCode" 
+                          [ngModelOptions]="{standalone: true}"
+                          class="photo-type-select"
+                          (change)="saveProgress()"
+                        >
+                          <option [value]="null">Select Image Type *</option>
+                          @for (type of imageTypes; track type.code) {
+                            <option [value]="type.code">{{ type.name }}</option>
+                          }
+                        </select>
+                        @if (!image.typeCode) {
+                          <p class="photo-warning">⚠️ Please select image type</p>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+                
+                @if (uploadedImages.length < 3) {
+                  <div class="photo-warning-banner">
+                    <p>⚠️ Minimum 3 photos required. Please add {{ 3 - uploadedImages.length }} more photo(s).</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Step 4 (Old): Water Sources & Irrigation -->
+        @if (currentStep === 10) {
+          <div class="form-section">
+            <div class="reference-section">
+              <h3>Water Sources</h3>
+              <div class="options-grid">
+                @for (source of waterSources; track source.id) {
+                  <label class="option-label" [class.selected]="isWaterSourceSelected(source.code)">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isWaterSourceSelected(source.code)"
+                      (change)="toggleWaterSource(source.code)"
+                    />
+                    <span>{{ source.name }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <div class="reference-section">
+              <h3>Irrigation Systems</h3>
+              <div class="options-grid">
+                @for (system of irrigationSystems; track system.id) {
+                  <label class="option-label" [class.selected]="isIrrigationSystemSelected(system.code)">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isIrrigationSystemSelected(system.code)"
+                      (change)="toggleIrrigationSystem(system.code)"
+                    />
+                    <span>{{ system.name }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <div class="reference-section">
+              <h3>Pest Management Methods</h3>
+              <div class="options-grid">
+                @for (method of pestManagementMethods; track method.id) {
+                  <label class="option-label" [class.selected]="isPestManagementSelected(method.code)">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isPestManagementSelected(method.code)"
+                      (change)="togglePestManagement(method.code)"
+                    />
+                    <span>{{ method.name }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <div class="reference-section">
+              <h3>Safety Equipment</h3>
+              <div class="options-grid">
+                @for (equipment of safetyEquipment; track equipment.id) {
+                  <label class="option-label" [class.selected]="isSafetyEquipmentSelected(equipment.code)">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isSafetyEquipmentSelected(equipment.code)"
+                      (change)="toggleSafetyEquipment(equipment.code)"
+                    />
+                    <span>{{ equipment.name }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 11: Review & Submit -->
+        @if (currentStep === 11) {
+          <div class="form-section review-section">
+            <h3>Review Your Information</h3>
+            <div class="review-content">
+              <div class="review-item">
+                <strong>Property Name:</strong> {{ propertyForm.get('property_name')?.value }}
+              </div>
+              <div class="review-item">
+                <strong>Address:</strong> {{ propertyForm.get('address')?.value }}
+              </div>
+              <div class="review-item">
+                <strong>Land Area:</strong> {{ propertyForm.get('total_land_area')?.value }} acres
+              </div>
+              <div class="review-item">
+                <strong>Ownership Type:</strong> {{ propertyForm.get('ownership_type')?.value }}
+              </div>
+              @if (selectedWaterSources.length > 0) {
+                <div class="review-item">
+                  <strong>Water Sources:</strong> {{ selectedWaterSources.length }} selected
+                </div>
+              }
+              @if (selectedIrrigationSystems.length > 0) {
+                <div class="review-item">
+                  <strong>Irrigation Systems:</strong> {{ selectedIrrigationSystems.length }} selected
+                </div>
+              }
+            </div>
+            
+            @if (errorMessage) {
+              <div class="error-alert">{{ errorMessage }}</div>
+            }
+          </div>
+        }
+
+        <!-- Navigation Buttons -->
+        <div class="form-actions">
+          @if (currentStep > 0) {
+            <button type="button" class="btn-secondary" (click)="prevStep()">Previous</button>
+          }
+          @if (currentStep < totalSteps - 1) {
+            <button type="submit" class="btn-primary">Next</button>
+          } @else {
+            <button 
+              type="button" 
+              class="btn-primary" 
+              (click)="submitOnboarding()"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+            </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

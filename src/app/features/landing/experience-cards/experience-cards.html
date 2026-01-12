@@ -1,0 +1,18 @@
+<section class="experience-cards">
+  <div class="container">
+    <div class="cards-grid">
+      @for (card of cards; track card.id) {
+        <div class="experience-card" 
+             [style.background-image]="'url(' + card.imageUrl + ')'"
+             [style.background-color]="card.backgroundColor || '#f5f7fa'">
+          <div class="card-overlay"></div>
+          <div class="card-content">
+            <h3 class="card-title">{{ card.title }}</h3>
+            <p class="card-description">{{ card.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+

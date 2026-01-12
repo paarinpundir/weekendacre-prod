@@ -1,0 +1,92 @@
+@if (loading) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading farm details...</p>
+  </div>
+} @else if (farm) {
+  <div class="farm-detail">
+    <!-- Image Gallery Section (Always Visible) -->
+    <section class="image-section">
+      <app-farm-image-gallery
+        [images]="farm.images"
+        [selectedIndex]="selectedImageIndex"
+        (imageSelected)="onImageSelected($event)">
+      </app-farm-image-gallery>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+      <div class="content-grid">
+        <!-- Left Column: Main Content -->
+        <div class="main-content">
+          <!-- Farm Header -->
+          <app-farm-header 
+            [farm]="farm"
+            [showGuestFavourite]="true">
+          </app-farm-header>
+
+          <!-- Description -->
+          <section class="description-section">
+            <h2>About this farm</h2>
+            <p>{{ farm.description }}</p>
+          </section>
+
+          <!-- Navigation Tabs -->
+          <div class="tabs-navigation">
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'photos'"
+              (click)="setActiveTab('photos')">
+              Photos
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'amenities'"
+              (click)="setActiveTab('amenities')">
+              Amenities
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'reviews'"
+              (click)="setActiveTab('reviews')">
+              Reviews
+            </button>
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'location'"
+              (click)="setActiveTab('location')">
+              Location
+            </button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="tab-content">
+            @if (activeTab === 'amenities') {
+              <app-farm-amenities [amenities]="farm.amenities"></app-farm-amenities>
+            }
+            
+            @if (activeTab === 'reviews') {
+              <app-farm-reviews 
+                [reviews]="farm.reviews || []"
+                [overallRating]="farm.rating"
+                [reviewCount]="farm.reviewCount">
+              </app-farm-reviews>
+            }
+            
+            @if (activeTab === 'location') {
+              <app-farm-location [farm]="farm"></app-farm-location>
+            }
+          </div>
+        </div>
+
+        <!-- Right Column: Booking Widget -->
+        <div class="sidebar">
+          <app-farm-booking-widget
+            [farm]="farm"
+            (bookNow)="onBookNow()">
+          </app-farm-booking-widget>
+        </div>
+      </div>
+    </div>
+  </div>
+}
