@@ -55,6 +55,12 @@
       </button>
       <button 
         class="tab-btn" 
+        [class.active]="activeTab === 'properties'"
+        (click)="activeTab = 'properties'; loadProperties()">
+        Properties
+      </button>
+      <button 
+        class="tab-btn" 
         [class.active]="activeTab === 'partners'"
         (click)="activeTab = 'partners'">
         Partners
@@ -398,6 +404,214 @@
                   <button class="btn btn-success" (click)="approveFarm(selectedFarm.id)">✓ Approve & Verify</button>
                   <button class="btn btn-warning" (click)="markNeedsMoreInfo(selectedFarm.id)">⚠ Needs More Info</button>
                   <button class="btn btn-danger" (click)="rejectFarm(selectedFarm.id)">✗ Reject</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Properties Tab -->
+    @if (activeTab === 'properties') {
+      <div class="tab-content">
+        <div class="section-header">
+          <h2>Property Verification Management</h2>
+          <div class="stats-mini">
+            <span class="stat-mini">Total: {{ properties.length }}</span>
+            <span class="stat-mini pending">Submitted: {{ submittedProperties.length }}</span>
+            <span class="stat-mini review">Under Review: {{ underReviewProperties.length }}</span>
+            <span class="stat-mini verified">Approved: {{ approvedProperties.length }}</span>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <div class="loading-state">
+            <p>Loading properties...</p>
+          </div>
+        }
+
+        <!-- Draft Properties (For Debugging/Visibility) -->
+        @if (draftProperties.length > 0) {
+          <div class="pending-section">
+            <h3>Draft Properties ({{ draftProperties.length }})</h3>
+            <div class="items-grid">
+              @for (property of draftProperties; track property.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800)'"></div>
+                  <div class="item-content">
+                    <h3>{{ property.property_name }}</h3>
+                    <p>{{ property.address }}</p>
+                    <p><strong>Contact:</strong> {{ property.contact_person || property.owner_name || 'N/A' }}</p>
+                    <p><strong>Phone:</strong> {{ property.phone_number || 'N/A' }}</p>
+                    <div class="item-meta">
+                      <span class="badge badge-draft" style="background: #f0f0f0; color: #666;">Draft</span>
+                      <span class="location">📍 {{ property.address }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewPropertyDetails(property)">View Details</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Submitted Properties (Pending Verification) -->
+        @if (submittedProperties.length > 0) {
+          <div class="pending-section">
+            <h3>Submitted for Verification ({{ submittedProperties.length }})</h3>
+            <div class="items-grid">
+              @for (property of submittedProperties; track property.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800)'"></div>
+                  <div class="item-content">
+                    <h3>{{ property.property_name }}</h3>
+                    <p>{{ property.address }}</p>
+                    <p><strong>Contact:</strong> {{ property.contact_person || property.owner_name || 'N/A' }}</p>
+                    <p><strong>Phone:</strong> {{ property.phone_number || 'N/A' }}</p>
+                    <div class="item-meta">
+                      <span class="badge badge-submitted">Submitted</span>
+                      <span class="location">📍 {{ property.address }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewPropertyDetails(property)">Review Details</button>
+                      <button class="btn-start-review" (click)="startPropertyReview(property.id)">Start Review</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Under Review Properties -->
+        @if (underReviewProperties.length > 0) {
+          <div class="pending-section">
+            <h3>Under Review ({{ underReviewProperties.length }})</h3>
+            <div class="items-grid">
+              @for (property of underReviewProperties; track property.id) {
+                <div class="item-card">
+                  <div class="item-image" [style.background-image]="'url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800)'"></div>
+                  <div class="item-content">
+                    <h3>{{ property.property_name }}</h3>
+                    <p>{{ property.address }}</p>
+                    <p><strong>Contact:</strong> {{ property.contact_person || property.owner_name || 'N/A' }}</p>
+                    <p><strong>Phone:</strong> {{ property.phone_number || 'N/A' }}</p>
+                    <div class="item-meta">
+                      <span class="badge badge-review">Under Review</span>
+                      <span class="location">📍 {{ property.address }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-view" (click)="viewPropertyDetails(property)">View Details</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Approved Properties -->
+        <div class="section-header">
+          <h3>Approved Properties ({{ approvedProperties.length }})</h3>
+        </div>
+        <div class="items-grid">
+          @for (property of approvedProperties; track property.id) {
+            <div class="item-card">
+              <div class="item-image" [style.background-image]="'url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800)'"></div>
+              <div class="item-content">
+                <h3>{{ property.property_name }}</h3>
+                <p>{{ property.address }}</p>
+                <p><strong>Contact:</strong> {{ property.contact_person || property.owner_name || 'N/A' }}</p>
+                <p><strong>Phone:</strong> {{ property.phone_number || 'N/A' }}</p>
+                <div class="item-meta">
+                  <span class="badge badge-verified">✓ {{ getPropertyStateLabel(property.state) }}</span>
+                  <span class="location">📍 {{ property.address }}</span>
+                </div>
+                <div class="item-actions">
+                  <button class="btn-view" (click)="viewPropertyDetails(property)">View</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="section-header">
+          <h3>All Property Contacts</h3>
+        </div>
+        <div class="partners-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Owner</th>
+                <th>Contact Person</th>
+                <th>Phone</th>
+                <th>WhatsApp</th>
+                <th>Email</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (property of properties; track property.id) {
+                <tr>
+                  <td>{{ property.property_name }}</td>
+                  <td>{{ property.owner_name || 'N/A' }}</td>
+                  <td>{{ property.contact_person || 'N/A' }}</td>
+                  <td>{{ property.phone_number || 'N/A' }}</td>
+                  <td>{{ property.whatsapp_number || 'N/A' }}</td>
+                  <td>{{ property.email_id || 'N/A' }}</td>
+                  <td><span class="badge" [ngClass]="getPropertyStateBadgeClass(property.state)">{{ getPropertyStateLabel(property.state) }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Property Detail Modal -->
+    @if (selectedProperty) {
+      <div class="modal-overlay" (click)="closePropertyDetails()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>{{ selectedProperty.property_name }}</h2>
+            <button class="modal-close" (click)="closePropertyDetails()">×</button>
+          </div>
+          
+          <div class="modal-body">
+            <div class="farm-detail-section">
+              <h3>Basic Information</h3>
+              <p><strong>Owner:</strong> {{ selectedProperty.owner_name || 'N/A' }}</p>
+              <p><strong>Contact:</strong> {{ selectedProperty.phone_number || 'N/A' }}</p>
+              <p><strong>WhatsApp:</strong> {{ selectedProperty.whatsapp_number || 'N/A' }}</p>
+              <p><strong>Email:</strong> {{ selectedProperty.email_id || 'N/A' }}</p>
+              <p><strong>Address:</strong> {{ selectedProperty.address }}</p>
+              @if (selectedProperty.latitude && selectedProperty.longitude) {
+                <p><strong>GPS:</strong> {{ selectedProperty.latitude }}, {{ selectedProperty.longitude }}</p>
+              }
+              <p><strong>Land Area:</strong> {{ selectedProperty.total_land_area }} {{ selectedProperty.land_area_unit || 'acres' }}</p>
+              <p><strong>Status:</strong> <span class="badge" [ngClass]="getPropertyStateBadgeClass(selectedProperty.state)">{{ getPropertyStateLabel(selectedProperty.state) }}</span></p>
+            </div>
+            
+            <div class="farm-detail-section">
+              <h3>Review Actions</h3>
+              <div class="review-actions">
+                <div class="form-group">
+                  <label>Review Notes (Optional)</label>
+                  <textarea [(ngModel)]="reviewNotes" class="form-textarea" rows="3" placeholder="Add any notes about this property..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label>Reason for "Needs More Info"</label>
+                  <textarea [(ngModel)]="needsMoreInfoReason" class="form-textarea" rows="2" placeholder="What information is missing?"></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                  <button class="btn btn-success" (click)="approveProperty(selectedProperty.id)">✓ Approve & Make Live</button>
+                  <button class="btn btn-warning" (click)="markPropertyNeedsMoreInfo(selectedProperty.id)">⚠ Needs More Info</button>
+                  <button class="btn btn-danger" (click)="rejectProperty(selectedProperty.id)">✗ Reject</button>
                 </div>
               </div>
             </div>

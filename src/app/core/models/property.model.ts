@@ -281,6 +281,7 @@ export interface PropertyCreateRequest {
   electricity_connection?: boolean;
   backup_power?: boolean;
   waste_management_system?: boolean;
+  force_new?: boolean; // Flag to force create new property instead of returning existing draft
 }
 
 export interface PropertyUpdateStateRequest {

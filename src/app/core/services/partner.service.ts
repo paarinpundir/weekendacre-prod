@@ -4,14 +4,13 @@ import { Observable } from 'rxjs';
 // Environment config removed - using hardcoded values for now
 
 import { Partner, PartnerOnboardingData } from '../models/partner.model';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PartnerService {
-  private baseUrl = environment.apiUrl.replace(/\/$/, '');
-  private apiUrl = `${this.baseUrl}/api/v1/partners`; // TODO: Move to config
+  private apiUrl = 'http://localhost:8080/api/v1/partners'; // TODO: Move to config
 
   constructor(private http: HttpClient) {}
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, HostListener, ChangeDetectorRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -13,7 +14,7 @@ import { selectAllProperties, selectPropertyLoading } from '../../../core/store/
 
 @Component({
   selector: 'app-partner-dashboard',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './partner-dashboard.html',
   styleUrl: './partner-dashboard.scss'
 })
@@ -27,59 +28,204 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<void>();
   private store = inject(Store);
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private propertyService = inject(PropertyService);
   private cdr = inject(ChangeDetectorRef);
+  public router = inject(Router);
   
-  constructor(private router: Router) {
-    // Check if we're in onboarding mode
+  // Booking/Rates Management
+  selectedBookingProperty: Property | null = null;
+  bookingCalendarDate = new Date();
+  bookingCalendarDays: (Date | null)[][] = [];
+  
+  // Date Range Selection
+  rangeStartDate: Date | null = null;
+  rangeEndDate: Date | null = null;
+  
+  bookingSettings = {
+    price: 0,
+    isAvailable: true,
+    status: 'available',
+    availableUnits: 1
+  };
+
+  constructor() {
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.isOnboarding = event.url.includes('/property/onboard');
+        this.isOnboarding = this.router.url.includes('/property/onboard');
       }
     });
   }
-  
+
   ngOnInit() {
     this.currentUser = this.authService.getStoredUser();
     this.isOnboarding = this.router.url.includes('/property/onboard');
     
-    // Subscribe to raw state and extract properties directly
+    // Subscribe to raw state and extract properties
     this.store.select((state: any) => {
       const propertyState = state.property;
-      if (!propertyState) {
-        console.log('PartnerDashboard: No property state found');
-        return [];
-      }
+      if (!propertyState) return [];
       
-      // Extract entities from EntityState
       const entities = propertyState.entities || {};
       const ids = propertyState.ids || [];
-      const properties = ids.map((id: string) => entities[id]).filter((p: Property) => p !== undefined) as Property[];
-      
-      console.log('PartnerDashboard: State entities:', entities);
-      console.log('PartnerDashboard: State ids:', ids);
-      console.log('PartnerDashboard: Extracted properties:', properties.length, properties);
-      
-      return properties;
+      return ids.map((id: string) => entities[id]).filter((p: Property) => p !== undefined) as Property[];
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe((properties: Property[]) => {
         this.properties = properties || [];
-        console.log('PartnerDashboard: Final properties array:', this.properties.length, this.properties);
-        this.cdr.detectChanges(); // Force change detection
+        this.cdr.detectChanges();
       });
     
-    // Subscribe to loading state
     this.store.select((state: any) => state.property?.loading)
       .pipe(takeUntil(this.destroy$))
       .subscribe((loading: boolean) => {
         this.loading = loading || false;
-        console.log('PartnerDashboard: Loading state:', this.loading);
       });
     
-    // Load properties after subscriptions are set up
     this.loadProperties();
+  }
+
+  selectBookingProperty(property: Property) {
+    this.selectedBookingProperty = property;
+    this.generateBookingCalendar();
+  }
+
+  generateBookingCalendar() {
+    const year = this.bookingCalendarDate.getFullYear();
+    const month = this.bookingCalendarDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+
+    let date = 1;
+    let days: (Date | null)[] = [];
+    const weeks: (Date | null)[][] = [];
+
+    for (let i = 0; i < startingDay; i++) days.push(null);
+
+    while (date <= daysInMonth) {
+      days.push(new Date(year, month, date));
+      if (days.length === 7) {
+        weeks.push(days);
+        days = [];
+      }
+      date++;
+    }
+    if (days.length > 0) {
+      while (days.length < 7) days.push(null);
+      weeks.push(days);
+    }
+    this.bookingCalendarDays = weeks;
+  }
+
+  bookingPrevMonth() {
+    this.bookingCalendarDate = new Date(this.bookingCalendarDate.getFullYear(), this.bookingCalendarDate.getMonth() - 1, 1);
+    this.generateBookingCalendar();
+  }
+
+  bookingNextMonth() {
+    this.bookingCalendarDate = new Date(this.bookingCalendarDate.getFullYear(), this.bookingCalendarDate.getMonth() + 1, 1);
+    this.generateBookingCalendar();
+  }
+
+  toggleCalendarDate(date: Date | null) {
+    if (!date) return;
+    
+    // Reset if both selected or clicking before start
+    if ((this.rangeStartDate && this.rangeEndDate) || (this.rangeStartDate && date < this.rangeStartDate)) {
+      this.rangeStartDate = date;
+      this.rangeEndDate = null;
+      return;
+    }
+
+    // Set end date if start is selected and click is after start
+    if (this.rangeStartDate && !this.rangeEndDate && date >= this.rangeStartDate) {
+      this.rangeEndDate = date;
+      return;
+    }
+
+    // Default: Set start date
+    this.rangeStartDate = date;
+    this.rangeEndDate = null;
+  }
+
+  isSelectedDate(date: Date | null): boolean {
+    if (!date) return false;
+    
+    // Check if it's the start or end date
+    if (this.rangeStartDate && date.getTime() === this.rangeStartDate.getTime()) return true;
+    if (this.rangeEndDate && date.getTime() === this.rangeEndDate.getTime()) return true;
+    
+    // Check if inside range
+    if (this.rangeStartDate && this.rangeEndDate && date > this.rangeStartDate && date < this.rangeEndDate) return true;
+    
+    return false;
+  }
+
+  saveRates() {
+    if (!this.selectedBookingProperty || !this.rangeStartDate) {
+      alert("Please select a date range first.");
+      return;
+    }
+    
+    const start = this.rangeStartDate;
+    const end = this.rangeEndDate || this.rangeStartDate; // Default to single day if no end date
+    
+    // Generate all dates in range
+    const datesToSave: string[] = [];
+    let current = new Date(start);
+    while (current <= end) {
+      const year = current.getFullYear();
+      const month = String(current.getMonth() + 1).padStart(2, '0');
+      const day = String(current.getDate()).padStart(2, '0');
+      datesToSave.push(`${year}-${month}-${day}`);
+      current.setDate(current.getDate() + 1);
+    }
+
+    const total = datesToSave.length;
+    let completed = 0;
+    let errors = 0;
+
+    datesToSave.forEach(dateStr => {
+      const rateData = {
+        property_id: this.selectedBookingProperty!.id,
+        date: dateStr,
+        price: this.bookingSettings.price,
+        status: this.bookingSettings.status,
+        available_units: this.bookingSettings.availableUnits,
+        currency: 'INR'
+      };
+
+      this.propertyService.saveDailyRate(rateData).subscribe({
+        next: () => {
+          completed++;
+          if (completed + errors === total) {
+            this.finalizeSave(completed, errors);
+          }
+        },
+        error: (err) => {
+          console.error(`Failed to save rate for ${dateStr}`, err);
+          errors++;
+          if (completed + errors === total) {
+            this.finalizeSave(completed, errors);
+          }
+        }
+      });
+    });
+  }
+
+  finalizeSave(success: number, failed: number) {
+    if (failed === 0) {
+      alert(`Successfully updated rates for ${success} dates.`);
+    } else {
+      alert(`Updated ${success} dates. Failed to update ${failed} dates.`);
+    }
+    // Keep selection for reference
+  }
+
+  getBookingMonthName(): string {
+    return this.bookingCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
   
   ngOnDestroy() {
@@ -89,15 +235,9 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   
   loadProperties() {
     this.loading = true;
-    // Verify user is logged in
     if (!this.authService.isLoggedIn()) {
-      console.error('User not logged in');
       this.loading = false;
       return;
-    }
-    const user = this.authService.getStoredUser();
-    if (user) {
-      console.log('Loading properties for user:', user.id || user.email);
     }
     this.store.dispatch(PropertyActions.getMyProperties());
   }
@@ -124,24 +264,22 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   }
   
   addNewProperty() {
-    this.router.navigate(['/property/onboard']);
+    // Navigate with 'new' flag to indicate creating a new property (not loading draft)
+    this.router.navigate(['/property/onboard'], { queryParams: { new: 'true' } });
   }
   
   continueOnboarding(property: Property) {
-    // Navigate to onboarding with property ID to resume
     this.router.navigate(['/property/onboard'], { 
       queryParams: { propertyId: property.id, step: property.onboarding_step || 0 }
     });
   }
   
   viewProperty(property: Property) {
-    // Navigate to property detail page
     this.router.navigate(['/properties', property.id]);
   }
   
   getShortPropertyId(id: string): string {
     if (!id) return 'N/A';
-    // Show first 8 characters of UUID
     return id.substring(0, 8) + '...';
   }
   
@@ -152,7 +290,6 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   }
   
   logout() {
-    // Dispatch logout action to clear sessionStorage via effect
     this.store.dispatch(AuthActions.logout());
   }
   
@@ -173,8 +310,6 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   
   goToProfile() {
     this.closeUserMenu();
-    // Navigate to profile page when implemented
-    // this.router.navigate(['/partner/profile']);
   }
   
   @HostListener('document:click', ['$event'])
@@ -184,5 +319,24 @@ export class PartnerDashboard implements OnInit, OnDestroy {
       this.closeUserMenu();
     }
   }
-}
 
+  getDisplayArea(property: Property): string {
+    let area = property.total_land_area;
+    let unit = (property as any).land_area_unit || 'acres';
+
+    if (!area || area === 0) {
+      if (property.onboarding_data) {
+        const data = typeof property.onboarding_data === 'string' 
+          ? JSON.parse(property.onboarding_data) 
+          : property.onboarding_data;
+          
+        if (data && data.formData && data.formData.total_land_area) {
+          area = data.formData.total_land_area;
+          unit = data.formData.land_area_unit || unit;
+        }
+      }
+    }
+    
+    return `${area || 0} ${unit}`;
+  }
+}

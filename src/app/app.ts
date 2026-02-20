@@ -12,13 +12,13 @@ import { filter } from 'rxjs/operators';
   styleUrl: './app.scss'
 })
 export class App {
-  title = 'GreenTrail Adventure Park';
+  title = 'WeekendAcres';
   currentUrl: string = '';
-  
+
   constructor(private router: Router) {
     // Set initial URL
     this.currentUrl = this.router.url;
-    
+
     // Track route changes
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -26,18 +26,18 @@ export class App {
       this.currentUrl = event.url;
     });
   }
-  
+
   isOnboardingPage(): boolean {
     const url = this.currentUrl.split('?')[0]; // Remove query params
-    return url.includes('/property/onboard') || 
-           url.includes('/partner/onboard');
+    return url.includes('/property/onboard') ||
+      url.includes('/partner/onboard');
   }
-  
+
   isPartnerDashboard(): boolean {
     const url = this.currentUrl.split('?')[0]; // Remove query params
-    return url === '/partner/dashboard' || 
-           url.includes('/property/onboard') ||
-           url.startsWith('/partner/');
+    return url === '/partner/dashboard' ||
+      url.includes('/property/onboard') ||
+      url.startsWith('/partner/');
   }
 
   isPropertyDetailPage(): boolean {

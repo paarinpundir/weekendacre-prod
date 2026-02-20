@@ -11,9 +11,25 @@ import { Property } from '../../../core/models/property.model';
 })
 export class PropertyCard {
   @Input() property!: Property;
+  private readonly backendBaseUrl = 'http://localhost:8080';
+
+  private resolveMediaUrl(url: string | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/uploads/')) return `${this.backendBaseUrl}${url}`;
+    if (url.startsWith('uploads/')) return `${this.backendBaseUrl}/${url}`;
+    return url;
+  }
 
   getPropertyImage(): string {
-    // Use a placeholder image for now - in production, use property.images[0] or default
+    if (this.property?.images && this.property.images.length > 0) {
+      const homeImage = this.property.images.find((img: any) => img.image_type_code === 801 || img.is_primary);
+      const selected = homeImage || this.property.images[0];
+      const url = this.resolveMediaUrl((selected as any).image_url || (selected as any).url);
+      if (url) {
+        return url;
+      }
+    }
     return 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop';
   }
 
@@ -33,4 +49,3 @@ export class PropertyCard {
     return 'Active';
   }
 }
-

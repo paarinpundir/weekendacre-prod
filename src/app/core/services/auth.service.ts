@@ -4,16 +4,13 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 // Environment config removed - using hardcoded values for now
 
-import { environment } from '../../../environments/environment';
-
 import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = environment.apiUrl.replace(/\/$/, '');
-  private apiUrl = `${this.baseUrl}/api/v1/auth`; // TODO: Move to config
+  private apiUrl = 'http://localhost:8080/api/v1/auth'; // TODO: Move to config
 
   constructor(private http: HttpClient) {}
 
@@ -156,7 +153,25 @@ export class AuthService {
   // Check if user is admin (helper method)
   isUserAdmin(): boolean {
     const user = this.getStoredUser();
-    return user?.role === 'admin';
+    return user?.role === 'admin' || (user as any)?.user_type === 'admin';
+  }
+
+  // Get all partners (for admin)
+  getPartners(): Observable<any> {
+    const token = sessionStorage.getItem('eco_adventure_park_access_token');
+    return this.http.get(
+      `http://localhost:8080/api/v1/admin/partners`,
+      { 
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        })
+      }
+    );
+  }
+  
+  getAccessToken(): string | null {
+    return sessionStorage.getItem('eco_adventure_park_access_token');
   }
 }
 

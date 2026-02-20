@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
 export interface ReferenceOption {
   id: string;
@@ -20,8 +19,7 @@ export interface ReferenceOption {
   providedIn: 'root'
 })
 export class ReferenceService {
-  private baseUrl = environment.apiUrl.replace(/\/$/, '');
-  private apiUrl = `${this.baseUrl}/api/v1/reference`;
+  private apiUrl = 'http://localhost:8080/api/v1/reference';
 
   constructor(private http: HttpClient) {}
 

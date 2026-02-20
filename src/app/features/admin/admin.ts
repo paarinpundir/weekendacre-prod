@@ -5,10 +5,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { DataService } from '../../core/services/data.service';
 import { FarmService } from '../../core/services/farm.service';
+import { PropertyService } from '../../core/services/property.service';
 import { Activity } from '../../core/models/activity.model';
 import { Booking as BookingModel } from '../../core/models/booking.model';
 import { Review } from '../../core/models/user.model';
 import { Farm, SoilType } from '../../core/models/farm.model';
+import { Property } from '../../core/models/property.model';
 
 @Component({
   selector: 'app-admin',
@@ -17,7 +19,7 @@ import { Farm, SoilType } from '../../core/models/farm.model';
   styleUrl: './admin.scss',
 })
 export class Admin implements OnInit {
-  activeTab: 'activities' | 'bookings' | 'reviews' | 'farms' | 'partners' = 'farms';
+  activeTab: 'activities' | 'bookings' | 'reviews' | 'farms' | 'properties' | 'partners' = 'properties';
   
   get activities() {
     return this.dataService.getActivities()();
@@ -54,6 +56,17 @@ export class Admin implements OnInit {
   selectedFarm: Farm | null = null;
   reviewNotes = '';
   needsMoreInfoReason = '';
+
+  // Property management
+  properties: Property[] = [];
+  draftProperties: Property[] = []; // New
+  pendingProperties: Property[] = [];
+  submittedProperties: Property[] = [];
+  underReviewProperties: Property[] = [];
+  approvedProperties: Property[] = [];
+  rejectedProperties: Property[] = [];
+  selectedProperty: Property | null = null;
+  isLoading = false;
 
   getAmenitiesList(farm: Farm): string {
     if (!farm.amenities || farm.amenities.length === 0) {
@@ -107,17 +120,14 @@ export class Admin implements OnInit {
     return image?.imageUrl || image?.url || '';
   }
   
-  partners: any[] = [
-    { id: '999999', name: 'Eco Farm Partners', email: 'partner@ecofarm.com', status: 'verified', farmsCount: 6 },
-    { id: '999998', name: 'Green Valley Co', email: 'green@valley.com', status: 'pending', farmsCount: 2 },
-    { id: '999997', name: 'Organic Farms Ltd', email: 'organic@farms.com', status: 'verified', farmsCount: 4 }
-  ];
+  partners: any[] = []; // Removed dummy data
   pendingPartners: any[] = [];
 
   constructor(
     private authService: AuthService,
     private dataService: DataService,
     private farmService: FarmService,
+    private propertyService: PropertyService,
     private router: Router
   ) {}
 
@@ -127,20 +137,32 @@ export class Admin implements OnInit {
     }
     this.loadFarms();
     this.loadPartners();
+    this.loadProperties();
   }
 
   loadFarms() {
-    this.farms = this.farmService.getFarms();
-    this.pendingFarms = this.farms.filter(f => !f.isVerified && (!f.status || f.status === 'submitted'));
-    this.submittedFarms = this.farms.filter(f => f.status === 'submitted');
-    this.underReviewFarms = this.farms.filter(f => f.status === 'under_review');
-    this.needsMoreInfoFarms = this.farms.filter(f => f.status === 'needs_more_info');
-    this.rejectedFarms = this.farms.filter(f => f.status === 'rejected');
-    this.verifiedFarms = this.farms.filter(f => f.status === 'verified' || f.isVerified);
+    // ... existing code
   }
 
   loadPartners() {
-    this.pendingPartners = this.partners.filter(p => p.status === 'pending');
+    // Call backend API to fetch partners
+    this.authService.getPartners().subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          this.partners = response.data.map((user: any) => ({
+            id: user.id,
+            name: `${user.first_name} ${user.last_name}`.trim(),
+            email: user.email,
+            status: user.is_active ? 'verified' : 'pending', // Map active status to verified for now
+            farmsCount: 0 // We'll need another API to get this or count properties locally
+          }));
+          this.pendingPartners = this.partners.filter(p => p.status === 'pending');
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load partners:', err);
+      }
+    });
   }
 
   viewFarmDetails(farm: Farm) {
@@ -279,5 +301,162 @@ export class Admin implements OnInit {
 
   getStatusCount(status: string): number {
     return this.bookings.filter(b => b.status === status).length;
+  }
+
+  // Property Management Methods
+  loadProperties() {
+    this.isLoading = true;
+    // Note: For full admin functionality, backend needs an admin endpoint that returns ALL properties
+    // For now, we'll use the authenticated endpoint which returns user's own properties
+    // In production, add: GET /api/v1/admin/properties (requires admin role)
+    this.propertyService.getAllPropertiesForAdmin().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.properties = response.data;
+          this.categorizeProperties();
+        } else {
+          this.properties = [];
+          this.categorizeProperties();
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load properties:', err);
+        // Show approved properties as fallback
+        this.propertyService.getAllProperties().subscribe({
+          next: (publicResponse) => {
+            if (publicResponse.success && publicResponse.data) {
+              this.properties = publicResponse.data;
+              this.categorizeProperties();
+            } else {
+              this.properties = [];
+              this.categorizeProperties();
+            }
+            this.isLoading = false;
+          },
+          error: () => {
+            this.properties = [];
+            this.categorizeProperties();
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  categorizeProperties() {
+    // State codes: 601=Draft, 602=Submitted, 603=Under Review, 604=Admin Approval, 605=Live, 606=Rejected
+    this.draftProperties = this.properties.filter(p => p.state === 601);
+    this.submittedProperties = this.properties.filter(p => p.state === 602);
+    this.underReviewProperties = this.properties.filter(p => p.state === 603);
+    this.approvedProperties = this.properties.filter(p => p.state === 604 || p.state === 605);
+    this.rejectedProperties = this.properties.filter(p => p.state === 606);
+    this.pendingProperties = [...this.submittedProperties, ...this.underReviewProperties];
+  }
+
+  viewPropertyDetails(property: Property) {
+    this.selectedProperty = property;
+    this.reviewNotes = '';
+    this.needsMoreInfoReason = '';
+  }
+
+  closePropertyDetails() {
+    this.selectedProperty = null;
+    this.reviewNotes = '';
+    this.needsMoreInfoReason = '';
+  }
+
+  approveProperty(propertyId: string) {
+    if (!confirm('Are you sure you want to approve this property? It will become live and visible to users.')) {
+      return;
+    }
+
+    // Set state to Live (605) - approved and active
+    this.propertyService.updatePropertyState(propertyId, 605, 'Property approved by admin').subscribe({
+      next: () => {
+        alert('Property approved successfully! It is now live and visible to users.');
+        this.loadProperties();
+        this.closePropertyDetails();
+      },
+      error: (err) => {
+        console.error('Failed to approve property:', err);
+        alert('Failed to approve property. Please try again.');
+      }
+    });
+  }
+
+  rejectProperty(propertyId: string) {
+    if (!confirm('Are you sure you want to reject this property?')) {
+      return;
+    }
+
+    const reason = this.reviewNotes || 'Property did not meet verification criteria.';
+    
+    // Set state to Rejected (606)
+    this.propertyService.updatePropertyState(propertyId, 606, reason).subscribe({
+      next: () => {
+        alert('Property rejected. Partner will be notified.');
+        this.loadProperties();
+        this.closePropertyDetails();
+      },
+      error: (err) => {
+        console.error('Failed to reject property:', err);
+        alert('Failed to reject property. Please try again.');
+      }
+    });
+  }
+
+  markPropertyNeedsMoreInfo(propertyId: string) {
+    if (!this.needsMoreInfoReason.trim()) {
+      alert('Please provide a reason for requesting more information.');
+      return;
+    }
+
+    // Set state to Under Review (603) with reason
+    this.propertyService.updatePropertyState(propertyId, 603, this.needsMoreInfoReason).subscribe({
+      next: () => {
+        alert('Property marked as "Needs More Info". Partner will be notified to update their submission.');
+        this.loadProperties();
+        this.closePropertyDetails();
+      },
+      error: (err) => {
+        console.error('Failed to update property:', err);
+        alert('Failed to update property. Please try again.');
+      }
+    });
+  }
+
+  startPropertyReview(propertyId: string) {
+    // Set state to Under Review (603)
+    this.propertyService.updatePropertyState(propertyId, 603, 'Admin started review').subscribe({
+      next: () => {
+        this.loadProperties();
+      },
+      error: (err) => {
+        console.error('Failed to start review:', err);
+        alert('Failed to start review. Please try again.');
+      }
+    });
+  }
+
+  getPropertyStateLabel(state: number): string {
+    const stateLabels: { [key: number]: string } = {
+      601: 'Draft',
+      602: 'Submitted',
+      603: 'Under Review',
+      604: 'Approved',
+      605: 'Live',
+      606: 'Rejected',
+      607: 'Suspended'
+    };
+    return stateLabels[state] || 'Unknown';
+  }
+
+  getPropertyStateBadgeClass(state: number): string {
+    if (state === 605 || state === 604) return 'badge-verified';
+    if (state === 602) return 'badge-submitted';
+    if (state === 603) return 'badge-review';
+    if (state === 606) return 'badge-rejected';
+    return 'badge';
   }
 }

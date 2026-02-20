@@ -139,7 +139,7 @@
                     </span>
                     <span class="meta-item">
                       <span class="meta-label">Area:</span>
-                      <span class="meta-value">{{ property.total_land_area }} acres</span>
+                      <span class="meta-value">{{ getDisplayArea(property) }} acres</span>
                     </span>
                     <span class="meta-item">
                       <span class="meta-label">Status:</span>
@@ -152,9 +152,14 @@
                         Continue Onboarding (Step {{ property.onboarding_step + 1 }}/6)
                       </button>
                     } @else {
-                      <button class="btn-view" (click)="viewProperty(property)">
-                        View Details
-                      </button>
+                      <div class="action-buttons">
+                        <button class="btn-view" (click)="viewProperty(property)">
+                          View
+                        </button>
+                        <button class="btn-edit" (click)="continueOnboarding(property)">
+                          Edit / Manage
+                        </button>
+                      </div>
                     }
                   </div>
                 </div>
@@ -163,9 +168,90 @@
           </div>
         }
       } @else if (activeMenu === 'bookings') {
-        <div class="section-placeholder">
-          <h2>Bookings</h2>
-          <p>Booking management coming soon...</p>
+        <div class="bookings-section">
+          <h1>Booking & Availability</h1>
+          
+          <!-- Property Selector -->
+          <div class="property-selector">
+            <label>Select Property:</label>
+            <select (change)="selectBookingProperty(properties[$any($event.target).value])">
+              <option value="" disabled selected>-- Choose a Property --</option>
+              @for (prop of properties; track prop.id; let i = $index) {
+                <option [value]="i">{{ prop.property_name }}</option>
+              }
+            </select>
+          </div>
+
+          @if (selectedBookingProperty) {
+            <div class="management-container">
+              <!-- Calendar (Left) -->
+              <div class="calendar-panel">
+                <div class="calendar-header">
+                  <button (click)="bookingPrevMonth()">←</button>
+                  <h3>{{ getBookingMonthName() }}</h3>
+                  <button (click)="bookingNextMonth()">→</button>
+                </div>
+                <div class="calendar-grid">
+                  <div class="week-day">Su</div><div class="week-day">Mo</div><div class="week-day">Tu</div>
+                  <div class="week-day">We</div><div class="week-day">Th</div><div class="week-day">Fr</div><div class="week-day">Sa</div>
+                  
+                  @for (week of bookingCalendarDays; track $index) {
+                    @for (day of week; track $index) {
+                      <div 
+                        class="day-cell" 
+                        [class.empty]="!day" 
+                        [class.selected]="isSelectedDate(day)"
+                        (click)="toggleCalendarDate(day)"
+                      >
+                        {{ day?.getDate() }}
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+
+              <!-- Settings (Right) -->
+              <div class="settings-panel">
+                <h3>Set Rates & Availability</h3>
+                <p class="helper-text">
+                  @if (rangeStartDate) {
+                    Selected: {{ rangeStartDate | date }} 
+                    @if (rangeEndDate) {
+                      - {{ rangeEndDate | date }}
+                    }
+                  } @else {
+                    Select dates on the calendar to apply changes.
+                  }
+                </p>
+                
+                <div class="form-group">
+                  <label>Daily Price (₹)</label>
+                  <input type="number" [(ngModel)]="bookingSettings.price" [ngModelOptions]="{standalone: true}" min="0">
+                </div>
+
+                <div class="form-group">
+                  <label>Available Units</label>
+                  <input type="number" [(ngModel)]="bookingSettings.availableUnits" [ngModelOptions]="{standalone: true}" min="0">
+                </div>
+
+                <div class="form-group">
+                  <label>Status</label>
+                  <select [(ngModel)]="bookingSettings.status" [ngModelOptions]="{standalone: true}">
+                    <option value="available">Available</option>
+                    <option value="booked">Booked</option>
+                    <option value="blocked">Blocked</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </div>
+
+                <button class="btn-primary" (click)="saveRates()" [disabled]="!rangeStartDate">Apply Changes</button>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p>Please select a property to manage bookings and rates.</p>
+            </div>
+          }
         </div>
       } @else if (activeMenu === 'dashboard') {
         <div class="partner-info-section">

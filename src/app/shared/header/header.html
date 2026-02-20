@@ -3,9 +3,9 @@
     <div class="nav-container">
       <a routerLink="/" class="logo">
         <span class="logo-icon">🌿</span>
-        <span class="logo-text">GreenTrail Adventure Park</span>
+        <span class="logo-text">WeekendAcres</span>
       </a>
-      
+
       <ul class="nav-menu">
         <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
         <li><a routerLink="/virtual-tour" routerLinkActive="active">About</a></li>
@@ -13,16 +13,16 @@
         <li><a routerLink="/education" routerLinkActive="active">Products & Activities</a></li>
         <li><a routerLink="/booking" routerLinkActive="active">Join Us</a></li>
         @if (authService.isLoggedIn()) {
-          <li><a [routerLink]="getDashboardRoute()" routerLinkActive="active">Dashboard</a></li>
-          @if (authService.isUserAdmin()) {
-            <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
-          }
-          <li class="user-info">
-            <span class="user-name">{{ getUserDisplayName() }}</span>
-            <button class="btn-logout" (click)="logout()">Logout</button>
-          </li>
+        <li><a [routerLink]="getDashboardRoute()" routerLinkActive="active">Dashboard</a></li>
+        @if (authService.isUserAdmin()) {
+        <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
+        }
+        <li class="user-info">
+          <span class="user-name">{{ getUserDisplayName() }}</span>
+          <button class="btn-logout" (click)="logout()">Logout</button>
+        </li>
         } @else {
-          <li><a routerLink="/auth/login" class="">Login</a></li>
+        <li><a routerLink="/auth/login" class="">Login</a></li>
         }
       </ul>
     </div>

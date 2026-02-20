@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 export class ContactSection {
   @Input() phone = '+91 1234567890';
   @Input() email = 'contact@greentrail.com';
-  @Input() address = 'GreenTrail Adventure Park, India';
+  @Input() address = 'WeekendAcres, India';
   @Input() latitude?: number;
   @Input() longitude?: number;
 

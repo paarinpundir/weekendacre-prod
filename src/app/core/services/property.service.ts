@@ -1,58 +1,70 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 // Environment config removed - using hardcoded values for now
 
-import { environment } from '../../../environments/environment';
-
-import { 
-  Property, 
-  Category, 
-  PropertyAvailability, 
-  PropertyPricing, 
-  PropertyReview, 
-  PropertySearchRequest, 
-  PropertyCreateRequest 
+import {
+  Property,
+  Category,
+  PropertyAvailability,
+  PropertyPricing,
+  PropertyReview,
+  PropertySearchRequest,
+  PropertyCreateRequest
 } from '../models/property.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PropertyService {
-  private baseUrl = environment.apiUrl.replace(/\/$/, '');
-  private apiUrl = `${this.baseUrl}/api/v1/properties`; // TODO: Move to config
+  private apiUrl = 'http://localhost:8080/api/v1/properties'; // TODO: Move to config
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getAuthHeaders(): HttpHeaders {
     // Try both key formats for compatibility
-    let token = sessionStorage.getItem('access_token') || 
-                sessionStorage.getItem('eco_adventure_park_access_token');
-    
+    let token = sessionStorage.getItem('access_token') ||
+      sessionStorage.getItem('eco_adventure_park_access_token');
+
     const headers: { [key: string]: string } = {
       'Content-Type': 'application/json'
     };
-    
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     } else {
       console.warn('PropertyService: No access token found in sessionStorage');
     }
-    
     return new HttpHeaders(headers);
+  }
+
+  saveDailyRatesBulk(payload: any): Observable<{ data: any; message: string }> {
+    return this.http.post<{ data: any; message: string }>(
+      `${this.apiUrl}/daily-rates/bulk`,
+      payload,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  updateMediaType(propertyId: string, mediaId: string, imageTypeCode: number): Observable<{ success: boolean; data: any; message: string }> {
+    return this.http.patch<{ success: boolean; data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/media/${mediaId}`,
+      { image_type_code: imageTypeCode },
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   private getFormDataHeaders(): HttpHeaders {
     // Try both key formats for compatibility
-    let token = sessionStorage.getItem('access_token') || 
-                sessionStorage.getItem('eco_adventure_park_access_token');
-    
+    let token = sessionStorage.getItem('access_token') ||
+      sessionStorage.getItem('eco_adventure_park_access_token');
+
     if (!token) {
       console.warn('No auth token found for file upload');
       return new HttpHeaders();
     }
-    
+
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
       // Don't set Content-Type - let browser set it with boundary for multipart/form-data
@@ -65,7 +77,7 @@ export class PropertyService {
     console.log('PropertyService: Creating property:', propertyData);
     console.log('PropertyService: Headers:', headers.keys());
     console.log('PropertyService: API URL:', this.apiUrl);
-    
+
     return this.http.post<{ success: boolean; message: string; data: Property }>(
       this.apiUrl,
       propertyData,
@@ -75,14 +87,14 @@ export class PropertyService {
 
   getProperty(propertyId: string, requireAuth: boolean = false): Observable<{ success: boolean; data: Property; message: string }> {
     // Use public endpoint by default, authenticated endpoint if requireAuth is true
-    const url = requireAuth 
+    const url = requireAuth
       ? `${this.apiUrl}/${propertyId}`
-      : `${this.baseUrl}/api/v1/properties/public/${propertyId}`;
-    
-    const options = requireAuth 
+      : `http://localhost:8080/api/v1/properties/public/${propertyId}`;
+
+    const options = requireAuth
       ? { headers: this.getAuthHeaders() }
       : {};
-    
+
     return this.http.get<{ success: boolean; data: Property; message: string }>(url, options);
   }
 
@@ -101,10 +113,10 @@ export class PropertyService {
   }
 
   getAllProperties(): Observable<{ success: boolean; data: Property[]; message: string }> {
-    // Public endpoint - no auth required
+    // Public endpoint - no auth required - only returns approved properties
     console.log('PropertyService: Fetching all properties from public endpoint');
     return this.http.get<{ success: boolean; data: Property[]; message: string }>(
-      `${this.baseUrl}/api/v1/properties/public`
+      'http://localhost:8080/api/v1/properties/public'
     ).pipe(
       tap(response => console.log('PropertyService: Received response:', response)),
       catchError(error => {
@@ -114,10 +126,18 @@ export class PropertyService {
     );
   }
 
+  getAllPropertiesForAdmin(): Observable<{ success: boolean; data: Property[]; message: string }> {
+    // Admin endpoint - requires auth - returns all properties regardless of state
+    return this.http.get<{ success: boolean; data: Property[]; message: string }>(
+      'http://localhost:8080/api/v1/admin/properties/all',
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   saveOnboardingProgress(propertyId: string, step: number, formData: any): Observable<{ success: boolean; message: string }> {
     return this.http.patch<{ success: boolean; message: string }>(
       `${this.apiUrl}/${propertyId}/onboarding`,
-      { onboarding_step: step, onboarding_data: formData },
+      { ...formData, onboarding_step: step },
       { headers: this.getAuthHeaders() }
     );
   }
@@ -125,7 +145,7 @@ export class PropertyService {
   updateOnboardingProgress(propertyId: string, step: number, data: any): Observable<{ data: any; message: string }> {
     return this.http.patch<{ data: any; message: string }>(
       `${this.apiUrl}/${propertyId}/onboarding`,
-      { onboarding_step: step, onboarding_data: data },
+      { ...data, onboarding_step: step },
       { headers: this.getAuthHeaders() }
     );
   }
@@ -209,10 +229,52 @@ export class PropertyService {
     );
   }
 
+  replaceCrops(propertyId: string, crops: any[]): Observable<{ data: any; message: string }> {
+    return this.http.put<{ data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/crops`,
+      crops,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   addOrganicInput(propertyId: string, cropId: string, inputCode: number): Observable<{ data: any; message: string }> {
     return this.http.post<{ data: any; message: string }>(
       `${this.apiUrl}/${propertyId}/crops/${cropId}/organic-inputs`,
       { input_code: inputCode },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // Stay Facilities Management
+  addStayFacility(propertyId: string, facility: any): Observable<{ data: any; message: string }> {
+    return this.http.post<{ data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/stay-facilities`,
+      facility,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  replaceStayFacilities(propertyId: string, facilities: any[]): Observable<{ data: any; message: string }> {
+    return this.http.put<{ data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/stay-facilities`,
+      facilities,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // Experiences Management
+  addExperience(propertyId: string, exp: any): Observable<{ data: any; message: string }> {
+    return this.http.post<{ data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/experiences`,
+      exp,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  replaceExperiences(propertyId: string, exps: any[]): Observable<{ data: any; message: string }> {
+    return this.http.put<{ data: any; message: string }>(
+      `${this.apiUrl}/${propertyId}/experiences`,
+      exps,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -259,19 +321,19 @@ export class PropertyService {
   }
 
   // Property Search
-  searchProperties(searchRequest: PropertySearchRequest): Observable<{ 
-    properties: Property[]; 
-    total: number; 
-    suggestions?: string[]; 
-    page: number; 
-    limit: number; 
+  searchProperties(searchRequest: PropertySearchRequest): Observable<{
+    properties: Property[];
+    total: number;
+    suggestions?: string[];
+    page: number;
+    limit: number;
   }> {
-    return this.http.post<{ 
-      properties: Property[]; 
-      total: number; 
-      suggestions?: string[]; 
-      page: number; 
-      limit: number; 
+    return this.http.post<{
+      properties: Property[];
+      total: number;
+      suggestions?: string[];
+      page: number;
+      limit: number;
     }>(
       `${this.apiUrl}/search`,
       searchRequest,
@@ -307,15 +369,15 @@ export class PropertyService {
     );
   }
 
-  checkAvailability(propertyId: string, startDate: string, endDate: string, guests: number): Observable<{ 
-    available: boolean; 
-    total_price: number; 
-    available_dates: any[] 
+  checkAvailability(propertyId: string, startDate: string, endDate: string, guests: number): Observable<{
+    available: boolean;
+    total_price: number;
+    available_dates: any[]
   }> {
-    return this.http.get<{ 
-      available: boolean; 
-      total_price: number; 
-      available_dates: any[] 
+    return this.http.get<{
+      available: boolean;
+      total_price: number;
+      available_dates: any[]
     }>(
       `${this.apiUrl}/${propertyId}/check-availability?start_date=${startDate}&end_date=${endDate}&guests=${guests}`,
       { headers: this.getAuthHeaders() }
@@ -331,20 +393,20 @@ export class PropertyService {
     );
   }
 
-  getPricing(propertyId: string, startDate?: string, endDate?: string, guests?: number): Observable<{ 
-    pricing: PropertyPricing; 
-    calculated_price: number; 
-    breakdown: any[] 
+  getPricing(propertyId: string, startDate?: string, endDate?: string, guests?: number): Observable<{
+    pricing: PropertyPricing;
+    calculated_price: number;
+    breakdown: any[]
   }> {
     const params = new URLSearchParams();
     if (startDate) params.append('start_date', startDate);
     if (endDate) params.append('end_date', endDate);
     if (guests) params.append('guests', guests.toString());
 
-    return this.http.get<{ 
-      pricing: PropertyPricing; 
-      calculated_price: number; 
-      breakdown: any[] 
+    return this.http.get<{
+      pricing: PropertyPricing;
+      calculated_price: number;
+      breakdown: any[]
     }>(
       `${this.apiUrl}/${propertyId}/pricing?${params.toString()}`,
       { headers: this.getAuthHeaders() }
@@ -352,17 +414,28 @@ export class PropertyService {
   }
 
   // Media Management
-  uploadMedia(propertyId: string, files: File[], type: string): Observable<any[]> {
+  uploadMedia(propertyId: string, files: File[], type: string): Observable<any> {
     const formData = new FormData();
     files.forEach(file => {
       formData.append('files', file);
     });
     formData.append('type', type);
 
-    return this.http.post<any[]>(
+    // Backend returns { success: boolean, data: PropertyImage[], message: string }
+    return this.http.post<{ success: boolean; data: any[]; message: string }>(
       `${this.apiUrl}/${propertyId}/media`,
       formData,
       { headers: this.getFormDataHeaders() }
+    ).pipe(
+      map(response => {
+        // Return the data array directly for easier handling
+        return response.data || response;
+      }),
+      tap(response => console.log('Upload media response:', response)),
+      catchError(error => {
+        console.error('Error uploading media:', error);
+        return throwError(() => error);
+      })
     );
   }
 
@@ -392,12 +465,12 @@ export class PropertyService {
     );
   }
 
-  getReviews(propertyId: string, page?: number, limit?: number, minRating?: number, sortBy?: string): Observable<{ 
-    reviews: PropertyReview[]; 
-    total: number; 
-    average_rating: number; 
-    page: number; 
-    limit: number; 
+  getReviews(propertyId: string, page?: number, limit?: number, minRating?: number, sortBy?: string): Observable<{
+    reviews: PropertyReview[];
+    total: number;
+    average_rating: number;
+    page: number;
+    limit: number;
   }> {
     const params = new URLSearchParams();
     if (page) params.append('page', page.toString());
@@ -405,12 +478,12 @@ export class PropertyService {
     if (minRating) params.append('min_rating', minRating.toString());
     if (sortBy) params.append('sort_by', sortBy);
 
-    return this.http.get<{ 
-      reviews: PropertyReview[]; 
-      total: number; 
-      average_rating: number; 
-      page: number; 
-      limit: number; 
+    return this.http.get<{
+      reviews: PropertyReview[];
+      total: number;
+      average_rating: number;
+      page: number;
+      limit: number;
     }>(
       `${this.apiUrl}/${propertyId}/reviews?${params.toString()}`,
       { headers: this.getAuthHeaders() }
@@ -421,6 +494,21 @@ export class PropertyService {
     return this.http.put<PropertyReview>(
       `${this.apiUrl}/reviews/${reviewId}`,
       updates,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  saveDailyRate(rateData: any): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/daily-rates`,
+      rateData,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  getDailyRates(propertyId: string, startDate: string, endDate: string): Observable<{ success: boolean; data: any[]; message: string }> {
+    return this.http.get<{ success: boolean; data: any[]; message: string }>(
+      `${this.apiUrl}/daily-rates?propertyId=${propertyId}&startDate=${startDate}&endDate=${endDate}`,
       { headers: this.getAuthHeaders() }
     );
   }
