@@ -11,7 +11,7 @@ import { Property } from '../../../core/models/property.model';
 })
 export class PropertyCard {
   @Input() property!: Property;
-  private readonly backendBaseUrl = 'http://localhost:8080';
+  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
 
   private resolveMediaUrl(url: string | undefined): string {
     if (!url) return '';

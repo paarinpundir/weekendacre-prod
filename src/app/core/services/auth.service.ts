@@ -10,9 +10,9 @@ import { User } from '../models/user.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/v1/auth'; // TODO: Move to config
+  private apiUrl = 'http://172.16.0.108:8081/api/v1/auth'; // TODO: Move to config
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('eco_adventure_park_access_token');
@@ -23,28 +23,7 @@ export class AuthService {
   }
 
   // Login
-  login(email: string, password: string): Observable<{ 
-    success: boolean;
-    message: string;
-    data: {
-      user: User; 
-      access_token: string; 
-      refresh_token: string;
-    }
-  }> {
-    return this.http.post<{ 
-      success: boolean;
-      message: string;
-      data: {
-        user: User; 
-        access_token: string; 
-        refresh_token: string;
-      }
-    }>(`${this.apiUrl}/login/password`, { email, password });
-  }
-
-  // Register
-  register(email: string, password: string, firstName: string, lastName: string, phone?: string, userType: string = 'user'): Observable<{ 
+  login(email: string, password: string): Observable<{
     success: boolean;
     message: string;
     data: {
@@ -53,7 +32,7 @@ export class AuthService {
       refresh_token: string;
     }
   }> {
-    return this.http.post<{ 
+    return this.http.post<{
       success: boolean;
       message: string;
       data: {
@@ -61,11 +40,32 @@ export class AuthService {
         access_token: string;
         refresh_token: string;
       }
-    }>(`${this.apiUrl}/register/password`, { 
-      email, 
-      password, 
-      first_name: firstName, 
-      last_name: lastName, 
+    }>(`${this.apiUrl}/login/password`, { email, password });
+  }
+
+  // Register
+  register(email: string, password: string, firstName: string, lastName: string, phone?: string, userType: string = 'user'): Observable<{
+    success: boolean;
+    message: string;
+    data: {
+      user: User;
+      access_token: string;
+      refresh_token: string;
+    }
+  }> {
+    return this.http.post<{
+      success: boolean;
+      message: string;
+      data: {
+        user: User;
+        access_token: string;
+        refresh_token: string;
+      }
+    }>(`${this.apiUrl}/register/password`, {
+      email,
+      password,
+      first_name: firstName,
+      last_name: lastName,
       phone: phone || '',
       user_type: userType
     });
@@ -74,21 +74,21 @@ export class AuthService {
   // Logout
   logout(): Observable<{ message: string }> {
     const refreshToken = sessionStorage.getItem('eco_adventure_park_refresh_token');
-    return this.http.post<{ message: string }>(`${this.apiUrl}/logout`, { 
-      refresh_token: refreshToken 
+    return this.http.post<{ message: string }>(`${this.apiUrl}/logout`, {
+      refresh_token: refreshToken
     });
   }
 
   // Refresh Token
-  refreshToken(refreshToken: string): Observable<{ 
-    access_token: string; 
-    refresh_token: string; 
-    expires_in: number 
+  refreshToken(refreshToken: string): Observable<{
+    access_token: string;
+    refresh_token: string;
+    expires_in: number
   }> {
-    return this.http.post<{ 
-      access_token: string; 
-      refresh_token: string; 
-      expires_in: number 
+    return this.http.post<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number
     }>(`${this.apiUrl}/refresh`, { refreshToken });
   }
 
@@ -124,9 +124,9 @@ export class AuthService {
 
   // Reset Password
   resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, { 
-      token, 
-      new_password: newPassword 
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, {
+      token,
+      new_password: newPassword
     });
   }
 
@@ -160,8 +160,8 @@ export class AuthService {
   getPartners(): Observable<any> {
     const token = sessionStorage.getItem('eco_adventure_park_access_token');
     return this.http.get(
-      `http://localhost:8080/api/v1/admin/partners`,
-      { 
+      `http://172.16.0.108:8081/api/v1/admin/partners`,
+      {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -169,7 +169,7 @@ export class AuthService {
       }
     );
   }
-  
+
   getAccessToken(): string | null {
     return sessionStorage.getItem('eco_adventure_park_access_token');
   }

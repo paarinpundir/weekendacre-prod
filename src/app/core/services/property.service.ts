@@ -18,7 +18,7 @@ import {
   providedIn: 'root'
 })
 export class PropertyService {
-  private apiUrl = 'http://localhost:8080/api/v1/properties'; // TODO: Move to config
+  private apiUrl = 'http://172.16.0.108:8081/api/v1/properties'; // TODO: Move to config
 
   constructor(private http: HttpClient) { }
 
@@ -89,7 +89,7 @@ export class PropertyService {
     // Use public endpoint by default, authenticated endpoint if requireAuth is true
     const url = requireAuth
       ? `${this.apiUrl}/${propertyId}`
-      : `http://localhost:8080/api/v1/properties/public/${propertyId}`;
+      : `http://172.16.0.108:8081/api/v1/properties/public/${propertyId}`;
 
     const options = requireAuth
       ? { headers: this.getAuthHeaders() }
@@ -116,7 +116,7 @@ export class PropertyService {
     // Public endpoint - no auth required - only returns approved properties
     console.log('PropertyService: Fetching all properties from public endpoint');
     return this.http.get<{ success: boolean; data: Property[]; message: string }>(
-      'http://localhost:8080/api/v1/properties/public'
+      'http://172.16.0.108:8081/api/v1/properties/public'
     ).pipe(
       tap(response => console.log('PropertyService: Received response:', response)),
       catchError(error => {
@@ -129,7 +129,7 @@ export class PropertyService {
   getAllPropertiesForAdmin(): Observable<{ success: boolean; data: Property[]; message: string }> {
     // Admin endpoint - requires auth - returns all properties regardless of state
     return this.http.get<{ success: boolean; data: Property[]; message: string }>(
-      'http://localhost:8080/api/v1/admin/properties/all',
+      'http://172.16.0.108:8081/api/v1/admin/properties/all',
       { headers: this.getAuthHeaders() }
     );
   }

@@ -19,9 +19,9 @@ export interface ReferenceOption {
   providedIn: 'root'
 })
 export class ReferenceService {
-  private apiUrl = 'http://localhost:8080/api/v1/reference';
+  private apiUrl = 'http://172.16.0.108:8081/api/v1/reference';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getOptionsByCategory(category: string): Observable<{ success: boolean; data: ReferenceOption[]; message: string }> {
     return this.http.get<{ success: boolean; data: ReferenceOption[]; message: string }>(

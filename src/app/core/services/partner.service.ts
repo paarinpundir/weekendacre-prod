@@ -10,9 +10,9 @@ import { environment } from '../../../environments/environment.prod';
   providedIn: 'root'
 })
 export class PartnerService {
-  private apiUrl = 'http://localhost:8080/api/v1/partners'; // TODO: Move to config
+  private apiUrl = 'http://172.16.0.108:8081/api/v1/partners'; // TODO: Move to config
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('eco_adventure_park_access_token');
@@ -25,7 +25,7 @@ export class PartnerService {
   // Partner Onboarding
   onboardPartner(partnerData: PartnerOnboardingData): Observable<{ partner: Partner; message: string }> {
     return this.http.post<{ partner: Partner; message: string }>(
-      `${this.apiUrl}/onboard`, 
+      `${this.apiUrl}/onboard`,
       partnerData,
       { headers: this.getAuthHeaders() }
     );
@@ -82,7 +82,7 @@ export class PartnerService {
   rejectPartner(partnerId: string, rejectionReason: string, rejectedBy: string): Observable<Partner> {
     return this.http.post<Partner>(
       `${this.apiUrl}/${partnerId}/reject`,
-      { 
+      {
         rejection_reason: rejectionReason,
         rejected_by: rejectedBy
       },
@@ -94,7 +94,7 @@ export class PartnerService {
   suspendPartner(partnerId: string, reason: string, suspendedBy: string): Observable<Partner> {
     return this.http.post<Partner>(
       `${this.apiUrl}/${partnerId}/suspend`,
-      { 
+      {
         reason,
         suspended_by: suspendedBy
       },

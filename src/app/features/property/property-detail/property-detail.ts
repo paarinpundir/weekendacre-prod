@@ -59,7 +59,7 @@ export class PropertyDetail implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private store = inject(Store);
   private cdr = inject(ChangeDetectorRef);
-  private readonly backendBaseUrl = 'http://localhost:8080';
+  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
 
   // ... (keep toggleGuestDropdown, closeGuestDropdown, updateGuests, increment, decrement methods same) ...
 

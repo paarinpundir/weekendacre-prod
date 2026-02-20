@@ -117,7 +117,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
   private propertyService = inject(PropertyService);
   private referenceService = inject(ReferenceService);
 
-  private readonly backendBaseUrl = 'http://localhost:8080';
+  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
 
   constructor(
     private router: Router,
