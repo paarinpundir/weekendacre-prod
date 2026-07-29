@@ -1,12 +1,14 @@
-<section class="events-section">
+<section id="events-section" class="events-section">
   <div class="container">
     <h2 class="section-title">{{ title }}</h2>
     <div class="events-grid">
       @for (event of events; track event.id) {
-        <div class="event-card" 
-             [style.background-image]="event.imageUrl ? 'url(' + event.imageUrl + ')' : 'none'"
-             [style.background-size]="'cover'"
-             [style.background-position]="'center'">
+        <a
+          class="event-card event-card-link"
+          [routerLink]="['/events', event.slug]"
+          [style.background-image]="event.imageUrl ? 'url(' + event.imageUrl + ')' : 'none'"
+          [style.background-size]="'cover'"
+          [style.background-position]="'center'">
           <div class="event-overlay"></div>
           <div class="event-content">
             @if (event.theme) {
@@ -24,8 +26,9 @@
             @if (event.date) {
               <div class="event-date">{{ event.date }}</div>
             }
+            <span class="event-cta">View details</span>
           </div>
-        </div>
+        </a>
       }
     </div>
   </div>

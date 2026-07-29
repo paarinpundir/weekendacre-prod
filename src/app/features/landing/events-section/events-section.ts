@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 export interface Event {
   id: string;
+  slug: string;
   title: string;
   description: string;
   theme?: string;
@@ -13,7 +15,7 @@ export interface Event {
 
 @Component({
   selector: 'app-events-section',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './events-section.html',
   styleUrl: './events-section.scss'
 })

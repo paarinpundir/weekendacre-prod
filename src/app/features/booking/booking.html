@@ -12,7 +12,7 @@
             class="type-btn" 
             [class.active]="bookingType === 'Day Visit'"
             (click)="bookingType = 'Day Visit'">
-            <span class="type-icon">🎫</span>
+            <span class="type-icon" aria-hidden="true"><i class="fa-solid fa-ticket"></i></span>
             <span class="type-label">Day Visit</span>
             <span class="type-price">₹200/person</span>
           </button>
@@ -20,7 +20,7 @@
             class="type-btn" 
             [class.active]="bookingType === 'Room Stay'"
             (click)="bookingType = 'Room Stay'">
-            <span class="type-icon">🏠</span>
+            <span class="type-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
             <span class="type-label">Room Stay</span>
             <span class="type-price">From ₹1,500</span>
           </button>
@@ -28,7 +28,7 @@
             class="type-btn" 
             [class.active]="bookingType === 'Activity'"
             (click)="bookingType = 'Activity'">
-            <span class="type-icon">🎯</span>
+            <span class="type-icon" aria-hidden="true"><i class="fa-solid fa-person-hiking"></i></span>
             <span class="type-label">Activity</span>
             <span class="type-price">Varies</span>
           </button>
@@ -107,7 +107,7 @@
         </div>
         
         <button class="btn-calendar" (click)="showCalendar = !showCalendar">
-          📅 View Calendar
+          <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> View Calendar
         </button>
 
         @if (showCalendar) {

@@ -3,7 +3,7 @@
   top: 2rem;
 
   .booking-card {
-    border: 1px solid #ebebeb;
+    border: 1px solid var(--color-border-light);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -20,17 +20,17 @@
         .price {
           font-size: 1.5rem;
           font-weight: 600;
-          color: #222;
+          color: var(--color-text-primary);
         }
 
         .price-label {
-          color: #717171;
+          color: var(--color-text-secondary);
           font-size: 1rem;
         }
       }
 
       .total-price {
-        color: #717171;
+        color: var(--color-text-secondary);
         font-size: 0.9rem;
         text-decoration: underline;
       }
@@ -46,7 +46,7 @@
           display: block;
           font-size: 0.75rem;
           font-weight: 600;
-          color: #222;
+          color: var(--color-text-primary);
           margin-bottom: 0.5rem;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -55,14 +55,14 @@
         .form-input {
           width: 100%;
           padding: 0.75rem;
-          border: 1px solid #b0b0b0;
+          border: 1px solid var(--color-text-tertiary);
           border-radius: 8px;
           font-size: 0.95rem;
           transition: border-color 0.2s;
 
           &:focus {
             outline: none;
-            border-color: #222;
+            border-color: var(--color-text-primary);
           }
         }
       }
@@ -71,7 +71,7 @@
     .btn-reserve {
       width: 100%;
       padding: 1rem;
-      background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+      background: linear-gradient(to right, var(--color-gradient-host-1) 0%, var(--color-gradient-host-2) 50%, var(--color-gradient-host-3) 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -94,7 +94,7 @@
 
     .booking-note {
       text-align: center;
-      color: #717171;
+      color: var(--color-text-secondary);
       font-size: 0.875rem;
       margin-bottom: 1.5rem;
     }
@@ -108,11 +108,11 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: #222;
+        color: var(--color-text-primary);
         font-size: 0.9rem;
 
         .feature-icon {
-          color: #00a699;
+          color: var(--color-accent-teal);
           font-weight: 600;
         }
       }

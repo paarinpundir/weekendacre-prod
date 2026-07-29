@@ -62,10 +62,8 @@ export interface Property {
   irrigation_systems?: PropertyIrrigationSystem[];
   pest_management?: PropertyPestManagement[];
   safety_equipment?: PropertySafetyEquipment[];
-  infrastructure?: PropertyInfrastructure[];
   documents?: PropertyDocument[];
   images?: PropertyImage[];
-  rates?: PropertyRate[];
   state_logs?: PropertyStateLog[];
   staff?: PropertyStaff[];
   crops?: PropertyCrop[];
@@ -102,22 +100,6 @@ export interface PropertySafetyEquipment {
   created_at: string;
 }
 
-export interface PropertyInfrastructure {
-  id: string;
-  property_id: string;
-  room_type: string;
-  name: string;
-  description?: string;
-  capacity?: number;
-  photos?: string[];
-  amenities?: string[];
-  constraints?: string[];
-  limitations?: string[];
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface PropertyDocument {
   id: string;
   property_id: string;
@@ -136,18 +118,8 @@ export interface PropertyImage {
   alt_text?: string;
   is_primary?: boolean;
   sort_order?: number;
-  room_id?: string; // If room-specific
+  stay_facility_id?: string; // Set for room-specific photos, null for property-level
   created_at: string;
-}
-
-export interface PropertyRate {
-  id: string;
-  property_id: string;
-  date: string;
-  rate: number;
-  currency: string;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface PropertyStateLog {
@@ -222,9 +194,21 @@ export interface PropertyStayFacility {
   emergency_plans?: string;
   first_aid_kit_available?: boolean;
   cctv_available?: boolean;
-  photos?: string[];
-  amenities?: string[];
+  // Normalized relations as returned by GET .../:id (see PropertyImage/PropertyStayFacilityAmenity).
+  // POST/PUT .../stay-facilities still accepts plain string[] (URLs / free-text labels) for these
+  // same field names — the backend builds the relations from those strings server-side.
+  photos?: (string | PropertyImage)[];
+  amenities?: (string | PropertyStayFacilityAmenity)[];
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PropertyStayFacilityAmenity {
+  id: string;
+  property_id: string;
+  stay_facility_id: string;
+  amenity: string;
   created_at: string;
   updated_at: string;
 }
@@ -305,130 +289,3 @@ export interface AddSafetyEquipmentRequest {
   equipment_code: number;
 }
 
-// Legacy types for backward compatibility (if needed)
-export interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  icon?: string;
-  parentId?: string;
-  sortOrder: number;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-  children?: Category[];
-}
-
-export interface PropertyAvailability {
-  id: string;
-  propertyId: string;
-  date: string;
-  available: boolean;
-  availableSlots: number;
-  totalSlots: number;
-  price: number;
-  status: 'available' | 'booked' | 'blocked' | 'maintenance';
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PropertyPricing {
-  id: string;
-  propertyId: string;
-  pricingType: 'per_night' | 'per_person' | 'per_hour' | 'flat_rate';
-  basePrice: number;
-  weekendPrice?: number;
-  holidayPrice?: number;
-  currency: string;
-  minStayNights: number;
-  maxStayNights?: number;
-  depositAmount?: number;
-  cleaningFee?: number;
-  taxRate: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PropertyReview {
-  id: string;
-  propertyId: string;
-  userId: string;
-  bookingId?: string;
-  rating: number;
-  title?: string;
-  comment?: string;
-  status: 'pending' | 'approved' | 'rejected';
-  verified: boolean;
-  response?: string;
-  responseDate?: string;
-  images?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PropertySearchRequest {
-  query?: string;
-  location?: string;
-  checkIn?: string;
-  checkOut?: string;
-  guests?: number;
-  categories?: string[];
-  amenities?: string[];
-  minPrice?: number;
-  maxPrice?: number;
-  lat?: number;
-  lng?: number;
-  radiusKm?: number;
-  page?: number;
-  limit?: number;
-}
-
-export interface PropertySearchResponse {
-  properties: Property[];
-  total: number;
-  suggestions?: string[];
-  page: number;
-  limit: number;
-}
-
-// Legacy PropertyCreateRequest (kept for backward compatibility with old components)
-export interface LegacyPropertyCreateRequest {
-  partnerId: string;
-  title: string;
-  description: string;
-  categoryId: string;
-  propertyType: string;
-  address?: string;
-  city?: string;
-  country?: string;
-  postalCode?: string;
-  latitude?: number;
-  longitude?: number;
-  maxCapacity: number;
-  minCapacity: number;
-  sizeSqft?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  amenities: string[];
-  features: string[];
-  rules: string[];
-  timezone: string;
-}
-
-export interface PropertyStats {
-  totalViews: number;
-  totalBookings: number;
-  totalRevenue: number;
-  averageRating: number;
-  totalReviews: number;
-  occupancyRate: number;
-  monthlyViews: number[];
-  monthlyRevenue: number[];
-  topReviewers: {
-    userId: string;
-    userName: string;
-    rating: number;
-    reviewCount: number;
-  }[];
-}

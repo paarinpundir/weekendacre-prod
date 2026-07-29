@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-// Environment config removed - using hardcoded values for now
+import { environment } from '../../../environments/environment';
 
 import { User } from '../models/user.model';
 
@@ -10,7 +10,7 @@ import { User } from '../models/user.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://172.16.0.108:8081/api/v1/auth'; // TODO: Move to config
+  private readonly apiUrl = `${environment.apiUrl}/api/v1/auth`;
 
   constructor(private http: HttpClient) { }
 
@@ -160,7 +160,7 @@ export class AuthService {
   getPartners(): Observable<any> {
     const token = sessionStorage.getItem('eco_adventure_park_access_token');
     return this.http.get(
-      `http://172.16.0.108:8081/api/v1/admin/partners`,
+      `${environment.apiUrl}/api/v1/admin/partners`,
       {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',

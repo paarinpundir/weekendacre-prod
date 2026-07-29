@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Property, PropertyExperience } from '../../../core/models/property.model';
 import { Subject, takeUntil, skip } from 'rxjs';
 import * as PropertyActions from '../../../core/store/property/property.actions';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-property-detail',
@@ -59,7 +60,7 @@ export class PropertyDetail implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private store = inject(Store);
   private cdr = inject(ChangeDetectorRef);
-  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
+  private readonly backendBaseUrl = environment.apiUrl;
 
   // ... (keep toggleGuestDropdown, closeGuestDropdown, updateGuests, increment, decrement methods same) ...
 
@@ -299,13 +300,7 @@ export class PropertyDetail implements OnInit, OnDestroy {
   }
 
   getPropertyPrice(): number | null {
-    if ((this.property as any)?.price_per_day) {
-      return (this.property as any).price_per_day;
-    }
-    if (this.property?.rates && this.property.rates.length > 0) {
-      return this.property.rates[0].rate;
-    }
-    return null;
+    return (this.property as any)?.price_per_day ?? null;
   }
 
   // ... (keep calendar methods same) ...
@@ -554,7 +549,6 @@ export class PropertyDetail implements OnInit, OnDestroy {
       }
     }
     if (onboardingData.formData && onboardingData.formData.price_per_day) {
-      if (!merged.rates) merged.rates = [];
       (merged as any).price_per_day = onboardingData.formData.price_per_day;
     }
 

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Property } from '../../../core/models/property.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-property-card',
@@ -11,7 +12,7 @@ import { Property } from '../../../core/models/property.model';
 })
 export class PropertyCard {
   @Input() property!: Property;
-  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
+  private readonly backendBaseUrl = environment.apiUrl;
 
   private resolveMediaUrl(url: string | undefined): string {
     if (!url) return '';

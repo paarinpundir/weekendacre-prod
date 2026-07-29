@@ -3,7 +3,7 @@
   <div class="dashboard-sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <span class="logo-icon">🌿</span>
+        <span class="logo-icon" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
         <span class="logo-text">GreenTrail</span>
       </div>
     </div>
@@ -12,31 +12,31 @@
       <ul class="nav-menu">
         <li class="nav-item" [class.active]="activeMenu === 'properties'">
           <a (click)="setActiveMenu('properties')" class="nav-link">
-            <span class="nav-icon">🏠</span>
+            <span class="nav-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
             <span class="nav-text">Properties</span>
           </a>
         </li>
         <li class="nav-item" [class.active]="activeMenu === 'bookings'">
           <a (click)="setActiveMenu('bookings')" class="nav-link">
-            <span class="nav-icon">📅</span>
+            <span class="nav-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
             <span class="nav-text">Bookings</span>
           </a>
         </li>
         <li class="nav-item" [class.active]="activeMenu === 'dashboard'">
           <a (click)="setActiveMenu('dashboard')" class="nav-link">
-            <span class="nav-icon">📊</span>
+            <span class="nav-icon" aria-hidden="true"><i class="fa-solid fa-chart-line"></i></span>
             <span class="nav-text">Dashboard</span>
           </a>
         </li>
         <li class="nav-item" [class.active]="activeMenu === 'settings'">
           <a (click)="setActiveMenu('settings')" class="nav-link">
-            <span class="nav-icon">⚙️</span>
+            <span class="nav-icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span>
             <span class="nav-text">Settings</span>
           </a>
         </li>
         <li class="nav-item" [class.active]="activeMenu === 'help'">
           <a (click)="setActiveMenu('help')" class="nav-link">
-            <span class="nav-icon">❓</span>
+            <span class="nav-icon" aria-hidden="true"><i class="fa-solid fa-circle-question"></i></span>
             <span class="nav-text">Help & Support</span>
           </a>
         </li>
@@ -62,11 +62,11 @@
           </div>
           <div class="user-menu-divider"></div>
           <a class="user-menu-item" (click)="goToProfile(); closeUserMenu()">
-            <span class="menu-item-icon">👤</span>
+            <span class="menu-item-icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
             <span>Profile</span>
           </a>
           <a class="user-menu-item" (click)="logout(); closeUserMenu()">
-            <span class="menu-item-icon">🚪</span>
+            <span class="menu-item-icon" aria-hidden="true"><i class="fa-solid fa-right-from-bracket"></i></span>
             <span>Logout</span>
           </a>
         </div>
@@ -83,7 +83,7 @@
         } @else if (properties.length === 0) {
           <div class="empty-properties">
             <div class="empty-content">
-              <div class="empty-icon">🏡</div>
+              <div class="empty-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney-window"></i></div>
               <h2>You haven't onboarded any property yet, {{ getUserName() }}</h2>
               <p>Get started by onboarding your first property to begin managing your farm listings</p>
               <p class="user-info-text">Logged in as: {{ getUserName() }} ({{ currentUser?.email }})</p>

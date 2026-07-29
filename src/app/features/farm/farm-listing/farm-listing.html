@@ -12,7 +12,7 @@
     <div class="container">
       <div class="search-bar">
         <div class="search-input-group">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
           <input
             type="text"
             [(ngModel)]="searchQuery"
@@ -85,17 +85,19 @@
               <div class="farm-image-container">
                 <img [src]="getImageUrl(farm.images[0])" [alt]="farm.name" class="farm-image">
                 @if (farm.isVerified) {
-                  <span class="verified-badge">✓ Verified</span>
+                  <span class="verified-badge"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Verified</span>
                 }
                 <div class="farm-rating">
-                  <span class="star">⭐</span>
+                  <span class="star" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
                   <span>{{ farm.rating }}</span>
                   <span class="review-count">({{ farm.reviewCount }})</span>
                 </div>
               </div>
               <div class="farm-content">
                 <h3 class="farm-name">{{ farm.name }}</h3>
-                <p class="farm-location">📍 {{ farm.city }}, {{ farm.state }}</p>
+                <p class="farm-location">
+                  <i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ farm.city }}, {{ farm.state }}
+                </p>
                 <p class="farm-description">{{ farm.description.substring(0, 120) }}...</p>
                 <div class="farm-amenities">
                   @for (amenity of farm.amenities.slice(0, 3); track amenity) {

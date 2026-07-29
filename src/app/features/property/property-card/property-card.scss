@@ -19,7 +19,7 @@
     width: 100%;
     height: 240px;
     overflow: hidden;
-    background: #f5f7fa;
+    background: var(--color-surface-wash);
 
     img {
       width: 100%;
@@ -41,12 +41,12 @@
       background: rgba(255, 255, 255, 0.9);
 
       &.draft {
-        color: #856404;
+        color: var(--color-badge-warning-text);
         background: rgba(255, 243, 205, 0.95);
       }
 
       &.active {
-        color: #155724;
+        color: var(--color-badge-success-text);
         background: rgba(209, 231, 221, 0.95);
       }
     }
@@ -72,7 +72,7 @@
       .property-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #222;
+        color: var(--color-text-primary);
         margin: 0;
         flex: 1;
         line-height: 1.4;
@@ -84,8 +84,8 @@
 
       .property-code {
         font-size: 0.75rem;
-        color: #717171;
-        background: #f5f7fa;
+        color: var(--color-text-secondary);
+        background: var(--color-surface-wash);
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         white-space: nowrap;
@@ -94,7 +94,7 @@
 
     .property-location {
       font-size: 0.9rem;
-      color: #717171;
+      color: var(--color-text-secondary);
       margin: 0;
       display: -webkit-box;
       -webkit-line-clamp: 1;
@@ -113,7 +113,7 @@
         align-items: center;
         gap: 0.4rem;
         font-size: 0.85rem;
-        color: #555;
+        color: var(--color-text-faint);
 
         .detail-icon {
           font-size: 1rem;
@@ -131,18 +131,18 @@
       align-items: center;
       margin-top: auto;
       padding-top: 0.75rem;
-      border-top: 1px solid #f0f0f0;
+      border-top: 1px solid var(--color-border-hairline);
 
       .property-type {
         font-size: 0.85rem;
-        color: #717171;
+        color: var(--color-text-secondary);
         font-weight: 500;
       }
 
       .view-details-btn {
         background: transparent;
         border: none;
-        color: #2d5016;
+        color: var(--color-primary);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
@@ -150,7 +150,7 @@
         transition: color 0.3s ease;
 
         &:hover {
-          color: #4a7c2a;
+          color: var(--color-primary-light);
         }
       }
     }

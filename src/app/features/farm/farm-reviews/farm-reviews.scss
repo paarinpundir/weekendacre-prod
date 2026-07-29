@@ -1,6 +1,6 @@
 .farm-reviews {
   padding: 2rem 0;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid var(--color-border-light);
 
   .reviews-header {
     margin-bottom: 2rem;
@@ -14,11 +14,11 @@
 
         .rating-value {
           font-weight: 600;
-          color: #222;
+          color: var(--color-text-primary);
         }
 
         .review-count-text {
-          color: #717171;
+          color: var(--color-text-secondary);
         }
       }
     }
@@ -44,38 +44,38 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: #f7f7f7;
+            background: var(--color-surface-muted);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            color: #222;
+            color: var(--color-text-primary);
             font-size: 1.1rem;
           }
 
           .reviewer-details {
             .reviewer-name {
               font-weight: 600;
-              color: #222;
+              color: var(--color-text-primary);
               margin-bottom: 0.25rem;
             }
 
             .review-date {
-              color: #717171;
+              color: var(--color-text-secondary);
               font-size: 0.875rem;
             }
           }
         }
 
         .review-rating {
-          color: #ff385c;
+          color: var(--color-accent-coral);
           font-size: 0.9rem;
         }
       }
 
       .review-content {
         p {
-          color: #222;
+          color: var(--color-text-primary);
           line-height: 1.6;
           margin: 0;
         }
@@ -86,7 +86,7 @@
   .no-reviews {
     text-align: center;
     padding: 3rem;
-    color: #717171;
+    color: var(--color-text-secondary);
     font-style: italic;
   }
 }

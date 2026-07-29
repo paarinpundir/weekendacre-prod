@@ -13,13 +13,15 @@ export class FarmReviews {
   @Input() overallRating?: number;
   @Input() reviewCount?: number;
 
-  getRatingStars(rating: number): string {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    let stars = '★'.repeat(fullStars);
-    if (hasHalfStar) stars += '½';
-    stars += '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
-    return stars;
+  getStarStates(rating: number): ('full' | 'half' | 'empty')[] {
+    const r = Math.min(5, Math.max(0, rating));
+    const out: ('full' | 'half' | 'empty')[] = [];
+    for (let i = 1; i <= 5; i++) {
+      if (r >= i) out.push('full');
+      else if (r >= i - 0.5) out.push('half');
+      else out.push('empty');
+    }
+    return out;
   }
 
   getRatingPercentage(rating: number): number {

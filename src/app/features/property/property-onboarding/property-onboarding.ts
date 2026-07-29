@@ -10,6 +10,7 @@ import { ReferenceService, ReferenceOption } from '../../../core/services/refere
 import * as PropertyActions from '../../../core/store/property/property.actions';
 import { Property, PropertyCreateRequest } from '../../../core/models/property.model';
 import { OnboardingSidebar, StepInfo } from './onboarding-sidebar/onboarding-sidebar';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-property-onboarding',
@@ -20,6 +21,11 @@ import { OnboardingSidebar, StepInfo } from './onboarding-sidebar/onboarding-sid
 })
 export class PropertyOnboarding implements OnInit, OnDestroy {
   currentStep = 0;
+  // Furthest step the user has ever reached in this session, independent of currentStep.
+  // currentStep moves back and forth freely as the user reviews earlier steps; step
+  // completion/accessibility must be judged against maxStepReached instead, or every
+  // later step re-locks the instant the user goes back to edit an earlier one.
+  maxStepReached = 0;
   totalSteps = 13; // 0: Basic Info ... 10: Pricing, 11: Water, 12: Review
   currentPropertyId: string | null = null; // Track if we're editing an existing property
   isNewPropertyMode = false; // Flag to track if we're creating a fresh new property
@@ -117,7 +123,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
   private propertyService = inject(PropertyService);
   private referenceService = inject(ReferenceService);
 
-  private readonly backendBaseUrl = 'http://172.16.0.108:8081';
+  private readonly backendBaseUrl = environment.apiUrl;
 
   constructor(
     private router: Router,
@@ -135,6 +141,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       this.currentPropertyId = propertyId;
       if (step) {
         this.currentStep = parseInt(step, 10);
+        this.maxStepReached = this.currentStep;
       }
     }
 
@@ -179,6 +186,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
             // Restore the onboarding step from the database
             if (response.data.onboarding_step !== undefined) {
               this.currentStep = response.data.onboarding_step;
+              this.maxStepReached = Math.max(this.maxStepReached, this.currentStep);
             }
 
             queueMicrotask(() => this.cdr.detectChanges());
@@ -435,12 +443,14 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       this.router.navigate(['/partner/dashboard']);
     }
 
-    // Clear saved progress on successful submission
-    this.clearSavedProgress();
-
-    // Reset success state to prevent re-triggering
+    // NOTE: this used to call clearSavedProgress() here, which resets currentStep to 0
+    // and wipes the whole form — that ran on every first-time draft creation (i.e. the
+    // very first "Next" click), discarding everything the user had just typed. This
+    // handler's job is to keep the session going with the newly created property, not
+    // reset it, so we only clear the success flag.
     this.store.dispatch(PropertyActions.resetPropertySuccessStates());
 
+    queueMicrotask(() => this.cdr.detectChanges());
   }
 
   handlePropertyError(error: string) {
@@ -486,56 +496,14 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
   saveProgress(saveRelationalData: boolean = true) {
     console.log('saveProgress: Called with saveRelationalData=', saveRelationalData, 'currentPropertyId=', this.currentPropertyId, 'isNewPropertyMode=', this.isNewPropertyMode);
 
-    // Map selectedFacilities to boolean fields for backend compatibility
-    const facilityBooleans = {
-      crop_rotation_system: this.selectedFacilities.includes(701),
-      is_soil_tested: this.selectedFacilities.includes(702),
-      farm_boundary: this.selectedFacilities.includes(703),
-      parking_space_available: this.selectedFacilities.includes(704),
-      shelter_shade_area: this.selectedFacilities.includes(705),
-      cold_storage: this.selectedFacilities.includes(706),
-      storage_room: this.selectedFacilities.includes(707),
-      kitchen_facility: this.selectedFacilities.includes(708),
-      toilet_available: this.selectedFacilities.includes(709),
-      toilet_drinking_water: this.selectedFacilities.includes(710),
-      electricity_connection: this.selectedFacilities.includes(711),
-      backup_power: this.selectedFacilities.includes(712),
-      waste_management_system: this.selectedFacilities.includes(713)
-    };
-
-    // Get form value and exclude facility boolean fields (they're derived from selectedFacilities)
-    const formValue = { ...this.propertyForm.value };
-    const facilityFields = [
-      'crop_rotation_system', 'is_soil_tested', 'farm_boundary', 'parking_space_available',
-      'shelter_shade_area', 'cold_storage', 'storage_room', 'kitchen_facility',
-      'toilet_available', 'toilet_drinking_water', 'electricity_connection',
-      'backup_power', 'waste_management_system'
-    ];
-    facilityFields.forEach(field => delete formValue[field]);
-
-    const draft = {
-      ...formValue,
-      ...facilityBooleans,
-      onboarding_step: this.currentStep,
-      // Local backup still keeps everything
-      selectedWaterSources: this.selectedWaterSources,
-      selectedIrrigationSystems: this.selectedIrrigationSystems,
-      selectedPestManagement: this.selectedPestManagement,
-      selectedSafetyEquipment: this.selectedSafetyEquipment,
-      selectedFacilities: this.selectedFacilities,
-      crops: this.crops,
-      cropOrganicInputs: this.cropOrganicInputs,
-      stayFacilities: this.stayFacilities,
-    };
-
-    // Do not persist onboarding draft in localStorage (avoid cross-property overwrites)
-
     // If we have a property ID, save to database
     if (this.currentPropertyId) {
-      // Only send current step payload to avoid overwriting other steps with defaults
+      // Only send current step payload to avoid overwriting other steps with defaults.
+      // Persist maxStepReached, not currentStep — otherwise reviewing an earlier step
+      // and autosaving would regress the saved progress (and re-lock later steps on reload).
       const backendData = this.sanitizePatchPayload({
         ...this.buildStepPayload(this.currentStep),
-        onboarding_step: this.currentStep,
+        onboarding_step: this.maxStepReached,
       });
 
       // Persist relational data only when explicitly requested (e.g., Next/Previous).
@@ -549,11 +517,14 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         if (this.currentStep === 8) {
           this.saveAdditionalData(8);
         }
+        if (this.currentStep === 11) {
+          this.saveAdditionalData(11);
+        }
       }
 
       this.propertyService.saveOnboardingProgress(
         this.currentPropertyId,
-        this.currentStep,
+        this.maxStepReached,
         backendData
       ).subscribe({
         next: () => {
@@ -615,6 +586,22 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
     if (step === 8) {
       this.saveExperiences(this.currentPropertyId);
     }
+
+    if (step === 11) {
+      this.saveWaterAndIrrigation(this.currentPropertyId);
+    }
+  }
+
+  // Water sources / irrigation / pest management / safety equipment only get persisted
+  // once, at initial property creation (see handlePropertyCreated) — if the user revisits
+  // this step later to change a selection, that edit was previously never saved at all.
+  private async saveWaterAndIrrigation(propertyId: string): Promise<void> {
+    await Promise.all([
+      firstValueFrom(this.propertyService.replaceWaterSources(propertyId, this.selectedWaterSources)),
+      firstValueFrom(this.propertyService.replaceIrrigationSystems(propertyId, this.selectedIrrigationSystems)),
+      firstValueFrom(this.propertyService.replacePestManagement(propertyId, this.selectedPestManagement)),
+      firstValueFrom(this.propertyService.replaceSafetyEquipment(propertyId, this.selectedSafetyEquipment)),
+    ]);
   }
 
   private async saveExperiences(propertyId: string): Promise<void> {
@@ -648,6 +635,27 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
     await firstValueFrom(this.propertyService.replaceExperiences(propertyId, payload));
   }
 
+  /** Full scalar payload for POST /properties so the first save matches DB columns (not only name+address). */
+  private buildFullPropertyCreatePayload(): any {
+    const merged: Record<string, any> = {};
+    for (let s = 0; s <= 5; s++) {
+      Object.assign(merged, this.buildStepPayload(s));
+    }
+    merged['state'] = 601;
+    merged['onboarding_step'] = this.currentStep;
+    merged['force_new'] = this.isNewPropertyMode;
+    merged['property_name'] = String(merged['property_name'] ?? '').trim() || 'Draft Property';
+    merged['address'] = String(merged['address'] ?? '').trim() || '';
+    const tla = merged['total_land_area'];
+    if (tla === undefined || tla === null || tla === '') {
+      merged['total_land_area'] = 0;
+    }
+    merged['land_area_unit'] =
+      merged['land_area_unit'] || this.propertyForm.get('land_area_unit')?.value || 'acres';
+    merged['ownership_type'] = merged['ownership_type'] || 'owned';
+    return this.sanitizePatchPayload(merged);
+  }
+
   createDraftProperty() {
     // Don't create if already creating
     if (this.isSubmitting) {
@@ -655,18 +663,10 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       return;
     }
 
-    const formValue = this.propertyForm.value;
-    const propertyData: any = {
-      property_name: formValue.property_name || 'Draft Property',
-      address: formValue.address || '',
-      total_land_area: formValue.total_land_area || 0,
-      ownership_type: formValue.ownership_type || 'owned',
-      state: 601, // Draft state
-      onboarding_step: this.currentStep,
-      force_new: this.isNewPropertyMode, // Force create new property when in new property mode
-    };
+    const propertyData: any = this.buildFullPropertyCreatePayload();
 
     console.log('createDraftProperty: Attempting with data:', propertyData);
+    const formValue = this.propertyForm.value;
     console.log('createDraftProperty: Form values:', { property_name: formValue.property_name, address: formValue.address });
 
     // Only create if we have minimum required data
@@ -711,6 +711,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         // Resume from the last saved onboarding step in DB
         if (property?.onboarding_step !== undefined && property?.onboarding_step !== null) {
           this.currentStep = property.onboarding_step;
+          this.maxStepReached = Math.max(this.maxStepReached, this.currentStep);
         }
 
         // Patch form so previously saved values are visible when resuming
@@ -884,12 +885,25 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
             emergency_plans: sf.emergency_plans || '',
             first_aid_kit: sf.first_aid_kit_available,
             cctv: sf.cctv_available,
-            amenities: Array.isArray(sf.amenities) ? sf.amenities.join(', ') : sf.amenities || '',
-            photos: sf.photos || []
+            // Backend now returns amenities/photos as normalized objects
+            // ({amenity} / {image_url} rows), not plain strings — unwrap them back
+            // to the plain string form this component's edit/save flow expects.
+            amenities: Array.isArray(sf.amenities)
+              ? sf.amenities.map((a: any) => typeof a === 'string' ? a : a?.amenity).filter(Boolean).join(', ')
+              : (sf.amenities || ''),
+            photos: Array.isArray(sf.photos)
+              ? sf.photos.map((p: any) => typeof p === 'string' ? p : p?.image_url).filter(Boolean)
+              : []
           }));
         }
 
         this.updateStepsAccessibility();
+
+        // Without this, the resumed currentStep/form data is set but never rendered:
+        // this app runs without zone.js, so a plain field assignment inside an HTTP
+        // subscribe callback doesn't trigger a re-render on its own (see the same
+        // pattern already applied around the getLatestDraftProperty() call above).
+        queueMicrotask(() => this.cdr.detectChanges());
       },
       error: (err: any) => {
         console.error('Failed to load property:', err);
@@ -899,6 +913,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
           this.currentPropertyId = null;
           this.clearSavedProgress();
         }
+        queueMicrotask(() => this.cdr.detectChanges());
       }
     });
   }
@@ -907,6 +922,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
     // Reset all form and state data when starting fresh
     this.currentPropertyId = null;
     this.currentStep = 0;
+    this.maxStepReached = 0;
     this.crops = [];
     this.cropOrganicInputs = {};
     this.stayFacilities = [];
@@ -1323,10 +1339,15 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         // Save the step we are leaving (important for step-specific payloads)
         this.saveProgress(true);
         this.currentStep++;
+        this.maxStepReached = Math.max(this.maxStepReached, this.currentStep);
         // Update step completion status after moving forward
         setTimeout(() => {
           this.updateStepsAccessibility();
+          this.cdr.detectChanges();
         }, 0);
+        // The step increment above can land after an `await` (see the photo-upload
+        // branch), and this app runs without zone.js, so force a render here too.
+        this.cdr.detectChanges();
       }
     } else {
       this.markCurrentStepTouched();
@@ -1347,7 +1368,9 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       // Update step completion status after moving back
       setTimeout(() => {
         this.updateStepsAccessibility();
+        this.cdr.detectChanges();
       }, 0);
+      this.cdr.detectChanges();
     }
   }
 
@@ -1696,16 +1719,20 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
 
     // Check each step's completion status
     for (let i = 1; i < this.stepsList.length; i++) {
-      // A step is accessible if the previous step is completed OR if current step is past it
+      // A step is accessible if the previous step is completed OR the user has already
+      // reached it before (maxStepReached, NOT currentStep — currentStep moves backward
+      // freely while reviewing earlier steps and must never re-lock later ones).
       const prevStepCompleted = this.isStepCompleted(i - 1);
-      this.stepsList[i].accessible = prevStepCompleted || this.currentStep >= i;
+      this.stepsList[i].accessible = prevStepCompleted || this.maxStepReached >= i;
       this.stepsList[i].completed = this.isStepCompleted(i);
     }
   }
 
   isStepCompleted(stepIndex: number): boolean {
-    // If current step is past this step, mark it as completed
-    if (this.currentStep > stepIndex) {
+    // If the user has ever reached past this step, it's completed — checked against
+    // maxStepReached (the historical high-water mark), NOT currentStep, so reviewing
+    // an earlier step doesn't re-lock everything after it.
+    if (this.maxStepReached > stepIndex) {
       return true;
     }
 
@@ -1714,7 +1741,7 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       return this.isCurrentStepValid();
     }
 
-    // For past steps, check if they have data
+    // For steps not yet reached, check if they have data
     const formValue = this.propertyForm.value;
 
     switch (stepIndex) {
@@ -1722,30 +1749,11 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         return !!(formValue.property_name?.trim() && formValue.address?.trim());
       case 1: // Land Details - must have area and ownership
         return !!(formValue.total_land_area && formValue.ownership_type);
-      case 2: // Business Details - mark as completed if user has visited
-        return this.currentStep > 2;
-      case 3: // Facilities - mark as completed if user has visited
-        return this.currentStep > 3;
-      case 4: // Staff & Team - mark as completed if user has visited
-        return this.currentStep > 4;
-      case 5: // Additional Information - mark as completed if user has visited
-        return this.currentStep > 5;
-      case 6: // Crops - mark as completed if user has visited
-        return this.currentStep > 6;
-      case 7: // Stay Facilities - mark as completed if user has visited
-        return this.currentStep > 7;
-      case 8: // Experiences - mark as completed if user has visited
-        return this.currentStep > 8;
       case 9: // Photos/Media - check if photos uploaded with types
         return this.uploadedImages.length >= 3 &&
-          this.uploadedImages.every(img => img.typeCode !== null && img.typeCode !== undefined) ||
-          this.currentStep > 9;
+          this.uploadedImages.every(img => img.typeCode !== null && img.typeCode !== undefined);
       case 10: // Pricing
         return this.propertyForm.get('price_per_day')?.valid || false;
-      case 11: // Water/Irrigation
-        return this.currentStep > 11;
-      case 12: // Review
-        return this.currentStep > 12;
       default:
         return false;
     }
@@ -1755,7 +1763,9 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
     if (this.stepsList[stepIndex]?.accessible) {
       this.saveProgress(false);
       this.currentStep = stepIndex;
+      this.maxStepReached = Math.max(this.maxStepReached, this.currentStep);
       this.updateStepsAccessibility();
+      this.cdr.detectChanges();
     }
   }
 
@@ -2294,14 +2304,6 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
           })
       )
     );
-  }
-
-  private checkLocalStorageForProperty(): void {
-    // Intentionally no-op: localStorage should not control onboarding state.
-    setTimeout(() => {
-      this.clearSavedProgress();
-      this.updateStepsAccessibility();
-    }, 100);
   }
 
 }

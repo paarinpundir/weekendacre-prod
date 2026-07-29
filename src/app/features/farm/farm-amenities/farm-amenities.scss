@@ -1,11 +1,11 @@
 .farm-amenities {
   padding: 2rem 0;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid var(--color-border-light);
 
   .section-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #222;
+    color: var(--color-text-primary);
     margin-bottom: 1.5rem;
   }
 
@@ -26,14 +26,14 @@
       }
 
       .amenity-name {
-        color: #222;
+        color: var(--color-text-primary);
         font-size: 1rem;
       }
     }
   }
 
   .no-amenities {
-    color: #717171;
+    color: var(--color-text-secondary);
     font-style: italic;
   }
 }

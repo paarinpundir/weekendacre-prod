@@ -6,6 +6,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/landing/home/home').then(m => m.Home)
   },
   {
+    path: 'experiences/:slug',
+    loadComponent: () =>
+      import('./features/landing/experience-detail/experience-detail').then(m => m.ExperienceDetail),
+  },
+  {
+    path: 'events/:slug',
+    loadComponent: () =>
+      import('./features/landing/event-detail/event-detail').then(m => m.EventDetail),
+  },
+  {
     path: 'virtual-tour',
     loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.VirtualTour)
   },

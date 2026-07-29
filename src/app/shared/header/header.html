@@ -1,15 +1,23 @@
 <header class="header">
   <nav class="navbar">
     <div class="nav-container">
-      <a routerLink="/" class="logo">
-        <span class="logo-icon">🌿</span>
-        <span class="logo-text">WeekendAcres</span>
+      <a routerLink="/" class="logo logo--uv" aria-label="U and V — You and Village, home">
+        <span class="logo-mark" aria-hidden="true">
+          <!-- <span class="logo-letter">U</span>
+          <span class="logo-emblem" title="Village" aria-hidden="true"
+            ><i class="fa-solid fa-house-chimney-window"></i></span>
+          <span class="logo-letter">V</span> -->
+        </span>
+        <span class="logo-wordmark">
+          <span class="logo-wordmark__main">WeekendAcres</span>
+        </span>
       </a>
 
       <ul class="nav-menu">
         <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
         <li><a routerLink="/virtual-tour" routerLinkActive="active">About</a></li>
         <li><a routerLink="/activities" routerLinkActive="active">Activities</a></li>
+        <li><a routerLink="/" fragment="gallery-section" target="_blank">Gallery</a></li>
         <li><a routerLink="/education" routerLinkActive="active">Products & Activities</a></li>
         <li><a routerLink="/booking" routerLinkActive="active">Join Us</a></li>
         @if (authService.isLoggedIn()) {

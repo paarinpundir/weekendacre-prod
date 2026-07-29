@@ -1,7 +1,11 @@
 main {
+  // Offset for fixed `<app-header>` (see `header.scss`); must stay in sync with `--layout-app-header-height`
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--layout-app-header-height));
+
   min-height: calc(100vh - 160px); // Account for header and footer
-  
+
   &.no-header {
+    padding-top: 0;
     min-height: 100vh;
   }
 }

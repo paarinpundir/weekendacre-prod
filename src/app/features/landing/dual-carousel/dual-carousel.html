@@ -2,26 +2,52 @@
   <div class="carousel-container">
     @if (slides && slides.length > 0) {
       <div class="carousel-wrapper" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-        <button class="carousel-btn prev" (click)="prevSlide()" aria-label="Previous slide">‹</button>
-        
-        <div class="carousel-slide" 
-             [style.background-color]="slides[currentIndex]?.backgroundColor || '#f5f7fa'"
-             [style.background-image]="slides[currentIndex]?.imageUrl ? 'url(' + slides[currentIndex].imageUrl + ')' : 'none'"
-             [style.background-size]="'cover'"
-             [style.background-position]="'center'">
+        <button class="carousel-btn prev" type="button" (click)="prevSlide()" aria-label="Previous slide">
+          <span class="carousel-btn__chevron" aria-hidden="true">‹</span>
+        </button>
+
+        <div
+          class="carousel-slide"
+          [style.background-color]="activeSlide?.backgroundColor || 'var(--color-forest-header)'"
+          [style.background-image]="heroBackgroundImage"
+          [style.background-size]="'cover'"
+          [style.background-position]="'center'">
           <div class="slide-overlay"></div>
           <div class="slide-content">
-            <h2 class="slide-title">{{ slides[currentIndex].title }}</h2>
-            <p class="slide-subtext">{{ slides[currentIndex].subtext }}</p>
+            <h2 class="slide-title">{{ activeSlide?.title }}</h2>
+            <p class="slide-subtext">{{ activeSlide?.subtext }}</p>
+            @if (activeSlide?.primaryCta || activeSlide?.secondaryCta) {
+              <div class="slide-ctas">
+                @if (activeSlide?.primaryCta; as primary) {
+                  <a
+                    class="hero-cta"
+                    [routerLink]="primary.routerLink"
+                    [fragment]="primary.fragment || undefined">
+                    <span class="hero-cta__bracket">[</span>{{ primary.label }}<span class="hero-cta__bracket">]</span>
+                  </a>
+                }
+                @if (activeSlide?.secondaryCta; as secondary) {
+                  <a
+                    class="hero-cta"
+                    [routerLink]="secondary.routerLink"
+                    [fragment]="secondary.fragment || undefined">
+                    <span class="hero-cta__bracket">[</span>{{ secondary.label }}<span class="hero-cta__bracket">]</span>
+                  </a>
+                }
+              </div>
+            }
           </div>
         </div>
-        
-        <button class="carousel-btn next" (click)="nextSlide()" aria-label="Next slide">›</button>
-        
+
+        <button class="carousel-btn next" type="button" (click)="nextSlide()" aria-label="Next slide">
+          <span class="carousel-btn__chevron" aria-hidden="true">›</span>
+        </button>
+
         <div class="carousel-indicators">
           @for (slide of slides; track slide.id; let i = $index) {
-            <button 
-              class="indicator" 
+            <button
+              type="button"
+              class="indicator"
               [class.active]="currentIndex === i"
               (click)="goToSlide(i)"
               [attr.aria-label]="'Go to slide ' + (i + 1)">
@@ -29,8 +55,6 @@
           }
         </div>
       </div>
-      
     }
   </div>
 </section>
-

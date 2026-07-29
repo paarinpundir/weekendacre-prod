@@ -21,7 +21,7 @@ export interface Booking {
   providedIn: 'root'
 })
 export class BookingService {
-  private apiUrl = `${environment.apiUrl}/bookings`;
+  private readonly apiUrl = `${environment.apiUrl}/api/v1/bookings`;
 
   constructor(
     private http: HttpClient,

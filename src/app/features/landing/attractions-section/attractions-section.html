@@ -6,7 +6,9 @@
       <div class="attractions-grid">
         @for (attraction of attractions; track attraction.id) {
           <div class="attraction-card" (click)="onAttractionClick(attraction)">
-            <div class="attraction-icon">{{ attraction.icon || '✨' }}</div>
+            <div class="attraction-icon" aria-hidden="true">
+              <i [class]="attraction.icon || 'fa-solid fa-leaf'"></i>
+            </div>
             <h3 class="attraction-title">{{ attraction.title }}</h3>
             @if (attraction.description) {
               <p class="attraction-description">{{ attraction.description }}</p>

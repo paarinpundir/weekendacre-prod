@@ -2,7 +2,9 @@
   <div class="reviews-header">
     <div class="rating-summary">
       <div class="overall-rating">
-        <span class="rating-value">★{{ overallRating || '4.8' }}</span>
+        <span class="rating-value">
+          <i class="fa-solid fa-star" aria-hidden="true"></i>{{ overallRating || '4.8' }}
+        </span>
         <span class="review-count-text">· {{ reviewCount || 0 }} reviews</span>
       </div>
     </div>
@@ -22,8 +24,16 @@
                 <div class="review-date">{{ formatDate(review.date) }}</div>
               </div>
             </div>
-            <div class="review-rating">
-              {{ getRatingStars(review.rating || 5) }}
+            <div class="review-rating" aria-hidden="true">
+              @for (state of getStarStates(review.rating || 5); track $index) {
+                @if (state === 'full') {
+                  <i class="fa-solid fa-star"></i>
+                } @else if (state === 'half') {
+                  <i class="fa-solid fa-star-half-stroke"></i>
+                } @else {
+                  <i class="fa-regular fa-star"></i>
+                }
+              }
             </div>
           </div>
           <div class="review-content">

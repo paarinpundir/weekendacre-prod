@@ -6,7 +6,7 @@
   </div>
   } @else if (error) {
   <div class="error-state">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></div>
     <h2>Error Loading Property</h2>
     <p>{{ error }}</p>
     <button class="btn-primary" (click)="goBack()">Go Back</button>
@@ -61,7 +61,7 @@
         <div class="gallery-grid">
           <div class="main-image-large no-images-placeholder">
             <div class="placeholder-content">
-              <span class="placeholder-icon">📷</span>
+              <span class="placeholder-icon" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
               <p>No photos available yet</p>
             </div>
           </div>
@@ -79,7 +79,7 @@
         </button>
         <div class="gallery-share-save">
           <button class="action-btn"><span>Share</span></button>
-          <button class="action-btn"><span>♡ Save</span></button>
+          <button class="action-btn"><i class="fa-regular fa-heart" aria-hidden="true"></i> Save</button>
         </div>
       </div>
       <div class="gallery-scroll-body">
@@ -97,10 +97,12 @@
     @if (isLightboxOpen) {
     <div class="lightbox-backdrop" (click)="closeLightbox()">
       <div class="lightbox-header">
-        <button class="lightbox-close-btn" (click)="closeLightbox()">✕ Close</button>
+        <button class="lightbox-close-btn" (click)="closeLightbox()">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Close
+        </button>
         <div class="lightbox-counter">{{ galleryIndex + 1 }} / {{ getAllImages().length }}</div>
         <div class="lightbox-actions">
-          <button class="action-btn">♡</button>
+          <button class="action-btn" aria-label="Save"><i class="fa-regular fa-heart" aria-hidden="true"></i></button>
         </div>
       </div>
       <div class="lightbox-body" (click)="$event.stopPropagation()">
@@ -127,7 +129,7 @@
           <div class="title-left">
             <h1 class="property-title">{{ property.property_name }}</h1>
             <div class="property-location">
-              <span class="location-icon">📍</span>
+              <span class="location-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
               <span>{{ getPropertyLocation() }}</span>
             </div>
           </div>
@@ -155,21 +157,21 @@
         <!-- Key Features -->
         <div class="key-features">
           <div class="feature-item">
-            <span class="feature-icon">📏</span>
+            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-ruler-combined"></i></span>
             <span class="feature-text">{{ property.total_land_area }} acres</span>
           </div>
           <div class="feature-item">
-            <span class="feature-icon">🏠</span>
+            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
             <span class="feature-text">{{ property.ownership_type || 'Owned' }}</span>
           </div>
           @if (property.years_in_operation) {
           <div class="feature-item">
-            <span class="feature-icon">⏱️</span>
+            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-clock-rotate-left"></i></span>
             <span class="feature-text">{{ property.years_in_operation }} years</span>
           </div>
           }
           <div class="feature-item">
-            <span class="feature-icon">🌾</span>
+            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></span>
             <span class="feature-text">Farm Property</span>
           </div>
         </div>
@@ -230,79 +232,79 @@
           <div class="amenities-grid">
             @if (property.crop_rotation_system) {
             <div class="amenity-item">
-              <span class="amenity-icon">🌾</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></span>
               <span>Crop Rotation System</span>
             </div>
             }
             @if (property.is_soil_tested) {
             <div class="amenity-item">
-              <span class="amenity-icon">🌱</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-seedling"></i></span>
               <span>Soil Tested</span>
             </div>
             }
             @if (property.farm_boundary) {
             <div class="amenity-item">
-              <span class="amenity-icon">🏞️</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-mountain-sun"></i></span>
               <span>Farm Boundary</span>
             </div>
             }
             @if (property.parking_space_available) {
             <div class="amenity-item">
-              <span class="amenity-icon">🚗</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-car"></i></span>
               <span>Parking available</span>
             </div>
             }
             @if (property.shelter_shade_area) {
             <div class="amenity-item">
-              <span class="amenity-icon">🏖️</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-umbrella-beach"></i></span>
               <span>Shelter/Shade Area</span>
             </div>
             }
             @if (property.cold_storage) {
             <div class="amenity-item">
-              <span class="amenity-icon">❄️</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-snowflake"></i></span>
               <span>Cold Storage</span>
             </div>
             }
             @if (property.storage_room) {
             <div class="amenity-item">
-              <span class="amenity-icon">📦</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-box"></i></span>
               <span>Storage Room</span>
             </div>
             }
             @if (property.kitchen_facility) {
             <div class="amenity-item">
-              <span class="amenity-icon">🍳</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-kitchen-set"></i></span>
               <span>Kitchen facility</span>
             </div>
             }
             @if (property.toilet_available) {
             <div class="amenity-item">
-              <span class="amenity-icon">🚽</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-toilet"></i></span>
               <span>Toilet available</span>
             </div>
             }
             @if (property.toilet_drinking_water) {
             <div class="amenity-item">
-              <span class="amenity-icon">💧</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-droplet"></i></span>
               <span>Drinking Water</span>
             </div>
             }
             @if (property.electricity_connection) {
             <div class="amenity-item">
-              <span class="amenity-icon">⚡</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
               <span>Electricity</span>
             </div>
             }
             @if (property.backup_power) {
             <div class="amenity-item">
-              <span class="amenity-icon">🔋</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-car-battery"></i></span>
               <span>Backup Power</span>
             </div>
             }
             @if (property.waste_management_system) {
             <div class="amenity-item">
-              <span class="amenity-icon">♻️</span>
+              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-recycle"></i></span>
               <span>Waste Management</span>
             </div>
             }
@@ -347,73 +349,73 @@
           <div class="experiences-grid">
             @if (isExperienceEnabled(property.experiences, 'experience_farm_walk')) {
             <div class="experience-item">
-              <span class="experience-icon">🚶</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-person-walking"></i></span>
               <span>Farm Walk</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_vegetable_harvesting')) {
             <div class="experience-item">
-              <span class="experience-icon">🥕</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-carrot"></i></span>
               <span>Vegetable Harvesting</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_animal_interaction')) {
             <div class="experience-item">
-              <span class="experience-icon">🐄</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-cow"></i></span>
               <span>Animal Interaction</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_organic_farming_workshop')) {
             <div class="experience-item">
-              <span class="experience-icon">🌿</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
               <span>Organic Farming Workshop</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_composting_demo')) {
             <div class="experience-item">
-              <span class="experience-icon">♻️</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-recycle"></i></span>
               <span>Composting Demo</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_pottery')) {
             <div class="experience-item">
-              <span class="experience-icon">🏺</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-mortar-pestle"></i></span>
               <span>Pottery</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_nature_trail')) {
             <div class="experience-item">
-              <span class="experience-icon">🌲</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-tree"></i></span>
               <span>Nature Trail</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_rural_games')) {
             <div class="experience-item">
-              <span class="experience-icon">🎮</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-chess-pawn"></i></span>
               <span>Rural Games</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_bonfire')) {
             <div class="experience-item">
-              <span class="experience-icon">🔥</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-fire"></i></span>
               <span>Bonfire</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_outdoor_seating')) {
             <div class="experience-item">
-              <span class="experience-icon">🪑</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-chair"></i></span>
               <span>Outdoor Seating</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_picnic_spots')) {
             <div class="experience-item">
-              <span class="experience-icon">🧺</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i></span>
               <span>Picnic Spots</span>
             </div>
             }
             @if (isExperienceEnabled(property.experiences, 'experience_kids_activities')) {
             <div class="experience-item">
-              <span class="experience-icon">👶</span>
+              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-child"></i></span>
               <span>Kids Activities</span>
             </div>
             }

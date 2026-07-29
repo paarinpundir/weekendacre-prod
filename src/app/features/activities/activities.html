@@ -11,7 +11,7 @@
           placeholder="Search activities..." 
           [(ngModel)]="searchTerm"
           class="search-input">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
       </div>
       
       <div class="filter-group">
@@ -39,7 +39,7 @@
         <div class="activity-card">
           <div class="activity-image" [style.background-image]="'url(' + activity.imageUrl + ')'">
             @if (activity.videoUrl) {
-              <div class="video-badge">📹 Video Available</div>
+              <div class="video-badge"><i class="fa-solid fa-video" aria-hidden="true"></i> Video Available</div>
             }
           </div>
           <div class="activity-content">
@@ -53,7 +53,7 @@
             
             <div class="activity-details">
               <div class="detail-item">
-                <span class="detail-icon">👥</span>
+                <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
                 <span>Age: {{ activity.ageLimit.min }}+ 
                   @if (activity.ageLimit.max) {
                     - {{ activity.ageLimit.max }}
@@ -61,11 +61,11 @@
                 </span>
               </div>
               <div class="detail-item">
-                <span class="detail-icon">⏱️</span>
+                <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-clock"></i></span>
                 <span>{{ activity.duration }} min</span>
               </div>
               <div class="detail-item">
-                <span class="detail-icon">🏷️</span>
+                <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-tag"></i></span>
                 <span>{{ activity.category }}</span>
               </div>
             </div>

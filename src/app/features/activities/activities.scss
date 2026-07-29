@@ -1,7 +1,7 @@
 .activities {
   min-height: 100vh;
   padding: 2rem 0;
-  background: #f8f9fa;
+  background: var(--color-bg-secondary);
 }
 
 .filters {
@@ -24,14 +24,14 @@
   .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 3rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--color-border-light);
     border-radius: 25px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
 
     &:focus {
       outline: none;
-      border-color: #a8e063;
+      border-color: var(--color-primary-accent);
     }
   }
 
@@ -51,12 +51,12 @@
 
   label {
     font-weight: 600;
-    color: #2d5016;
+    color: var(--color-primary);
   }
 
   .filter-select {
     padding: 0.75rem 1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--color-border-light);
     border-radius: 25px;
     font-size: 1rem;
     background: white;
@@ -65,7 +65,7 @@
 
     &:focus {
       outline: none;
-      border-color: #a8e063;
+      border-color: var(--color-primary-accent);
     }
   }
 }
@@ -119,7 +119,7 @@
   gap: 1rem;
 
   h3 {
-    color: #2d5016;
+    color: var(--color-primary);
     margin: 0;
     flex: 1;
     font-size: 1.3rem;
@@ -127,7 +127,7 @@
 }
 
 .activity-description {
-  color: #666;
+  color: var(--color-text-muted);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -138,7 +138,7 @@
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: var(--color-bg-secondary);
   border-radius: 10px;
 }
 
@@ -146,7 +146,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
 
   .detail-icon {
@@ -159,18 +159,18 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .price {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #2d5016;
+  color: var(--color-primary);
 }
 
 .btn-book {
-  background: #a8e063;
-  color: #2d5016;
+  background: var(--color-primary-accent);
+  color: var(--color-primary);
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
   text-decoration: none;
@@ -178,7 +178,7 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: #8bc34a;
+    background: var(--color-primary-lightest);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(168, 224, 99, 0.4);
   }
@@ -187,7 +187,7 @@
 .no-results {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
 }
 
@@ -199,23 +199,23 @@
   white-space: nowrap;
 
   &.badge-easy {
-    background: #c8e6c9;
-    color: #2e7d32;
+    background: var(--color-difficulty-easy-bg);
+    color: var(--color-difficulty-easy-text);
   }
 
   &.badge-medium {
-    background: #fff9c4;
-    color: #f57f17;
+    background: var(--color-bg-primary)9c4;
+    color: var(--color-difficulty-warn);
   }
 
   &.badge-hard {
-    background: #ffccbc;
-    color: #d84315;
+    background: var(--color-difficulty-hard-bg);
+    color: var(--color-difficulty-hard-text);
   }
 
   &.badge-expert {
-    background: #f8bbd0;
-    color: #c2185b;
+    background: var(--color-difficulty-extreme-bg);
+    color: var(--color-difficulty-extreme-text);
   }
 }
 

@@ -6,7 +6,7 @@
   <app-experience-cards [cards]="experienceCards"></app-experience-cards>
 
   <!-- Section 2.5: Properties Listing -->
-  <section class="properties-section">
+  <section id="properties-section" class="properties-section">
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Explore Our Properties</h2>
@@ -35,10 +35,13 @@
   <app-membership-section></app-membership-section>
 
   <!-- Section 4: Attractions -->
-  <app-attractions-section 
+  <app-attractions-section
     [attractions]="attractions"
     (attractionClick)="onAttractionClick($event)">
   </app-attractions-section>
+
+  <!-- Section 4.5: Photo Gallery -->
+  <app-gallery-section [photos]="galleryPhotos"></app-gallery-section>
 
   <!-- Section 5: Upcoming Events -->
   <app-events-section [events]="events"></app-events-section>

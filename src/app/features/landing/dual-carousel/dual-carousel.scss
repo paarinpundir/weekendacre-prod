@@ -1,8 +1,13 @@
 @use '../../../../styles/theme' as *;
 
+// Custom elements default to `inline`; block avoids stray line-box gaps under the fixed header.
+:host {
+  display: block;
+}
+
 .dual-carousel {
   padding: 0;
-  background: var(--color-bg-primary);
+  background: var(--color-forest-header-deep, var(--color-forest-header-deep));
 
   .carousel-container {
     max-width: 100%;
@@ -14,29 +19,39 @@
     position: relative;
     border-radius: 0;
     overflow: hidden;
-    min-height: 80vh;
+    min-height: min(88vh, 820px);
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
+
+    @media (max-width: 768px) {
+      min-height: min(78vh, 640px);
+    }
 
     .carousel-slide {
       width: 100%;
-      min-height: 80vh;
+      min-height: min(88vh, 820px);
       background-size: cover;
       background-position: center;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.5s ease;
+      transition: opacity 0.45s ease;
+
+      @media (max-width: 768px) {
+        min-height: min(78vh, 640px);
+      }
 
       .slide-overlay {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--color-bg-overlay);
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 18, 10, 0.45) 0%,
+          rgba(15, 28, 18, 0.25) 35%,
+          rgba(8, 16, 10, 0.65) 100%
+        );
       }
 
       .slide-content {
@@ -44,30 +59,76 @@
         z-index: 1;
         text-align: center;
         color: white;
-        padding: 4rem 2rem;
-        max-width: 1000px;
+        padding: 5rem 2rem 6.5rem;
+        max-width: 920px;
+
+        @media (max-width: 768px) {
+          padding: 4rem 1.25rem 5.5rem;
+        }
 
         .slide-title {
-          font-size: 4rem;
-          font-weight: 800;
-          margin-bottom: 2rem;
-          text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-          line-height: 1.2;
-
-          @media (max-width: 768px) {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-          }
+          font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+          font-size: clamp(2.25rem, 5vw, 3.75rem);
+          font-weight: 600;
+          font-style: italic;
+          margin: 0 0 1.25rem;
+          line-height: 1.15;
+          letter-spacing: 0.02em;
+          color: var(--color-gold-wash);
+          text-shadow:
+            0 0 42px rgba(197, 160, 89, 0.45),
+            0 2px 14px rgba(0, 0, 0, 0.55),
+            0 1px 0 rgba(0, 0, 0, 0.35);
         }
 
         .slide-subtext {
-          font-size: 1.75rem;
-          line-height: 1.6;
-          opacity: 0.95;
-          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+          font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+          font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+          font-weight: 500;
+          font-style: italic;
+          line-height: 1.55;
+          color: rgba(255, 255, 255, 0.96);
+          margin: 0 auto 2.25rem;
+          max-width: 36rem;
+          text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+        }
 
-          @media (max-width: 768px) {
-            font-size: 1.25rem;
+        .slide-ctas {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem 1.25rem;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .hero-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.65rem 1.35rem;
+          font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+          font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+          font-weight: 600;
+          font-style: italic;
+          letter-spacing: 0.03em;
+          color: var(--color-bg-primary);
+          text-decoration: none;
+          background: rgba(12, 28, 18, 0.35);
+          border: 1px dashed rgba(168, 224, 99, 0.65);
+          border-radius: 2px;
+          backdrop-filter: blur(6px);
+          transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+
+          .hero-cta__bracket {
+            color: rgba(197, 160, 89, 0.95);
+            margin: 0 0.15rem;
+            font-weight: 500;
+          }
+
+          &:hover {
+            background: rgba(27, 48, 34, 0.55);
+            border-color: rgba(232, 213, 168, 0.9);
+            color: var(--color-cream);
           }
         }
       }
@@ -77,62 +138,93 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.9);
+      background: transparent;
       border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      font-size: 2rem;
+      width: 3.25rem;
+      height: 4rem;
       cursor: pointer;
-      z-index: 2;
-      transition: all var(--transition-base);
+      z-index: 4;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-text-primary);
+      color: var(--color-gold);
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+      transition: color 0.2s ease, transform 0.2s ease;
+
+      .carousel-btn__chevron {
+        font-size: 3.25rem;
+        font-weight: 300;
+        line-height: 1;
+        font-family: Georgia, serif;
+      }
 
       &:hover {
-        background: white;
-        transform: translateY(-50%) scale(1.1);
+        color: var(--color-gold-wash);
+        transform: translateY(-50%) scale(1.06);
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba(232, 213, 168, 0.8);
+        outline-offset: 4px;
+        border-radius: 4px;
       }
 
       &.prev {
-        left: 1rem;
+        left: 0.75rem;
       }
 
       &.next {
-        right: 1rem;
+        right: 0.75rem;
+      }
+
+      @media (max-width: 768px) {
+        width: 2.5rem;
+
+        .carousel-btn__chevron {
+          font-size: 2.5rem;
+        }
+
+        &.prev {
+          left: 0.35rem;
+        }
+
+        &.next {
+          right: 0.35rem;
+        }
       }
     }
   }
 
   .carousel-indicators {
     position: absolute;
-    bottom: 3rem;
+    bottom: 2.25rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    gap: 0.75rem;
-    z-index: 3;
+    gap: 0.6rem;
+    z-index: 4;
 
     .indicator {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      border: 2px solid var(--color-primary-light);
+      border: 2px solid rgba(232, 213, 168, 0.55);
       background: transparent;
       cursor: pointer;
-      transition: all var(--transition-base);
+      padding: 0;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 
       &.active {
-        background: var(--color-primary-light);
+        background: var(--color-gold);
+        border-color: var(--color-gold-wash);
+        transform: scale(1.15);
       }
 
-      &:hover {
-        transform: scale(1.2);
+      &:hover:not(.active) {
+        border-color: var(--color-gold-wash);
+        transform: scale(1.1);
       }
     }
   }
 }
-

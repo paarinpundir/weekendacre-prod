@@ -1,7 +1,7 @@
 .education {
   min-height: 100vh;
   padding: 2rem 0;
-  background: #f8f9fa;
+  background: var(--color-bg-secondary);
 }
 
 .education-grid {
@@ -35,14 +35,14 @@
   }
 
   h2 {
-    color: #2d5016;
+    color: var(--color-primary);
     margin: 0;
     font-size: 1.5rem;
   }
 }
 
 .section-description {
-  color: #666;
+  color: var(--color-text-muted);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -51,7 +51,7 @@
   margin-bottom: 1.5rem;
 
   h3 {
-    color: #2d5016;
+    color: var(--color-primary);
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
@@ -67,14 +67,14 @@
     align-items: start;
     gap: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
+    background: var(--color-bg-secondary);
     border-radius: 10px;
     margin-bottom: 0.5rem;
     transition: background 0.3s ease;
     cursor: pointer;
 
     &:hover {
-      background: #e8f5e9;
+      background: var(--color-bg-tertiary);
     }
 
     .play-icon,
@@ -89,7 +89,7 @@
 
       strong {
         display: block;
-        color: #2d5016;
+        color: var(--color-primary);
         margin-bottom: 0.25rem;
       }
 
@@ -97,7 +97,7 @@
       .read-time {
         display: block;
         font-size: 0.85rem;
-        color: #666;
+        color: var(--color-text-muted);
         margin-top: 0.25rem;
       }
     }
@@ -109,13 +109,13 @@
   gap: 1rem;
   margin-top: 0.5rem;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .btn-explore {
   width: 100%;
-  background: #a8e063;
-  color: #2d5016;
+  background: var(--color-primary-accent);
+  color: var(--color-primary);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
@@ -124,14 +124,14 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: #8bc34a;
+    background: var(--color-primary-lightest);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(168, 224, 99, 0.4);
   }
 }
 
 .cta-section {
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   color: white;
   padding: 3rem;
   border-radius: 15px;
@@ -151,8 +151,8 @@
 }
 
 .btn-cta {
-  background: #a8e063;
-  color: #2d5016;
+  background: var(--color-primary-accent);
+  color: var(--color-primary);
   padding: 1rem 2.5rem;
   border-radius: 30px;
   text-decoration: none;
@@ -162,7 +162,7 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: #8bc34a;
+    background: var(--color-primary-lightest);
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(168, 224, 99, 0.4);
   }

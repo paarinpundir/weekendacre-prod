@@ -16,9 +16,24 @@ import * as AuthActions from '../../../core/store/auth/auth.actions';
 export class Login implements OnDestroy {
   email = '';
   password = '';
+  /** API / routing roles: user = member, partner = farm partner, admin = staff */
   userType: 'user' | 'partner' | 'admin' = 'user';
+  showPassword = false;
+  rememberMe = true;
   errorMessage = '';
+  infoMessage = '';
   isLoading = false;
+
+  get emailFieldLabel(): string {
+    switch (this.userType) {
+      case 'partner':
+        return 'Farm partner email';
+      case 'admin':
+        return 'Staff email';
+      default:
+        return 'Member email or ID';
+    }
+  }
   
   private destroy$ = new Subject<void>();
   private store = inject(Store);
@@ -29,6 +44,7 @@ export class Login implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((authState: any) => {
         if (authState.loginError) {
+          this.infoMessage = '';
           this.errorMessage = authState.loginError;
           this.isLoading = false;
         } else if (authState.isAuthenticated) {
@@ -55,6 +71,7 @@ export class Login implements OnDestroy {
 
   onSubmit() {
     this.errorMessage = '';
+    this.infoMessage = '';
     
     if (!this.email || !this.password) {
       this.errorMessage = 'Please fill in all fields.';
@@ -66,6 +83,18 @@ export class Login implements OnDestroy {
       email: this.email, 
       password: this.password 
     }));
+  }
+
+  onForgotPasswordClick(event: Event) {
+    event.preventDefault();
+    this.errorMessage = '';
+    this.infoMessage =
+      'Password reset is coming soon. For help, reach out to Weekend Acres support.';
+  }
+
+  /** Keeps floating labels up when browsers skip :placeholder-shown (e.g. autofill). */
+  isFilled(value: string | null | undefined): boolean {
+    return (value ?? '').trim().length > 0;
   }
 }
 

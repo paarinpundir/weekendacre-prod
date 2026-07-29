@@ -16,7 +16,9 @@
       <div class="farm-header">
         <h3 class="farm-title">{{ farm.name }}</h3>
         @if (farm.isVerified) {
-          <span class="verified-badge">✓ Verified</span>
+          <span class="verified-badge"
+            ><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Verified</span
+          >
         }
       </div>
       
@@ -24,7 +26,7 @@
       
       <div class="farm-meta">
         <div class="farm-rating">
-          <span class="star">★</span>
+          <span class="star" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
           <span class="rating-value">{{ farm.rating || 0 }}</span>
         </div>
         <div class="farm-price">

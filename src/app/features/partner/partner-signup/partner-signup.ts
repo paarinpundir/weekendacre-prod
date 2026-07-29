@@ -20,6 +20,8 @@ export class PartnerSignup implements OnDestroy {
   password = '';
   confirmPassword = '';
   agreeToTerms = false;
+  showPassword = false;
+  showPasswordConfirm = false;
   errorMessage = '';
   isLoading = false;
   
@@ -92,6 +94,10 @@ export class PartnerSignup implements OnDestroy {
       phone: this.phone,
       userType: 'partner'
     }));
+  }
+
+  isFilled(value: string | null | undefined): boolean {
+    return (value ?? '').trim().length > 0;
   }
 }
 

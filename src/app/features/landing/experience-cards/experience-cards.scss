@@ -15,6 +15,12 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 
+    .experience-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
     .experience-card {
       position: relative;
       min-height: 350px;
@@ -28,6 +34,11 @@
       &:hover {
         transform: translateY(-8px);
         box-shadow: 0 12px 30px var(--color-shadow-heavy);
+      }
+
+      &:focus-visible {
+        outline: 3px solid var(--color-primary-light, var(--color-primary-accent));
+        outline-offset: 3px;
       }
 
       .card-overlay {
@@ -60,7 +71,32 @@
           line-height: 1.6;
           opacity: 0.95;
         }
+
+        .card-cta {
+          display: inline-block;
+          margin-top: 0.75rem;
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          opacity: 0;
+          transform: translateY(4px);
+          transition: opacity var(--transition-base), transform var(--transition-base);
+        }
       }
+
+      &:hover .card-cta,
+      &:focus-visible .card-cta {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  @media (hover: none) {
+    .cards-grid .experience-card .card-cta {
+      opacity: 0.95;
+      transform: none;
     }
   }
 

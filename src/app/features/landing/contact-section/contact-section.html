@@ -6,7 +6,7 @@
       <!-- Contact Info -->
       <div class="contact-info">
         <div class="info-item">
-          <div class="info-icon">📞</div>
+          <div class="info-icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></div>
           <div class="info-content">
             <h3>Phone</h3>
             <a [href]="'tel:' + phone">{{ phone }}</a>
@@ -14,7 +14,7 @@
         </div>
 
         <div class="info-item">
-          <div class="info-icon">✉️</div>
+          <div class="info-icon" aria-hidden="true"><i class="fa-solid fa-envelope"></i></div>
           <div class="info-content">
             <h3>Email</h3>
             <a [href]="'mailto:' + email">{{ email }}</a>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="info-item">
-          <div class="info-icon">📍</div>
+          <div class="info-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></div>
           <div class="info-content">
             <h3>Location</h3>
             <p>{{ address }}</p>
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Map -->
-    <div class="map-container">
+    <!-- <div class="map-container">
       @if (getMapIframeUrl()) {
         <iframe
           [src]="getMapIframeUrl()"
@@ -98,11 +98,11 @@
         </iframe>
       } @else {
         <div class="map-placeholder">
-          <p>📍 {{ address }}</p>
+          <p><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ address }}</p>
           <a [href]="getMapUrl()" target="_blank" class="map-link">Open in Google Maps →</a>
         </div>
       }
-    </div>
+    </div> -->
   </div>
 </section>
 

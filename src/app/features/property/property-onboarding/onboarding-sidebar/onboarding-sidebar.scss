@@ -1,7 +1,7 @@
 .onboarding-sidebar {
   width: 320px;
   background: white;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--color-border-light);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -14,8 +14,8 @@
   
   .sidebar-header {
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-    background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+    border-bottom: 1px solid var(--color-border-light);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     color: white;
     
     h2 {
@@ -50,27 +50,27 @@
       }
       
       &:not(.disabled):hover {
-        background: #f8f9fa;
+        background: var(--color-bg-secondary);
       }
       
       &.active {
-        background: #e8f5e9;
-        border-left-color: var(--color-primary, #2d5016);
+        background: var(--color-bg-tertiary);
+        border-left-color: var(--color-primary, var(--color-primary));
         
         .step-indicator {
-          background: var(--color-primary, #2d5016);
+          background: var(--color-primary, var(--color-primary));
           color: white;
         }
         
         .step-title {
-          color: var(--color-primary, #2d5016);
+          color: var(--color-primary, var(--color-primary));
           font-weight: 600;
         }
       }
       
       &.completed {
         .step-indicator {
-          background: #4caf50;
+          background: var(--color-material-green);
           color: white;
         }
       }
@@ -79,7 +79,7 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: #e0e0e0;
+        background: var(--color-border-light);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -100,13 +100,13 @@
         .step-title {
           font-size: 1rem;
           font-weight: 500;
-          color: #222;
+          color: var(--color-text-primary);
           margin-bottom: 0.25rem;
         }
         
         .step-desc {
           font-size: 0.85rem;
-          color: #717171;
+          color: var(--color-text-secondary);
         }
       }
     }
@@ -114,22 +114,22 @@
   
   .sidebar-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--color-border-light);
     
     .btn-clear-sidebar {
       width: 100%;
       padding: 0.75rem;
       background: transparent;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--color-border-light);
       border-radius: 8px;
-      color: #717171;
+      color: var(--color-text-secondary);
       font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.3s ease;
       
       &:hover {
-        background: #f5f5f5;
-        border-color: #b0b0b0;
+        background: var(--color-surface-subtle);
+        border-color: var(--color-text-tertiary);
       }
     }
   }
@@ -139,7 +139,7 @@
     position: relative;
     height: auto;
     border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-border-light);
   }
 }
 

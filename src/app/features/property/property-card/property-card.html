@@ -17,17 +17,17 @@
     <p class="property-location">{{ getPropertyLocation() }}</p>
     <div class="property-details">
       <div class="detail-item">
-        <span class="detail-icon">📏</span>
+        <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-ruler-combined"></i></span>
         <span class="detail-text">{{ property.total_land_area }} acres</span>
       </div>
       @if (property.years_in_operation) {
         <div class="detail-item">
-          <span class="detail-icon">⏱️</span>
+          <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-clock-rotate-left"></i></span>
           <span class="detail-text">{{ property.years_in_operation }} years</span>
         </div>
       }
       <div class="detail-item">
-        <span class="detail-icon">🏠</span>
+        <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
         <span class="detail-text">{{ property.ownership_type || 'N/A' }}</span>
       </div>
     </div>

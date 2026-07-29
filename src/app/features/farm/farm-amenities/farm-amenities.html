@@ -5,7 +5,7 @@
     <div class="amenities-grid">
       @for (amenity of amenities; track amenity.id || amenity.name) {
         <div class="amenity-item">
-          <span class="amenity-icon">{{ getAmenityIcon(amenity.name) }}</span>
+          <span class="amenity-icon" aria-hidden="true"><i [class]="getAmenityIcon(amenity.name)"></i></span>
           <span class="amenity-name">{{ amenity.name }}</span>
         </div>
       }

@@ -23,9 +23,9 @@ export class PartnerOnboarding implements OnInit {
   
   // Step 1: Place Type
   placeTypes = [
-    { id: 'farm', label: 'Farm', icon: '🌾', description: 'A working farm with crops, livestock, or agricultural activities' },
-    { id: 'farmhouse', label: 'Farmhouse', icon: '🏠', description: 'A residential property on a farm with accommodation' },
-    { id: 'eco_retreat', label: 'Eco Retreat', icon: '🌿', description: 'An eco-friendly retreat center with sustainable practices' }
+    { id: 'farm', label: 'Farm', icon: 'fa-solid fa-wheat-awn', description: 'A working farm with crops, livestock, or agricultural activities' },
+    { id: 'farmhouse', label: 'Farmhouse', icon: 'fa-solid fa-house-chimney', description: 'A residential property on a farm with accommodation' },
+    { id: 'eco_retreat', label: 'Eco Retreat', icon: 'fa-solid fa-leaf', description: 'An eco-friendly retreat center with sustainable practices' }
   ];
   selectedPlaceType: string | null = null;
   
@@ -38,14 +38,14 @@ export class PartnerOnboarding implements OnInit {
   
   // Step 4: Amenities
   amenitiesList = [
-    { id: 'pond', label: 'Pond / Lake', icon: '💧' },
-    { id: 'house', label: 'Livable House', icon: '🏠' },
-    { id: 'electricity', label: 'Electricity', icon: '⚡' },
-    { id: 'water_source', label: 'Water Source', icon: '🚰' },
-    { id: 'parking', label: 'Parking', icon: '🅿️' },
-    { id: 'wifi', label: 'WiFi', icon: '📶' },
-    { id: 'kitchen', label: 'Kitchen', icon: '🍳' },
-    { id: 'bathroom', label: 'Bathroom', icon: '🚿' }
+    { id: 'pond', label: 'Pond / Lake', icon: 'fa-solid fa-water' },
+    { id: 'house', label: 'Livable House', icon: 'fa-solid fa-house-chimney' },
+    { id: 'electricity', label: 'Electricity', icon: 'fa-solid fa-bolt' },
+    { id: 'water_source', label: 'Water Source', icon: 'fa-solid fa-faucet-drip' },
+    { id: 'parking', label: 'Parking', icon: 'fa-solid fa-square-parking' },
+    { id: 'wifi', label: 'WiFi', icon: 'fa-solid fa-wifi' },
+    { id: 'kitchen', label: 'Kitchen', icon: 'fa-solid fa-kitchen-set' },
+    { id: 'bathroom', label: 'Bathroom', icon: 'fa-solid fa-shower' }
   ];
   
   // Step 5: Photos

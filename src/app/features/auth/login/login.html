@@ -1,69 +1,110 @@
-<div class="login-page">
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <h1>Welcome Back</h1>
-        <p>Sign in to your account</p>
-      </div>
-      
-      <form (ngSubmit)="onSubmit()" class="login-form">
-        @if (errorMessage) {
-          <div class="error-alert">{{ errorMessage }}</div>
-        }
-        
-        <div class="form-group">
-          <label for="userType">Login As</label>
-          <select 
-            id="userType" 
-            [(ngModel)]="userType" 
-            name="userType" 
-            class="form-select"
-          >
-            <option value="user">Guest/User</option>
-            <option value="partner">Partner</option>
-            <option value="admin">Admin</option>
-          </select>
+<div class="auth-split-page">
+  <div class="auth-split">
+    <aside class="auth-split__form-side" aria-label="Sign in">
+      <div class="auth-glass">
+        <div class="auth-brand-row">
+          <a routerLink="/" class="auth-brand-mark">WeekendAcres</a>
         </div>
-        
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input 
-            id="email" 
-            type="email" 
-            [(ngModel)]="email" 
-            name="email" 
-            required 
-            class="form-input" 
-            placeholder="your.email@example.com">
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input 
-            id="password" 
-            type="password" 
-            [(ngModel)]="password" 
-            name="password" 
-            required 
-            class="form-input" 
-            placeholder="Enter your password">
-        </div>
-        
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading">
-          @if (isLoading) {
-            <span>Signing In...</span>
-          } @else {
-            <span>Sign In</span>
+
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-lead">Sign in to the Rurality Club — simple, beautifully made.</p>
+
+        <form (ngSubmit)="onSubmit()" class="login-form">
+          @if (errorMessage) {
+            <div class="auth-error" role="alert">{{ errorMessage }}</div>
           }
-        </button>
-        
-        <div class="login-footer">
-          <p>Don't have an account? 
-            <a routerLink="/partner/signup" class="link">Sign up as Partner</a>
-          </p>
-        </div>
-      </form>
+          @if (infoMessage) {
+            <div class="auth-info" role="status">{{ infoMessage }}</div>
+          }
+
+          <div class="auth-role-toggle" role="group" aria-label="Sign in as">
+            <button
+              type="button"
+              class="auth-role-pill"
+              [class.is-selected]="userType === 'user'"
+              (click)="userType = 'user'">
+              Member
+              <small>Family / Pro</small>
+            </button>
+            <button
+              type="button"
+              class="auth-role-pill"
+              [class.is-selected]="userType === 'partner'"
+              (click)="userType = 'partner'">
+              Farm Partner
+              <small>Owner / Steward</small>
+            </button>
+            <button
+              type="button"
+              class="auth-role-pill"
+              [class.is-selected]="userType === 'admin'"
+              (click)="userType = 'admin'">
+              Staff
+              <small>Admin</small>
+            </button>
+          </div>
+
+          <div class="auth-field" [class.auth-field--filled]="isFilled(email)">
+            <input
+              id="email"
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              autocomplete="username"
+              placeholder=" " />
+            <label for="email">{{ emailFieldLabel }}</label>
+          </div>
+
+          <div class="auth-field auth-field--password" [class.auth-field--filled]="isFilled(password)">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              placeholder=" " />
+            <label for="password">Password</label>
+            <button
+              type="button"
+              class="auth-password-toggle"
+              (click)="showPassword = !showPassword"
+              [attr.aria-pressed]="showPassword"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+
+          <div class="auth-row-inline">
+            <label class="auth-checkbox">
+              <input type="checkbox" [(ngModel)]="rememberMe" name="remember" />
+              <span>Remember my login</span>
+            </label>
+            <a href="#" class="auth-link-gold" (click)="onForgotPasswordClick($event)">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="auth-btn-forest" [disabled]="isLoading">
+            @if (isLoading) {
+              <span>Signing in…</span>
+            } @else {
+              <span>[ Sign In ]</span>
+            }
+          </button>
+
+          <div class="auth-footer-copy">
+            Interested in joining our founding community?
+            <a routerLink="/partner/signup" class="auth-link-gold">Sign up as a Partner</a>
+          </div>
+
+          <p class="auth-testimonial">“A subscription to the soul.” — Delhi founding member</p>
+        </form>
+      </div>
+    </aside>
+
+    <div class="auth-split__visual" aria-hidden="true">
+      <p class="auth-split__visual-kicker">6 seasons of rural life. One monthly habit.</p>
+      <p class="auth-split__visual-quote">Don’t just visit the land. Belong to it.</p>
     </div>
   </div>
 </div>
-

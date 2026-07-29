@@ -4,7 +4,7 @@
     <div class="onboarding-header">
       <div class="header-left">
         <a routerLink="/" class="logo-link">
-          <span class="logo-icon">🌿</span>
+          <span class="logo-icon" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
           <span class="logo-text">GreenTrail</span>
         </a>
       </div>
@@ -26,7 +26,7 @@
     <div class="onboarding-content">
       @if (showSuccess) {
         <div class="success-message">
-          <div class="success-icon">✓</div>
+          <div class="success-icon" aria-hidden="true"><i class="fa-solid fa-circle-check"></i></div>
           <h2>Your listing is being submitted!</h2>
           <p>We're processing your farm listing. You'll receive a confirmation email shortly.</p>
         </div>
@@ -39,7 +39,7 @@
             
             <div class="host-type-selection">
               <div class="host-type-card" (click)="selectHostType('farm')" [class.selected]="selectedHostType === 'farm'">
-                <div class="host-type-icon">🌾</div>
+                <div class="host-type-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></div>
                 <h3>Farm</h3>
                 <p>Share your working farm with guests who want to experience authentic farm life</p>
               </div>
@@ -58,7 +58,7 @@
                 <div class="place-type-card" 
                      (click)="selectPlaceType(placeType.id)" 
                      [class.selected]="selectedPlaceType === placeType.id">
-                  <div class="place-type-icon">{{ placeType.icon }}</div>
+                  <div class="place-type-icon" aria-hidden="true"><i [class]="placeType.icon"></i></div>
                   <h3>{{ placeType.label }}</h3>
                   <p>{{ placeType.description }}</p>
                 </div>
@@ -132,7 +132,9 @@
                 <div class="location-inputs">
                   <input type="number" formControlName="latitude" step="0.000001" class="form-input" placeholder="Latitude">
                   <input type="number" formControlName="longitude" step="0.000001" class="form-input" placeholder="Longitude">
-                  <button type="button" class="btn btn-outline" (click)="getCurrentLocation()">📍 Use Current Location</button>
+                  <button type="button" class="btn btn-outline" (click)="getCurrentLocation()">
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Use Current Location
+                  </button>
                 </div>
               </div>
             </form>
@@ -239,7 +241,7 @@
                   <div class="amenity-card" 
                        (click)="toggleAmenity(amenity.id)" 
                        [class.selected]="isAmenitySelected(amenity.id)">
-                    <div class="amenity-icon">{{ amenity.icon }}</div>
+                    <div class="amenity-icon" aria-hidden="true"><i [class]="amenity.icon"></i></div>
                     <span>{{ amenity.label }}</span>
                   </div>
                 }
@@ -258,7 +260,7 @@
               <div class="photo-upload-area">
                 <input type="file" multiple accept="image/jpeg,image/png" (change)="onFileSelected($event)" style="display: none;" #fileInput>
                 <button type="button" class="btn btn-outline btn-large" (click)="fileInput.click()">
-                  📷 Upload Photos ({{ getTotalUploadedPhotos() }} / 10)
+                  <i class="fa-solid fa-camera" aria-hidden="true"></i> Upload Photos ({{ getTotalUploadedPhotos() }} / 10)
                 </button>
                 <small>JPG / PNG, Min 1200px width, Max 5 MB per file</small>
                 @if (getTotalUploadedPhotos() < getRequiredPhotosCount()) {
@@ -276,7 +278,9 @@
                         <option [value]="cat.key">{{ cat.label }}</option>
                       }
                     </select>
-                    <button type="button" class="btn-remove-photo" (click)="removePhoto($index)">×</button>
+                    <button type="button" class="btn-remove-photo" (click)="removePhoto($index)" aria-label="Remove photo">
+                      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
                   </div>
                 }
               </div>

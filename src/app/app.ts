@@ -34,10 +34,13 @@ export class App {
   }
 
   isPartnerDashboard(): boolean {
-    const url = this.currentUrl.split('?')[0]; // Remove query params
-    return url === '/partner/dashboard' ||
-      url.includes('/property/onboard') ||
-      url.startsWith('/partner/');
+    const url = this.currentUrl.split('?')[0];
+    // Keep header/footer on public partner signup; hide chrome only for onboard + dashboard flows
+    return (
+      url === '/partner/dashboard' ||
+      url === '/partner/onboard' ||
+      url === '/partner/onboarding/confirmation'
+    );
   }
 
   isPropertyDetailPage(): boolean {

@@ -8,7 +8,7 @@
     <!-- Resume Notice -->
     @if (hasSavedProgress()) {
     <div class="resume-notice">
-      <span>📝 You have a saved draft. Continuing from where you left off...</span>
+      <span><i class="fa-solid fa-file-pen" aria-hidden="true"></i> You have a saved draft. Continuing from where you left off...</span>
       <button type="button" class="btn-clear" (click)="clearSavedProgressAndRestart()">Start Fresh</button>
     </div>
     }
@@ -98,7 +98,7 @@
               <input type="number" formControlName="latitude" placeholder="Latitude" step="any" />
               <input type="number" formControlName="longitude" placeholder="Longitude" step="any" />
               <button type="button" class="btn-secondary" (click)="getCurrentLocation()">
-                📍 Get Current Location
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Get Current Location
               </button>
             </div>
           </div>
@@ -156,7 +156,7 @@
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;" />
               @if (!proofOfOwnershipFile && !proofOfOwnershipPreview) {
               <div class="upload-placeholder">
-                <div class="upload-icon">📄</div>
+                <div class="upload-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></div>
                 <p class="upload-text">Drag and drop your document here</p>
                 <p class="upload-subtext">or click to browse</p>
                 <p class="upload-formats">Supported: PDF, JPG, PNG, DOC, DOCX</p>
@@ -164,14 +164,14 @@
               } @else {
               <div class="uploaded-file">
                 <div class="file-info">
-                  <span class="file-icon">📄</span>
+                  <span class="file-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
                   <div class="file-details">
                     <span class="file-name">{{ proofOfOwnershipFile?.name || 'Document uploaded' }}</span>
                     <span class="file-size">{{ getFileSize(proofOfOwnershipFile?.size) }}</span>
                   </div>
                 </div>
                 <button type="button" class="btn-remove" (click)="removeProofOfOwnership(); $event.stopPropagation()">
-                  ✕
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
               </div>
               }
@@ -693,20 +693,20 @@
                 (change)="onPhotoSelected($event)" style="display: none;" />
               @if (uploadedImages.length === 0) {
               <div class="upload-placeholder">
-                <div class="upload-icon">📷</div>
+                <div class="upload-icon" aria-hidden="true"><i class="fa-solid fa-camera"></i></div>
                 <p class="upload-text">Drag and drop photos here</p>
                 <p class="upload-subtext">or</p>
                 <button type="button" class="btn-upload-photos" (click)="photoInput.click(); $event.stopPropagation()">
-                  📁 Browse Files
+                  <i class="fa-solid fa-folder-open" aria-hidden="true"></i> Browse Files
                 </button>
                 <p class="upload-formats">Minimum 3 photos required. Supported: JPG, PNG, WebP (Max 5MB each)</p>
               </div>
               } @else {
               <div class="upload-placeholder">
-                <div class="upload-icon">📷</div>
+                <div class="upload-icon" aria-hidden="true"><i class="fa-solid fa-camera"></i></div>
                 <p class="upload-text">Add More Photos</p>
                 <button type="button" class="btn-upload-photos" (click)="photoInput.click(); $event.stopPropagation()">
-                  📁 Add More Images
+                  <i class="fa-solid fa-folder-open" aria-hidden="true"></i> Add More Images
                 </button>
                 <p class="upload-formats">{{ uploadedImages.length }} photo(s) uploaded</p>
               </div>
@@ -719,7 +719,9 @@
               <div class="photo-card">
                 <div class="photo-preview">
                   <img [src]="image.uploadedUrl || image.preview" [alt]="image.name" />
-                  <button type="button" class="btn-remove-photo" (click)="removePhoto($index)">✕</button>
+                  <button type="button" class="btn-remove-photo" (click)="removePhoto($index)" aria-label="Remove photo">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                  </button>
                 </div>
                 <div class="photo-info">
                   <p class="photo-name" [title]="image.name">{{ image.name.length > 20 ? (image.name.substring(0, 20) +
@@ -732,13 +734,19 @@
                     }
                   </select>
                   @if (image.isUploading) {
-                  <p class="photo-status uploading">⏳ Uploading...</p>
+                  <p class="photo-status uploading">
+                    <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Uploading...
+                  </p>
                   } @else if (image.uploadedUrl) {
-                  <p class="photo-status uploaded">✓ Uploaded</p>
+                  <p class="photo-status uploaded"><i class="fa-solid fa-check" aria-hidden="true"></i> Uploaded</p>
                   } @else if (image.uploadError) {
-                  <p class="photo-status error">⚠️ Upload failed. Select type again to retry.</p>
+                  <p class="photo-status error">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Upload failed. Select type again to retry.
+                  </p>
                   } @else if (!image.typeCode) {
-                  <p class="photo-warning">⚠️ Please select image type</p>
+                  <p class="photo-warning">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Please select image type
+                  </p>
                   }
                 </div>
               </div>
@@ -746,17 +754,23 @@
             </div>
 
             @if (uploadedImages.length < 3) { <div class="photo-warning-banner">
-              <p>⚠️ Minimum 3 photos required. Please add {{ 3 - uploadedImages.length }} more photo(s).</p>
+              <p>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Minimum 3 photos required. Please add
+                {{ 3 - uploadedImages.length }} more photo(s).
+              </p>
           </div>
           }
           @if (uploadedImages.length >= 3) {
           @if (hasPhotosWithoutType()) {
           <div class="photo-warning-banner">
-            <p>⚠️ Please select image type for all photos before submitting.</p>
+            <p>
+              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Please select image type for all photos before
+              submitting.
+            </p>
           </div>
           } @else {
           <div class="photo-success-banner">
-            <p>✓ All photos have image types selected. Ready to submit!</p>
+            <p><i class="fa-solid fa-circle-check" aria-hidden="true"></i> All photos have image types selected. Ready to submit!</p>
           </div>
           }
           }

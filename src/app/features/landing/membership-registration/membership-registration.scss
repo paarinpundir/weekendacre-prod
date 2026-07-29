@@ -1,6 +1,6 @@
 .membership-registration {
   padding: 5rem 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  background: linear-gradient(135deg, var(--color-surface-wash) 0%, var(--color-bg-tertiary) 100%);
 
   .container {
     max-width: 1200px;
@@ -11,7 +11,7 @@
   .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2d5016;
+    color: var(--color-primary);
     text-align: center;
     margin-bottom: 3rem;
 
@@ -26,7 +26,7 @@
     .subsection-title {
       font-size: 1.75rem;
       font-weight: 600;
-      color: #222;
+      color: var(--color-text-primary);
       text-align: center;
       margin-bottom: 2rem;
     }
@@ -53,12 +53,12 @@
         .membership-name {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #2d5016;
+          color: var(--color-primary);
           margin-bottom: 1rem;
         }
 
         .membership-description {
-          color: #717171;
+          color: var(--color-text-secondary);
           margin-bottom: 1.5rem;
           line-height: 1.6;
         }
@@ -66,7 +66,7 @@
         .membership-price {
           font-size: 2rem;
           font-weight: 700;
-          color: #4a7c2a;
+          color: var(--color-primary-light);
           margin-bottom: 1.5rem;
         }
 
@@ -77,16 +77,17 @@
 
           li {
             padding: 0.5rem 0;
-            color: #222;
+            color: var(--color-text-primary);
             position: relative;
             padding-left: 1.5rem;
 
             &::before {
-              content: '✓';
+              font-family: 'Font Awesome 6 Free';
+              font-weight: 900;
+              content: '\f00c';
               position: absolute;
               left: 0;
-              color: #4a7c2a;
-              font-weight: 600;
+              color: var(--color-primary-light);
             }
           }
         }
@@ -101,7 +102,7 @@
     .btn-register {
       display: inline-block;
       padding: 1.25rem 3rem;
-      background: linear-gradient(45deg, #4a7c2a, #6b9f3d);
+      background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary-lighter));
       color: white;
       border-radius: 50px;
       font-size: 1.2rem;
@@ -127,12 +128,12 @@
     .farm-owner-title {
       font-size: 1.75rem;
       font-weight: 700;
-      color: #2d5016;
+      color: var(--color-primary);
       margin-bottom: 1rem;
     }
 
     .farm-owner-text {
-      color: #717171;
+      color: var(--color-text-secondary);
       font-size: 1.1rem;
       margin-bottom: 2rem;
       line-height: 1.6;
@@ -142,8 +143,8 @@
       display: inline-block;
       padding: 1rem 2.5rem;
       background: transparent;
-      color: #4a7c2a;
-      border: 2px solid #4a7c2a;
+      color: var(--color-primary-light);
+      border: 2px solid var(--color-primary-light);
       border-radius: 50px;
       font-size: 1.1rem;
       font-weight: 600;
@@ -151,7 +152,7 @@
       transition: all 0.3s ease;
 
       &:hover {
-        background: #4a7c2a;
+        background: var(--color-primary-light);
         color: white;
       }
     }

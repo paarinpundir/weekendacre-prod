@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@use './styles/tokens';
 @use './styles/theme' as *;
 
 /* Global Styles */
@@ -8,11 +9,21 @@
   box-sizing: border-box;
 }
 
-html, body {
+html {
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--layout-app-header-height));
+}
+
+html,
+body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-body);
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -21,10 +32,21 @@ body {
   background: var(--color-bg-secondary);
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.2;
+/* Typography — sizes/weights from theme variables */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  // `inherit`, not a fixed color: headings on dark photo overlays (event/experience
+  // cards, hero) rely on their container setting `color: white` — a hardcoded value
+  // here would win over that inherited color and render dark text on a dark photo.
+  color: inherit;
 }
 
 a {
@@ -32,23 +54,21 @@ a {
   color: inherit;
 }
 
-button {
-  font-family: inherit;
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-body);
 }
 
-/* Utility Classes */
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
+/* Utility Classes — .container is defined in theme */
 
 .page-title {
   text-align: center;
   font-size: var(--font-size-4xl);
   color: var(--color-primary);
   margin-bottom: var(--spacing-xs);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .page-subtitle {
@@ -56,24 +76,28 @@ button {
   color: var(--color-text-secondary);
   margin-bottom: var(--spacing-xl);
   font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-relaxed);
 }
 
-/* Scrollbar Styling */
+/* Scrollbar — subtle neutral rail (not brand green) */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary-light);
-  border-radius: 5px;
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Responsive */
@@ -83,10 +107,15 @@ button {
   }
 
   .page-title {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 
   .page-subtitle {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
   }
+}
+
+/* Font Awesome: decorative icons inherit color/size from parent */
+i[class*='fa-'] {
+  line-height: 1;
 }

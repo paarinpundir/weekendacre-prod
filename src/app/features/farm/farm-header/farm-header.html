@@ -3,10 +3,10 @@
     <h1 class="farm-title">{{ farm.name }}</h1>
     <div class="header-actions">
       <button class="action-btn" title="Share">
-        <span>🔗</span> Share
+        <i class="fa-solid fa-link" aria-hidden="true"></i> Share
       </button>
       <button class="action-btn" title="Save">
-        <span>❤️</span> Save
+        <i class="fa-regular fa-heart" aria-hidden="true"></i> Save
       </button>
     </div>
   </div>
@@ -17,7 +17,7 @@
         <span class="location-text">{{ farm.address }}, {{ farm.city }}, {{ farm.state }}</span>
         @if (farm.isVerified) {
           <span class="verified-badge">
-            <span class="checkmark">✓</span> Verified
+            <i class="fa-solid fa-circle-check checkmark" aria-hidden="true"></i> Verified
           </span>
         }
       </div>
@@ -25,12 +25,12 @@
       <div class="rating-info">
         @if (showGuestFavourite) {
           <div class="guest-favourite-badge">
-            <span class="badge-icon">🏆</span>
+            <i class="fa-solid fa-trophy badge-icon" aria-hidden="true"></i>
             <span>Guest favourite</span>
           </div>
         }
         <div class="rating">
-          <span class="star-icon">★</span>
+          <i class="fa-solid fa-star star-icon" aria-hidden="true"></i>
           <span class="rating-value">{{ farm.rating || '4.8' }}</span>
           <span class="review-count">({{ farm.reviewCount || 0 }} reviews)</span>
         </div>

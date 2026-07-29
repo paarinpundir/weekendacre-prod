@@ -1,6 +1,6 @@
 .farm-header {
   padding: 2rem 0;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid var(--color-border-light);
 
   .header-top {
     display: flex;
@@ -11,7 +11,7 @@
     .farm-title {
       font-size: 1.75rem;
       font-weight: 600;
-      color: #222;
+      color: var(--color-text-primary);
       margin: 0;
       flex: 1;
     }
@@ -22,19 +22,19 @@
 
       .action-btn {
         background: transparent;
-        border: 1px solid #b0b0b0;
+        border: 1px solid var(--color-text-tertiary);
         padding: 0.5rem 1rem;
         border-radius: 8px;
         cursor: pointer;
         font-size: 0.9rem;
-        color: #222;
+        color: var(--color-text-primary);
         display: flex;
         align-items: center;
         gap: 0.5rem;
         transition: all 0.2s;
 
         &:hover {
-          border-color: #222;
+          border-color: var(--color-text-primary);
         }
 
         span {
@@ -60,7 +60,7 @@
       flex-wrap: wrap;
 
       .location-text {
-        color: #222;
+        color: var(--color-text-primary);
         text-decoration: underline;
         cursor: pointer;
         font-weight: 500;
@@ -70,7 +70,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        background: #00a699;
+        background: var(--color-accent-teal);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -93,7 +93,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #222;
+        color: var(--color-text-primary);
         font-weight: 600;
         font-size: 0.95rem;
 
@@ -108,17 +108,17 @@
         gap: 0.5rem;
 
         .star-icon {
-          color: #ff385c;
+          color: var(--color-accent-coral);
           font-size: 1.1rem;
         }
 
         .rating-value {
           font-weight: 600;
-          color: #222;
+          color: var(--color-text-primary);
         }
 
         .review-count {
-          color: #717171;
+          color: var(--color-text-secondary);
           text-decoration: underline;
           cursor: pointer;
         }
@@ -127,7 +127,7 @@
   }
 
   .farm-type {
-    color: #717171;
+    color: var(--color-text-secondary);
     font-size: 0.95rem;
     margin-bottom: 0.5rem;
   }
@@ -136,7 +136,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #717171;
+    color: var(--color-text-secondary);
     font-size: 0.95rem;
     flex-wrap: wrap;
   }

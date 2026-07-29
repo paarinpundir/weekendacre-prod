@@ -1,0 +1,76 @@
+@if (content) {
+  <article class="story-detail">
+    <nav class="detail-hero__topbar" aria-label="Page navigation">
+      <div class="container detail-hero__topbar-inner">
+        <a routerLink="/" [fragment]="'experiences-section'" class="back-link">
+          <span class="back-link__icon" aria-hidden="true">←</span>
+          <span>Back to home</span>
+        </a>
+      </div>
+    </nav>
+    <header class="detail-hero" [style.background-image]="'url(' + content.heroImage + ')'">
+      <div class="detail-hero__overlay"></div>
+      <div class="container detail-hero__inner">
+        <h1 class="detail-hero__title">{{ content.title }}</h1>
+        <p class="detail-hero__tagline">{{ content.tagline }}</p>
+        @if (content.meta) {
+          <ul class="detail-meta">
+            @if (content.meta.duration) {
+              <li><span class="detail-meta__label">Typical stay</span> {{ content.meta.duration }}</li>
+            }
+            @if (content.meta.bestFor) {
+              <li><span class="detail-meta__label">Best for</span> {{ content.meta.bestFor }}</li>
+            }
+            @if (content.meta.region) {
+              <li><span class="detail-meta__label">Region</span> {{ content.meta.region }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </header>
+
+    <div class="container detail-body">
+      <p class="detail-intro">{{ content.intro }}</p>
+
+      <section class="detail-highlights" aria-labelledby="highlights-heading">
+        <h2 id="highlights-heading" class="section-heading">Highlights</h2>
+        <ul class="highlight-list">
+          @for (item of content.highlights; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      @for (section of content.sections; track section.heading) {
+        <section class="detail-split">
+          <div class="detail-split__text">
+            <h2 class="section-heading">{{ section.heading }}</h2>
+            <p>{{ section.body }}</p>
+          </div>
+          @if (section.image) {
+            <figure class="detail-split__figure">
+              <img [src]="section.image" [alt]="section.imageAlt || ''" loading="lazy" />
+            </figure>
+          }
+        </section>
+      }
+
+      <section class="detail-gallery" aria-labelledby="gallery-heading">
+        <h2 id="gallery-heading" class="section-heading">Gallery</h2>
+        <div class="gallery-grid">
+          @for (src of content.gallery; track src) {
+            <div class="gallery-cell" [style.background-image]="'url(' + src + ')'" role="img" [attr.aria-label]="'Experience image'"></div>
+          }
+        </div>
+      </section>
+
+      <footer class="detail-cta">
+        <p class="detail-cta__text">Ready to plan your stay?</p>
+        <div class="detail-cta__actions">
+          <a routerLink="/" [fragment]="'properties-section'" class="btn btn-primary">Browse properties</a>
+          <a routerLink="/booking" class="btn btn-outline">Join us</a>
+        </div>
+      </footer>
+    </div>
+  </article>
+}

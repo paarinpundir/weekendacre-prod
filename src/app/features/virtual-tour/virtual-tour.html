@@ -6,7 +6,11 @@
     <!-- Geofencing Configuration Button -->
     <div class="geofence-config-header">
       <button class="btn-geofence-config" (click)="showGeofenceConfig = !showGeofenceConfig">
-        {{ showGeofenceConfig ? '✕ Close Configuration' : '⚙️ Configure Geofencing' }}
+        @if (showGeofenceConfig) {
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Close Configuration
+        } @else {
+          <i class="fa-solid fa-gear" aria-hidden="true"></i> Configure Geofencing
+        }
       </button>
       @if (zones.length > 0) {
         <span class="zones-count">Active Zones: {{ zones.length }}</span>
@@ -36,7 +40,7 @@
         <!-- Step 1: Location -->
         @if (configStep === 'location') {
           <div class="config-step-content">
-            <h3>📍 Step 1: Set Center Location</h3>
+            <h3><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Step 1: Set Center Location</h3>
             <p class="config-description">Get your current location or enter coordinates manually. This will be the center point of your geofencing area.</p>
 
             <div class="form-row">
@@ -59,9 +63,9 @@
                 (click)="getCurrentLocation()"
                 [disabled]="isGettingLocation">
                 @if (isGettingLocation) {
-                  <span>⏳ Getting Location...</span>
+                  <span><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Getting Location...</span>
                 } @else {
-                  <span>📍 Get Current Location</span>
+                  <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Get Current Location</span>
                 }
               </button>
               <span class="location-divider">OR</span>
@@ -109,7 +113,7 @@
             
             @if (centerLat && centerLon) {
               <div class="location-preview">
-                <strong>📍 Current Location:</strong> 
+                <strong><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Current Location:</strong> 
                 Lat: {{ centerLat | number:'1.6-6' }}, 
                 Lng: {{ centerLon | number:'1.6-6' }}
               </div>
@@ -130,7 +134,7 @@
         <!-- Step 2: Area -->
         @if (configStep === 'area') {
           <div class="config-step-content">
-            <h3>📐 Step 2: Define Area Dimensions</h3>
+            <h3><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i> Step 2: Define Area Dimensions</h3>
             <p class="config-description">You can either define a rectangular area (width × height) or a circular eco-friendly area using a radius.</p>
             
             <div class="form-row">
@@ -204,7 +208,7 @@
         <!-- Step 3: Divisions -->
         @if (configStep === 'divisions') {
           <div class="config-step-content">
-            <h3>🔲 Step 3: Set Zone Divisions</h3>
+            <h3><i class="fa-solid fa-border-all" aria-hidden="true"></i> Step 3: Set Zone Divisions</h3>
             <p class="config-description">Divide the area into equal zones. Enter how many zones you want horizontally and vertically.</p>
             
             <div class="form-row">
@@ -260,7 +264,7 @@
                 class="btn-create-zones" 
                 (click)="initializeGeofencing()"
                 [disabled]="!divisionsX || !divisionsY || divisionsX < 1 || divisionsY < 1">
-                ✅ Create Geofencing Zones
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Create Geofencing Zones
               </button>
             </div>
           </div>
@@ -275,9 +279,13 @@
           <h2>Park Map</h2>
           <div class="map-controls">
             @if (zones.length > 0) {
-              <span class="zones-active">✓ Geofencing Active ({{ zones.length }} zones)</span>
+              <span class="zones-active"
+                ><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Geofencing Active ({{ zones.length }} zones)</span
+              >
             } @else {
-              <p class="info-text">📍 Configure geofencing to see zones on map</p>
+              <p class="info-text">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Configure geofencing to see zones on map
+              </p>
             }
           </div>
         </div>
@@ -319,7 +327,7 @@
             <!-- Map Overlay (only if no zones) -->
             <!-- @if (zones.length === 0) {
               <div class="map-overlay">
-                <p>🗺️ Interactive Map</p>
+                <p>Interactive Map</p>
                 <p class="small-text">Click on hotspots to explore different zones</p>
                 <p class="small-text">Configure geofencing to divide the area into zones</p>
               </div>

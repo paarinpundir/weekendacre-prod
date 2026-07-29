@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { of } from 'rxjs';
+import { catchError, finalize, tap, timeout } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { DataService } from '../../core/services/data.service';
 import { FarmService } from '../../core/services/farm.service';
@@ -19,6 +21,8 @@ import { Property } from '../../core/models/property.model';
   styleUrl: './admin.scss',
 })
 export class Admin implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   activeTab: 'activities' | 'bookings' | 'reviews' | 'farms' | 'properties' | 'partners' = 'properties';
   
   get activities() {
@@ -306,42 +310,42 @@ export class Admin implements OnInit {
   // Property Management Methods
   loadProperties() {
     this.isLoading = true;
-    // Note: For full admin functionality, backend needs an admin endpoint that returns ALL properties
-    // For now, we'll use the authenticated endpoint which returns user's own properties
-    // In production, add: GET /api/v1/admin/properties (requires admin role)
-    this.propertyService.getAllPropertiesForAdmin().subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          this.properties = response.data;
-          this.categorizeProperties();
-        } else {
-          this.properties = [];
-          this.categorizeProperties();
-        }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load properties:', err);
-        // Show approved properties as fallback
-        this.propertyService.getAllProperties().subscribe({
-          next: (publicResponse) => {
-            if (publicResponse.success && publicResponse.data) {
-              this.properties = publicResponse.data;
-              this.categorizeProperties();
+
+    const emptyResponse = { success: false as const, data: [] as Property[], message: '' };
+
+    this.propertyService
+      .getAllPropertiesForAdmin()
+      .pipe(
+        timeout(25000),
+        catchError((err) => {
+          console.warn('Admin properties endpoint failed, trying public list:', err);
+          return this.propertyService.getAllProperties().pipe(
+            timeout(25000),
+            catchError((err2) => {
+              console.error('Public properties fallback failed:', err2);
+              return of(emptyResponse);
+            })
+          );
+        }),
+        tap((response) => {
+          try {
+            if (response?.success && Array.isArray(response.data)) {
+              this.properties = response.data;
             } else {
               this.properties = [];
-              this.categorizeProperties();
             }
-            this.isLoading = false;
-          },
-          error: () => {
-            this.properties = [];
             this.categorizeProperties();
+          } finally {
             this.isLoading = false;
+            this.cdr.detectChanges();
           }
-        });
-      }
-    });
+        }),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe();
   }
 
   categorizeProperties() {

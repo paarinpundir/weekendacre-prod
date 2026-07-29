@@ -1,5 +1,5 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -8,16 +8,21 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { routes } from './app.routes';
 import { reducers } from './core/store';
 import { AuthEffects } from './core/store/auth/auth.effects';
-import { PartnerEffects } from './core/store/partner/partner.effects';
 import { PropertyEffects } from './core/store/property/property.effects';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'enabled',
+        anchorScrolling: 'enabled',
+      })
+    ),
     provideHttpClient(withInterceptorsFromDi()),
     provideStore(reducers),
-    provideEffects([AuthEffects, PartnerEffects, PropertyEffects]),
+    provideEffects([AuthEffects, PropertyEffects]),
     provideStoreDevtools({ 
       maxAge: 25, 
       logOnly: !isDevMode(),

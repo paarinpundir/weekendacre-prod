@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ReferenceOption {
   id: string;
@@ -19,7 +20,7 @@ export interface ReferenceOption {
   providedIn: 'root'
 })
 export class ReferenceService {
-  private apiUrl = 'http://172.16.0.108:8081/api/v1/reference';
+  private readonly apiUrl = `${environment.apiUrl}/api/v1/reference`;
 
   constructor(private http: HttpClient) { }
 

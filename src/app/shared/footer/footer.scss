@@ -1,5 +1,5 @@
 .footer {
-  background: linear-gradient(135deg, #1a3a0f 0%, #2d5016 100%);
+  background: linear-gradient(135deg, var(--color-forest-deep) 0%, var(--color-primary) 100%);
   color: white;
   padding: 3rem 0 1rem;
   margin-top: 4rem;
@@ -16,13 +16,13 @@
 
 .footer-section {
   h3 {
-    color: #a8e063;
+    color: var(--color-primary-accent);
     margin-bottom: 1rem;
     font-size: 1.5rem;
   }
 
   h4 {
-    color: #a8e063;
+    color: var(--color-primary-accent);
     margin-bottom: 1rem;
     font-size: 1.1rem;
   }
@@ -30,6 +30,11 @@
   p {
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.8);
+
+    i {
+      margin-right: 0.45em;
+      color: var(--color-primary-accent);
+    }
   }
 
   ul {
@@ -45,7 +50,7 @@
         transition: color 0.3s ease;
 
         &:hover {
-          color: #a8e063;
+          color: var(--color-primary-accent);
         }
       }
     }
@@ -58,10 +63,12 @@
   font-size: 1.5rem;
 
   a {
-    transition: transform 0.3s ease;
+    color: rgba(255, 255, 255, 0.9);
+    transition: transform 0.3s ease, color 0.3s ease;
 
     &:hover {
       transform: scale(1.2);
+      color: var(--color-primary-accent);
     }
   }
 }

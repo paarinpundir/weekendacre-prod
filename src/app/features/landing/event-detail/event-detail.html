@@ -1,0 +1,79 @@
+@if (content) {
+  <article class="story-detail">
+    <nav class="detail-hero__topbar" aria-label="Page navigation">
+      <div class="container detail-hero__topbar-inner">
+        <a routerLink="/" [fragment]="'events-section'" class="back-link">
+          <span class="back-link__icon" aria-hidden="true">←</span>
+          <span>Back to home</span>
+        </a>
+      </div>
+    </nav>
+    <header class="detail-hero" [style.background-image]="'url(' + content.heroImage + ')'">
+      <div class="detail-hero__overlay"></div>
+      <div class="container detail-hero__inner">
+        @if (content.theme) {
+          <p class="detail-hero__theme">{{ content.theme }}</p>
+        }
+        <h1 class="detail-hero__title">{{ content.title }}</h1>
+        <p class="detail-hero__tagline">{{ content.description }}</p>
+        @if (content.meta) {
+          <ul class="detail-meta">
+            @if (content.meta.when) {
+              <li><span class="detail-meta__label">When</span> {{ content.meta.when }}</li>
+            }
+            @if (content.meta.format) {
+              <li><span class="detail-meta__label">Format</span> {{ content.meta.format }}</li>
+            }
+            @if (content.meta.audience) {
+              <li><span class="detail-meta__label">Audience</span> {{ content.meta.audience }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </header>
+
+    <div class="container detail-body">
+      <p class="detail-intro">{{ content.intro }}</p>
+
+      <section class="detail-highlights" aria-labelledby="event-highlights-heading">
+        <h2 id="event-highlights-heading" class="section-heading">What to expect</h2>
+        <ul class="highlight-list">
+          @for (item of content.highlights; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      @for (section of content.sections; track section.heading) {
+        <section class="detail-split">
+          <div class="detail-split__text">
+            <h2 class="section-heading">{{ section.heading }}</h2>
+            <p>{{ section.body }}</p>
+          </div>
+          @if (section.image) {
+            <figure class="detail-split__figure">
+              <img [src]="section.image" [alt]="section.imageAlt || ''" loading="lazy" />
+            </figure>
+          }
+        </section>
+      }
+
+      <section class="detail-gallery" aria-labelledby="event-gallery-heading">
+        <h2 id="event-gallery-heading" class="section-heading">Gallery</h2>
+        <div class="gallery-grid">
+          @for (src of content.gallery; track src) {
+            <div class="gallery-cell" [style.background-image]="'url(' + src + ')'" role="img" [attr.aria-label]="'Event atmosphere'"></div>
+          }
+        </div>
+      </section>
+
+      <footer class="detail-cta">
+        <p class="detail-cta__text">Join the next gathering</p>
+        <div class="detail-cta__actions">
+          <a routerLink="/" [fragment]="'events-section'" class="btn btn-primary">More events</a>
+          <a routerLink="/booking" class="btn btn-outline">Join us</a>
+        </div>
+      </footer>
+    </div>
+  </article>
+}
