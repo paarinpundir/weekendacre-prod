@@ -1,6 +1,36 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+ 
+interface PhotoSlot {
+  src: string;
+  alt: string;
+  label: string;
+  aspect: string;
+  rotate?: number;
+  caption?: string; // used by the hero polaroid only
+}
+ 
+interface DayItem {
+  number: string; // '01', '02'...
+  time: string;
+  title: string;
+  copy: string;
+}
+ 
+interface CrowdFact {
+  value: string;
+  label: string;
+}
+ 
+interface PracticalNote {
+  eyebrow: string;
+  title: string;
+  copy: string;
+  pending?: boolean;
+  pendingNote?: string;
+  rotate?: number;
+}
 
 @Component({
   selector: 'app-education',
@@ -9,50 +39,60 @@ import { RouterLink } from '@angular/router';
   styleUrl: './education.scss',
 })
 export class Education {
-  educationSections = [
+  readonly heroPhoto: PhotoSlot = {
+    src: 'assets/photos/hero-field.jpeg',
+    alt: 'Guests gathered on the farm over a weekend',
+    label: 'photo: candid, guests mid-weekend',
+    aspect: '4 / 5',
+    rotate: 4,
+    caption: 'a weekend, roughly',
+  };
+ 
+  readonly dayPhoto: PhotoSlot = {
+    src: 'assets/photos/people.jpeg',
+    alt: 'The long table set for dinner under the trees',
+    label: 'photo: long table or fire, one strong supporting shot',
+    aspect: '4 / 5',
+    rotate: -3,
+  };
+ 
+  readonly moments: DayItem[] = [
+    { number: '01', time: 'Afternoon', title: 'Arrival', copy: 'You arrive by afternoon and settle into simple rooms, a short walk from the fields.' },
+    { number: '02', time: 'Before dinner', title: 'The Walk', copy: 'A walk through what\u2019s growing, so you\u2019ve seen where the meal came from before it reaches you.' },
+    { number: '03', time: 'Evening', title: 'Open Fires', copy: 'The fires are already going by evening: a chulha, a grill, sometimes a tandoor.' },
+    { number: '04', time: 'Dinner', title: 'Dinner, Your Way', copy: 'The long table under the trees, a charpai by the pond, or cushions under a tree of your own choosing.' },
+    { number: '05', time: 'Morning', title: 'Slow Mornings', copy: 'Unhurried \u2014 a walk, quiet, and coffee that takes as long as you want it to.' },
+    { number: '06', time: 'Afternoon', title: 'Slow Afternoons', copy: 'Naps, books, and crafty activities of your choosing \u2014 the day asks nothing of you.' },
+    { number: '07', time: 'All day', title: 'For the Little Ones', copy: 'A patch to dig in, something to sow, room to run, and games to play.' },
+  ];
+ 
+  readonly crowdFacts: CrowdFact[] = [
+    { value: 'Twenty', label: 'guests' },
+    { value: 'One', label: 'acre' },
+    { value: 'No', label: 'fixed table' },
+  ];
+ 
+  /* ---- unchanged from before: keep exactly as is ---- */
+  readonly practicalNotes: PracticalNote[] = [
     {
-      id: '1',
-      title: 'Animal Care Videos',
-      description: 'Learn how to care for farm animals',
-      icon: 'fa-solid fa-cow',
-      videos: [
-        { title: 'Feeding Farm Animals', duration: '5:30' },
-        { title: 'Animal Health Basics', duration: '8:15' },
-        { title: 'Dairy Farm Management', duration: '12:00' }
-      ]
+      eyebrow: 'Booking',
+      title: 'How it works',
+      copy: 'Stays and single-day visits are limited, and go through our WhatsApp group / app — first come, first held. We ask you to confirm a few days ahead so the kitchen can plan around what\u2019s actually ready to harvest that week.',
+      rotate: -2,
     },
     {
-      id: '2',
-      title: 'Farming Tips',
-      description: 'Sustainable farming techniques and best practices',
-      icon: 'fa-solid fa-wheat-awn',
-      articles: [
-        { title: 'Organic Composting', readTime: '5 min read' },
-        { title: 'Crop Rotation Methods', readTime: '7 min read' },
-        { title: 'Natural Pest Control', readTime: '6 min read' }
-      ]
+      eyebrow: 'Price',
+      title: 'What it costs',
+      copy: '',
+      pending: true,
+      pendingNote: 'to be set once the first few weekends have run',
+      rotate: 1.5,
     },
     {
-      id: '3',
-      title: 'Hydroponics Section',
-      description: 'Modern soilless farming technology',
-      icon: 'fa-solid fa-seedling',
-      content: [
-        { title: 'Introduction to Hydroponics', type: 'video' },
-        { title: 'Setting Up Your System', type: 'article' },
-        { title: 'Nutrient Management', type: 'video' }
-      ]
+      eyebrow: 'Good to know',
+      title: 'Before you come',
+      copy: 'Comfortable shoes for the walk. This is an outdoor, weather-led weekend — we\u2019ll tell you in advance if dates need to move. Come as you are; there\u2019s no dress code here, only good vibes.',
+      rotate: -1,
     },
-    {
-      id: '4',
-      title: 'Sustainability Blog',
-      description: 'Latest articles on sustainable living',
-      icon: 'fa-solid fa-recycle',
-      posts: [
-        { title: 'Reducing Carbon Footprint', date: '2024-01-15', author: 'Eco Team' },
-        { title: 'Water Conservation Tips', date: '2024-01-10', author: 'Eco Team' },
-        { title: 'Renewable Energy at Home', date: '2024-01-05', author: 'Eco Team' }
-      ]
-    }
   ];
 }

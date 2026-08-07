@@ -1,99 +1,90 @@
-<div class="education">
-  <div class="container">
-    <h1 class="page-title">Farm Education Center</h1>
-    <p class="page-subtitle">Learn about nature, farming, animals, and sustainability</p>
-
-    <div class="education-grid">
-      @for (section of educationSections; track section.id) {
-        <div class="education-card">
-          <div class="card-header">
-            <span class="section-icon" aria-hidden="true"><i [class]="section.icon"></i></span>
-            <h2>{{ section.title }}</h2>
-          </div>
-          <p class="section-description">{{ section.description }}</p>
-          
-          @if (section.videos) {
-            <div class="content-list">
-              <h3>Videos</h3>
-              <ul>
-                @for (video of section.videos; track video.title) {
-                  <li>
-                    <span class="play-icon" aria-hidden="true"><i class="fa-solid fa-circle-play"></i></span>
-                    <div>
-                      <strong>{{ video.title }}</strong>
-                      <span class="duration">{{ video.duration }}</span>
-                    </div>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-
-          @if (section.articles) {
-            <div class="content-list">
-              <h3>Articles</h3>
-              <ul>
-                @for (article of section.articles; track article.title) {
-                  <li>
-                    <span class="article-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
-                    <div>
-                      <strong>{{ article.title }}</strong>
-                      <span class="read-time">{{ article.readTime }}</span>
-                    </div>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-
-          @if (section.content) {
-            <div class="content-list">
-              <ul>
-                @for (item of section.content; track item.title) {
-                  <li>
-                    <span class="content-icon" aria-hidden="true">
-                      @if (item.type === 'video') {
-                        <i class="fa-solid fa-circle-play"></i>
-                      } @else {
-                        <i class="fa-solid fa-file-lines"></i>
-                      }
-                    </span>
-                    <strong>{{ item.title }}</strong>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-
-          @if (section.posts) {
-            <div class="content-list">
-              <h3>Latest Posts</h3>
-              <ul>
-                @for (post of section.posts; track post.title) {
-                  <li>
-                    <div>
-                      <strong>{{ post.title }}</strong>
-                      <div class="post-meta">
-                        <span>{{ post.date }}</span>
-                        <span>by {{ post.author }}</span>
-                      </div>
-                    </div>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-
-          <button class="btn-explore">Explore More</button>
-        </div>
-      }
-    </div>
-
-    <!-- Call to Action -->
-    <div class="cta-section">
-      <h2>Want to Learn Hands-On?</h2>
-      <p>Join our workshops and experience farming, animal care, and sustainability practices in person.</p>
-      <a routerLink="/booking" class="btn-cta">Book a Workshop</a>
+<!-- ============ HERO ============ -->
+<section class="hero-weekend">
+  <div class="hero-text">
+    <div class="eyebrow">tranqulity over crowd</div>
+    <h1>A weekend<br>on the farm</h1>
+    <p class="lead">
+      Stay for a while. Twenty guests at a time, spread across the huge space —
+      <strong>never crowded, never rushed.</strong>
+    </p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" routerLink="/booking">Request your weekend</a>
+      <a class="btn btn-ghost" routerLink="/our-farm">Meet the farm</a>
     </div>
   </div>
-</div>
+
+  <div class="hero-polaroid" [style.transform]="'rotate(' + heroPhoto.rotate + 'deg)'">
+    <div class="polaroid-photo" [style.aspect-ratio]="heroPhoto.aspect">
+      <img *ngIf="heroPhoto.src" [src]="heroPhoto.src" [alt]="heroPhoto.alt">
+      <div class="photo-placeholder small" *ngIf="!heroPhoto.src">
+        <span>{{ heroPhoto.label }}</span>
+      </div>
+    </div>
+    <div class="polaroid-caption">{{ heroPhoto.caption }}</div>
+  </div>
+</section>
+
+<!-- ============ THE DAY, LOOSELY (numbered list + one photo) ============ -->
+<section class="day-section">
+  <div class="day-list-col">
+    <div class="eyebrow">Roughly in order</div>
+    <h2>The day, loosely</h2>
+
+    <div class="day-list">
+      <div class="day-row" *ngFor="let m of moments">
+        <span class="day-number">{{ m.number }}</span>
+        <div class="day-copy">
+          <span class="day-time">{{ m.time }}</span>
+          <h3>{{ m.title }}</h3>
+          <p>{{ m.copy }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-photo" [style.aspect-ratio]="dayPhoto.aspect" [style.transform]="'rotate(' + dayPhoto.rotate + 'deg)'">
+    <img *ngIf="dayPhoto.src" [src]="dayPhoto.src" [alt]="dayPhoto.alt">
+    <div class="photo-placeholder small" *ngIf="!dayPhoto.src">
+      <span>{{ dayPhoto.label }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NO CROWD (typographic statement) ============ -->
+<section class="no-crowd-statement">
+  <div class="eyebrow">No crowds, ever</div>
+  <h2 class="statement">
+    <ng-container *ngFor="let f of crowdFacts; let last = last">{{ f.value }} <span>{{ f.label }}</span>{{ last ? '.' : ', ' }}</ng-container>
+  </h2>
+  <p class="statement-sub">
+    A kitchen with no walls, and no single table you're bound to. Cook alongside the
+    chulha, linger by the grill, gather at the long table when the meal is ready, or
+    take your plate to a quiet spot by the pond. The farm has room enough that no two
+    weekends feel the same — and by the time you leave, you'll know everyone's name anyway.
+  </p>
+</section>
+
+<!-- ============ BEFORE YOU BOOK — kept exactly as before ============ -->
+<section class="notes-section">
+  <div class="eyebrow">Before you book</div>
+  <h2>The practical bits</h2>
+
+  <div class="notes-stack">
+    <div class="note-card" *ngFor="let n of practicalNotes" [style.transform]="'rotate(' + n.rotate + 'deg)'">
+      <div class="note-pin" aria-hidden="true"></div>
+      <div class="eyebrow">{{ n.eyebrow }}</div>
+      <h3>{{ n.title }}</h3>
+      <p *ngIf="!n.pending">{{ n.copy }}</p>
+      <div class="pending-note" *ngIf="n.pending">
+        <span>{{ n.pendingNote }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING (quiet sign-off, no photo) ============ -->
+<section class="closing-section">
+  <div class="closing-rule" aria-hidden="true"></div>
+  <p class="closing-line">First come, first held — a few days' notice is all we ask.</p>
+  <a class="btn btn-primary" routerLink="/booking">Join the WhatsApp group</a>
+</section>

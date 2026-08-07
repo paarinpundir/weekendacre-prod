@@ -1,377 +1,114 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DataService } from '../../core/services/data.service';
-import { GeofenceService } from '../../core/services/geofence.service';
-import { GeofenceZone, GeoPoint, ParkArea } from '../../core/models/geofence.model';
-import * as L from 'leaflet';
+ 
+interface PhotoSlot {
+  /** Real image path once you have it, e.g. 'assets/photos/fields.jpg'. Empty = show placeholder. */
+  src: string;
+  alt: string;
+  /** Shown only when src is empty — tells you (and anyone else on the team) what to shoot/drop in. */
+  label: string;
+  aspect: string; // CSS aspect-ratio, e.g. '4 / 5'
+  rotate?: number; // small tilt in degrees, for the handmade feel
+}
+ 
+interface MapPin {
+  x: number; // position on the map svg, viewBox 0 0 320 220
+  y: number;
+}
+ 
+interface TrailStop {
+  number: string;
+  title: string;
+  copy: string;
+  photo: PhotoSlot;
+  pin: MapPin;
+}
+ 
+interface FarmStat {
+  value: string;
+  label: string;
+  rotate?: number;
+}
 
 @Component({
-  selector: 'app-virtual-tour',
-  imports: [CommonModule, FormsModule],
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './virtual-tour.html',
   styleUrl: './virtual-tour.scss',
 })
-export class VirtualTour implements OnInit, AfterViewInit {
-  get parkAreas() {
-    return this.dataService.getParkAreas()();
-  }
-  
-  selectedZone: GeofenceZone | null = null;
-  showGeofenceConfig = false;
-  isGettingLocation = false;
-  locationError: string | null = null;
-  
-  // Geofencing configuration
-  centerLat: number = 0;
-  centerLon: number = 0;
-  areaWidth: number = 1000; // meters
-  areaHeight: number = 1000; // meters
-  divisionsX: number = 4;
-  divisionsY: number = 4;
-  radiusMeters: number = 0; // optional circular mode
-  guestName: string = '';
-  
-  // Configuration steps
-  configStep: 'location' | 'area' | 'divisions' = 'location';
-  
-  // Map center and bounds
-  mapCenter: GeoPoint = { latitude: 0, longitude: 0 };
-  mapBounds = {
-    minLat: 0,
-    maxLat: 0,
-    minLon: 0,
-    maxLon: 0
+export class OurFarm {
+  readonly heroPhoto: PhotoSlot = {
+    src: 'assets/photos/DSC_6331.JPG',
+    alt: 'The farm at Weekend Acres, wide shot',
+    label: 'photo: the whole spread, drone or from the water tank — this is the "you are here" shot',
+    aspect: '16 / 9'
   };
-  
-  // Zones for visualization
-  zones: GeofenceZone[] = [];
-
-  // Leaflet map instance
-  private map?: L.Map;
-  
-  constructor(
-    private dataService: DataService,
-    private geofenceService: GeofenceService
-  ) {}
-
-  ngOnInit() {
-    // Load existing zones if any
-    this.loadZones();
-  }
-
-  ngAfterViewInit() {
-    this.initMap();
-  }
-
-  private initMap() {
-    if (this.map) {
-      return;
+ 
+  /** The trail path, in the loose order most people end up walking it. Doubles as the map's pin order. */
+  readonly trail: TrailStop[] = [
+    {
+      number: '01',
+      title: 'The Fields',
+      copy: 'Twenty acres of open land, worked the way it always has been — mustard in winter, wheat before the heat sets in.',
+      photo: { src: 'assets/photos/abc.jpeg', alt: 'Open fields at Weekend Acres', label: 'photo: fields, low light, someone walking the edge', aspect: '4 / 5', rotate: -2 },
+      pin: { x: 42, y: 36 }
+    },
+    {
+      number: '02',
+      title: 'The Orchard',
+      copy: 'Guava, mango, and a few trees nobody quite remembers planting. Pick what you find on the ground.',
+      photo: { src: 'assets/photos/def.jpeg', alt: 'Fruit trees in the orchard', label: 'photo: orchard canopy, dappled light', aspect: '1 / 1', rotate: 2 },
+      pin: { x: 232, y: 52 }
+    },
+    {
+      number: '03',
+      title: 'The Flora',
+      copy: 'Tree A, Species B, and  who run the place better than we do. Mornings start by watering them.',
+      photo: { src: 'assets/photos/abc.jpeg', alt: 'trees', label: 'photo: tree, close-up, leaves or flowers', aspect: '4 / 5', rotate: -1.5 },
+      pin: { x: 62, y: 108 }
+    },
+    {
+      number: '04',
+      title: 'The Kitchen Garden',
+      copy: 'Whatever\'s in season goes straight from this patch to the plate — usually within the hour.',
+      photo: { src: 'assets/photos/maggi.jpeg', alt: 'Kitchen garden with vegetables', label: 'photo: hands in soil, vegetables in a basket', aspect: '1 / 1', rotate: 1.5 },
+      pin: { x: 222, y: 128 }
+    },
+    {
+      number: '05',
+      title: 'The Water\'s Edge',
+      copy: 'A pond that fills up with the monsoon and empties out slow. Good for sitting, better for nothing at all.',
+      photo: { src: 'assets/photos/bird.JPG', alt: 'Pond at the edge of the farm', label: 'photo: pond, early morning mist if we get lucky', aspect: '4 / 5', rotate: -2.5 },
+      pin: { x: 68, y: 178 }
+    },
+    {
+      number: '06',
+      title: 'The Workshop',
+      copy: 'Where the tractor gets fixed, the wood gets cut, and most of what you\'ll see around the farm gets made.',
+      photo: { src: 'assets/photos/ghi.jpeg', alt: 'The farm workshop and barn', label: 'photo: tools on a wall, or someone mid-repair', aspect: '1 / 1', rotate: 2 },
+      pin: { x: 238, y: 182 }
     }
-
-    // Default center if no coordinates yet (Mumbai)
-    const lat = this.centerLat || 19.0760;
-    const lon = this.centerLon || 72.8777;
-
-    this.map = L.map('leafletMap', {
-      center: [lat, lon],
-      zoom: 14
-    });
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
-  }
-
-
-  adjustCoordinates(latDelta?: number, lonDelta?: number) {
-    if (latDelta !== undefined) {
-      this.centerLat += latDelta;
-    }
-    if (lonDelta !== undefined) {
-      this.centerLon += lonDelta;
-    }
-    if (this.centerLat && this.centerLon) {
-      this.mapCenter = { latitude: this.centerLat, longitude: this.centerLon };
-    }
-  }
-
-  proceedToAreaStep() {
-    if (!this.centerLat || !this.centerLon) {
-      alert('Please get your current location or enter coordinates manually');
-      return;
-    }
-    this.configStep = 'area';
-  }
-
-  proceedToDivisionsStep() {
-    if (!this.areaWidth || !this.areaHeight || this.areaWidth < 100 || this.areaHeight < 100) {
-      alert('Please enter valid area dimensions (minimum 100 meters)');
-      return;
-    }
-    this.configStep = 'divisions';
-  }
-
-  backToLocationStep() {
-    this.configStep = 'location';
-  }
-
-  backToAreaStep() {
-    this.configStep = 'area';
-  }
-
-  loadZones() {
-    const areas = this.parkAreas;
-    if (areas.length > 0 && areas[0].zones.length > 0) {
-      this.zones = areas[0].zones;
-      if (this.zones.length > 0) {
-        this.mapCenter = this.zones[0].center;
-        this.calculateMapBounds();
-
-        // Center Leaflet map on existing zones
-        if (this.map) {
-          this.map.setView(
-            [this.mapCenter.latitude, this.mapCenter.longitude],
-            this.map.getZoom() ?? 14
-          );
-        }
-      }
-    }
-  }
-
-  calculateMapBounds() {
-    if (this.zones.length === 0) return;
-    
-    let minLat = Infinity, maxLat = -Infinity;
-    let minLon = Infinity, maxLon = -Infinity;
-    
-    this.zones.forEach(zone => {
-      zone.area.forEach(point => {
-        minLat = Math.min(minLat, point.latitude);
-        maxLat = Math.max(maxLat, point.latitude);
-        minLon = Math.min(minLon, point.longitude);
-        maxLon = Math.max(maxLon, point.longitude);
-      });
-    });
-    
-    // Add padding
-    const padding = 0.001;
-    this.mapBounds = {
-      minLat: minLat - padding,
-      maxLat: maxLat + padding,
-      minLon: minLon - padding,
-      maxLon: maxLon + padding
-    };
-  }
-
-  initializeGeofencing() {
-    if (!this.centerLat || !this.centerLon) {
-      alert('Please set the center coordinates');
-      return;
-    }
-
-    // If radius is provided, use circular eco-friendly area divided into 6 sectors
-    const useCircle = this.radiusMeters && this.radiusMeters > 0;
-
-    if (!useCircle) {
-      if (!this.areaWidth || !this.areaHeight) {
-        alert('Please set the area dimensions');
-        return;
-      }
-
-      if (!this.divisionsX || !this.divisionsY) {
-        alert('Please set the division counts');
-        return;
-      }
-    }
-
-    this.mapCenter = { latitude: this.centerLat, longitude: this.centerLon };
-    if (this.map) {
-      this.map.setView(
-        [this.mapCenter.latitude, this.mapCenter.longitude],
-        this.map.getZoom() ?? 14
-      );
-    }
-    
-    // Generate zones
-    if (useCircle) {
-      const baseName = this.guestName
-        ? `${this.guestName}'s Eco Area`
-        : 'Eco Area';
-      this.zones = this.geofenceService.divideCircleIntoSectors(
-        this.mapCenter,
-        this.radiusMeters,
-        6,
-        baseName
-      );
-    } else {
-      this.zones = this.geofenceService.divideAreaIntoZones(
-        this.mapCenter,
-        this.areaWidth,
-        this.areaHeight,
-        this.divisionsX,
-        this.divisionsY
-      );
-    }
-    
-    // Calculate map bounds
-    this.calculateMapBounds();
-    
-    // Save to data service
-    const totalArea = useCircle
-      ? Math.PI * this.radiusMeters * this.radiusMeters
-      : this.areaWidth * this.areaHeight;
-    const divisions = this.zones.length;
-    
-    // Clear existing areas
-    this.dataService.initializeParkAreas(this.mapCenter, totalArea, divisions);
-    
-    // Add zones to the first area
-    const areas = this.dataService.getParkAreas()();
-    if (areas.length > 0) {
-      this.zones.forEach(zone => {
-        this.dataService.addGeofenceZone(areas[0].id, zone);
-      });
-    }
-    
-    this.showGeofenceConfig = false;
-    this.configStep = 'location';
-    alert(`Successfully created ${this.zones.length} geofencing zones!`);
-  }
-
-  onHotspotClick(hotspot: any) {
-    // Find zone that contains this hotspot (if zones exist)
-    if (this.zones.length > 0) {
-      const hotspotPoint = this.getHotspotCoordinates(hotspot);
-      const containingZone = this.zones.find(zone => 
-        this.geofenceService.isPointInPolygon(hotspotPoint, zone.area)
-      );
-      
-      if (containingZone) {
-        this.selectedZone = containingZone;
-        return;
-      }
-    }
-    
-    // Fallback to creating a zone from hotspot
-    this.selectedZone = {
-      id: hotspot.id,
-      name: hotspot.name,
-      area: [],
-      center: this.mapCenter,
-      type: hotspot.type as any,
-      description: `Information about ${hotspot.name}`
-    };
-  }
-
-  getHotspotCoordinates(hotspot: any): GeoPoint {
-    // Convert percentage-based hotspot to actual coordinates
-    if (this.zones.length === 0) {
-      return this.mapCenter;
-    }
-    
-    const latRange = this.mapBounds.maxLat - this.mapBounds.minLat;
-    const lonRange = this.mapBounds.maxLon - this.mapBounds.minLon;
-    
-    return {
-      latitude: this.mapBounds.minLat + (hotspot.y / 100) * latRange,
-      longitude: this.mapBounds.minLon + (hotspot.x / 100) * lonRange
-    };
-  }
-
-  closeZoneDetails() {
-    this.selectedZone = null;
-  }
-
-  getZonePolygonPath(zone: GeofenceZone): string {
-    if (zone.area.length === 0 || !this.mapBounds.minLat) return '';
-    
-    const mapWidth = 800; // Approximate map width in pixels
-    const mapHeight = 500; // Approximate map height in pixels
-    
-    return zone.area.map((point, index) => {
-      const pixel = this.geofenceService.geoToPixel(
-        point,
-        this.mapBounds,
-        mapWidth,
-        mapHeight
-      );
-      return `${index === 0 ? 'M' : 'L'} ${pixel.x} ${pixel.y}`;
-    }).join(' ') + ' Z';
-  }
-
-  getZoneCenterPixel(zone: GeofenceZone): { x: number; y: number } {
-    if (!this.mapBounds.minLat) {
-      return { x: 400, y: 250 }; // Center of map as fallback
-    }
-    const mapWidth = 800;
-    const mapHeight = 500;
-    return this.geofenceService.geoToPixel(
-      zone.center,
-      this.mapBounds,
-      mapWidth,
-      mapHeight
-    );
-  }
-
-  onZoneClick(zone: GeofenceZone) {
-    this.selectedZone = zone;
-  }
-
-  /**
-   * Get current location using browser geolocation API
-   */
-  getCurrentLocation() {
-    this.isGettingLocation = true;
-    this.locationError = null;
-
-    if (!navigator.geolocation) {
-      this.locationError = 'Geolocation is not supported by your browser';
-      this.isGettingLocation = false;
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.centerLat = position.coords.latitude;
-        this.centerLon = position.coords.longitude;
-        this.mapCenter = { 
-          latitude: this.centerLat, 
-          longitude: this.centerLon 
-        };
-        if (this.map) {
-          this.map.setView(
-            [this.centerLat, this.centerLon],
-            this.map.getZoom() ?? 15
-          );
-        }
-        this.isGettingLocation = false;
-        this.locationError = null;
-        this.configStep = 'area';
-      },
-      (error) => {
-        this.isGettingLocation = false;
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            this.locationError = 'Location access denied. Please enable location permissions or enter coordinates manually.';
-            break;
-          case error.POSITION_UNAVAILABLE:
-            this.locationError = 'Location information unavailable. Please enter coordinates manually.';
-            break;
-          case error.TIMEOUT:
-            this.locationError = 'Location request timed out. Please enter coordinates manually.';
-            break;
-          default:
-            this.locationError = 'An unknown error occurred. Please enter coordinates manually.';
-            break;
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-  }
+  ];
+ 
+  /** SVG path string connecting the pins above, in order — keep in sync if you reorder the trail. */
+  readonly trailPath =
+    'M42,36 C130,14 190,40 232,52 C160,88 100,84 62,108 ' +
+    'C158,142 188,108 222,128 C150,170 104,150 68,178 ' +
+    'C150,208 202,158 238,182';
+ 
+  readonly stats: FarmStat[] = [
+    { value: '20', label: 'acres, working farm', rotate: -1.5 },
+    { value: '2.5', label: 'hrs from Delhi', rotate: 1 },
+    { value: '100+', label: 'flora species, any given day', rotate: -1 },
+    { value: '0', label: 'notifications that matter', rotate: 1.5 }
+  ];
+ 
+  /** A loose, unscripted handful for the closing cluster — not a strip, just what the day left behind. */
+  readonly closingPhotos: PhotoSlot[] = [
+    { src: 'assets/photos/hero-field.jpeg', alt: 'Morning feed round', label: 'photo: feeding the animals, early light', aspect: '3 / 4', rotate: -4 },
+    { src: 'assets/photos/overview-pond.jpeg', alt: 'The pond at dusk', label: 'photo: pond, golden hour', aspect: '4 / 5', rotate: 3 },
+    { src: 'assets/photos/erk.jpeg', alt: 'Farm dog resting in the yard', label: 'photo: farm dog or cat, mid-nap', aspect: '1 / 1', rotate: -2 }
+  ];
 }

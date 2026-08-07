@@ -1,54 +1,85 @@
-<div class="home">
-  <!-- Section 1: Dual Carousel (First Section) -->
-  <app-dual-carousel [slides]="carouselSlides"></app-dual-carousel>
-
-  <!-- Section 2: Experience Cards -->
-  <app-experience-cards [cards]="experienceCards"></app-experience-cards>
-
-  <!-- Section 2.5: Properties Listing -->
-  <section id="properties-section" class="properties-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Explore Our Properties</h2>
-        <p class="section-subtitle">Discover farm stays and eco-adventure experiences</p>
-      </div>
-      @if (loadingProperties) {
-        <div class="loading-properties">
-          <div class="spinner"></div>
-          <p>Loading properties...</p>
-        </div>
-      } @else if (properties.length > 0) {
-        <div class="properties-grid">
-          @for (property of properties; track property.id) {
-            <app-property-card [property]="property"></app-property-card>
-          }
-        </div>
-      } @else {
-        <div class="no-properties">
-          <p>No properties available at the moment. Check back soon!</p>
-        </div>
-      }
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-photo" [style.aspect-ratio]="heroPhoto.aspect">
+    <img *ngIf="heroPhoto.src" [src]="heroPhoto.src" [alt]="heroPhoto.alt">
+    <div class="photo-placeholder" *ngIf="!heroPhoto.src">
+      <span>{{ heroPhoto.label }}</span>
     </div>
-  </section>
+  </div>
 
-  <!-- Section 3: Membership Section -->
-  <app-membership-section></app-membership-section>
+  <div class="hero-copy">
+    <div class="eyebrow">Roorkee · 2.5 hrs from Delhi</div>
+    <h1>
+      WeekendAcres -<br>
+      A call to the outdoors
+      <svg class="doodle-underline" viewBox="0 0 220 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 14C40 4 90 20 130 9C160 1 190 15 217 6" stroke="#c98a3c" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </h1>
+    <p class="quote">"Some weekend plans are best left to green fields, silence, and slow evenings."</p>
+  </div>
 
-  <!-- Section 4: Attractions -->
-  <app-attractions-section
-    [attractions]="attractions"
-    (attractionClick)="onAttractionClick($event)">
-  </app-attractions-section>
+  <svg class="doodle-bird" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 22C10 14 16 20 20 14C24 20 30 14 36 22" stroke="#b5652e" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>
+</section>
 
-  <!-- Section 4.5: Photo Gallery -->
-  <app-gallery-section [photos]="galleryPhotos"></app-gallery-section>
+<!-- ============ INTRO ============ -->
+<section class="intro">
+  <div class="eyebrow">Spring into action</div>
+  <p>
+    Just <strong>two and a half hours</strong> from Delhi, where the foothills of Uttarakhand begin,
+    lies twenty acres of a working farm — and a weekend that asks nothing of you. No stress.
+    No notifications that matter. Just open land, quiet, and a bed closer to the stars than your own.
+  </p>
+  <div class="fine">Roorkee, Uttarakhand — via the Delhi–Dehradun Expressway</div>
+</section>
 
-  <!-- Section 5: Upcoming Events -->
-  <app-events-section [events]="events"></app-events-section>
+<div class="banner">
+  A weekend that remembers what a weekend is for.
+</div>
 
-  <!-- Section 6: Membership & Registration -->
-  <app-membership-registration [membershipTypes]="membershipTypes"></app-membership-registration>
+<!-- ============ STAY / EAT / BELONG ============ -->
+<div class="blocks">
+  <div class="block" *ngFor="let b of blocks">
+    <div class="block-photo" [style.aspect-ratio]="b.photo.aspect" [style.transform]="'rotate(' + b.photo.rotate + 'deg)'">
+      <img *ngIf="b.photo.src" [src]="b.photo.src" [alt]="b.photo.alt">
+      <div class="photo-placeholder small" *ngIf="!b.photo.src">
+        <span>{{ b.photo.label }}</span>
+      </div>
+    </div>
+    <h3>{{ b.title }}</h3>
+    <p>{{ b.copy }}</p>
+  </div>
+</div>
 
-  <!-- Section 7: Contact Us -->
-  <app-contact-section></app-contact-section>
+<!-- ============ A PEEK AT THE FARM ============ -->
+<section class="peek">
+  <div class="eyebrow">A peek at the farm</div>
+  <h2>What's here, right now
+    <svg class="doodle-leaf" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 32C6 18 16 6 30 6C30 20 20 30 8 32Z" stroke="#7c8a54" stroke-width="2"/>
+      <path d="M9 31C14 22 19 15 29 8" stroke="#7c8a54" stroke-width="1.6"/>
+    </svg>
+  </h2>
+
+  <div class="peek-strip">
+    <div
+      class="peek-photo"
+      *ngFor="let p of peekPhotos"
+      [style.aspect-ratio]="p.aspect"
+      [style.transform]="'rotate(' + p.rotate + 'deg)'">
+      <img *ngIf="p.src" [src]="p.src" [alt]="p.alt">
+      <div class="photo-placeholder small" *ngIf="!p.src">
+        <span>{{ p.label }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING ============ -->
+<div class="closing">
+  <div class="eyebrow">A small circle, first</div>
+  <h2>We're opening Weekend Acres to a small circle of families first.</h2>
+  <a class="btn btn-primary" routerLink="/this-weekend">Reserve a weekend</a>
 </div>

@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'virtual-tour',
-    loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.VirtualTour)
+    loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.OurFarm)
   },
   {
     path: 'activities',
