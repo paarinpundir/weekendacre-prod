@@ -1,0 +1,327 @@
+:host {
+  --cream: #faf3e6;
+  --cream-dim: #f2e8d3;
+  --ink: #3a2f22;
+  --ink-soft: rgba(58, 47, 34, 0.72);
+  --gold: #c98a3c;
+  --gold-soft: #e6c07f;
+  --rust: #b5652e;
+  --moss: #7c8a54;
+  --line: rgba(58, 47, 34, 0.14);
+
+  display: block;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Newsreader', serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* ---------- shared: photo placeholder ---------- */
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  border-radius: inherit;
+  border: 2px dashed var(--gold-soft);
+  background:
+    repeating-linear-gradient(135deg, var(--cream-dim), var(--cream-dim) 10px, #ede0c4 10px, #ede0c4 20px);
+
+  span {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--rust);
+    line-height: 1.5;
+  }
+  &.small span { font-size: 10.5px; }
+}
+
+/* ---------- shared: buttons ---------- */
+.btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.btn-primary {
+  background: var(--gold);
+  color: #2b2115;
+  &:hover { transform: translateY(-2px); background: var(--gold-soft); }
+}
+.btn-ghost {
+  border: 1.5px solid var(--rust);
+  color: var(--rust);
+  &:hover { transform: translateY(-2px); background: rgba(181, 101, 46, 0.08); }
+}
+
+/* ---------- shared: pending text placeholder ---------- */
+.pending-note {
+  border: 2px dashed var(--gold-soft);
+  border-radius: 10px;
+  padding: 14px;
+  background:
+    repeating-linear-gradient(135deg, var(--cream-dim), var(--cream-dim) 10px, #ede0c4 10px, #ede0c4 20px);
+
+  span {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--rust);
+    line-height: 1.5;
+  }
+}
+
+/* ============ HERO ============ */
+.hero-weekend {
+  padding: clamp(40px, 6vw, 72px) clamp(20px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+}
+.hero-text {
+  .eyebrow { margin-bottom: 14px; }
+}
+.hero-weekend h1 {
+  font-size: clamp(34px, 4.6vw, 52px);
+  line-height: 1.08;
+}
+.hero-weekend .lead {
+  font-size: 15.5px;
+  line-height: 1.6;
+  margin-top: 18px;
+  max-width: 440px;
+
+  strong { font-weight: 500; color: var(--rust); }
+}
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+/* the polaroid is capped so it can never dominate the hero */
+.hero-polaroid {
+  width: 100%;
+  max-width: 260px;
+  justify-self: center;
+  background: var(--cream);
+  padding: 10px 10px 26px;
+  border-radius: 4px;
+  box-shadow: 0 14px 28px rgba(58, 47, 34, 0.16);
+
+  @media (max-width: 860px) {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+.polaroid-photo {
+  border-radius: 2px;
+  overflow: hidden;
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+.polaroid-caption {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ============ THE DAY, LOOSELY ============ */
+.day-section {
+  padding: clamp(56px, 7vw, 90px) clamp(20px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+}
+.day-list-col h2 {
+  font-size: clamp(26px, 3.4vw, 38px);
+  margin-top: 8px;
+}
+.day-list {
+  margin-top: clamp(28px, 4vw, 40px);
+}
+.day-row {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px dashed var(--line);
+
+  &:last-child { border-bottom: 1px dashed var(--line); }
+}
+.day-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  padding-top: 3px;
+}
+.day-time {
+  font-family: 'Space Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+.day-copy h3 {
+  font-size: 19px;
+  margin: 6px 0 6px;
+}
+.day-copy p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 480px;
+}
+
+/* single supporting photo, capped and pinned to the top of its column */
+.day-photo {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(58, 47, 34, 0.14);
+  position: sticky;
+  top: 100px;
+  justify-self: center;
+
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  @media (max-width: 860px) {
+    position: static;
+    max-width: 220px;
+    margin: 0 auto;
+  }
+}
+
+/* ============ NO CROWD (typographic statement) ============ */
+.no-crowd-statement {
+  padding: clamp(56px, 7vw, 90px) clamp(20px, 6vw, 72px);
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.statement {
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1.15;
+  margin-top: 14px;
+
+  span {
+    font-style: italic;
+    color: var(--rust);
+  }
+}
+.statement-sub {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: 22px auto 0;
+  max-width: 560px;
+}
+
+/* ============ BEFORE YOU BOOK — unchanged ============ */
+.notes-section {
+  padding: clamp(56px, 7vw, 90px) clamp(20px, 6vw, 72px);
+  background: var(--cream-dim);
+}
+.notes-section h2 {
+  font-size: clamp(26px, 3.4vw, 38px);
+  margin-top: 8px;
+}
+.notes-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(24px, 3.5vw, 40px);
+  margin-top: clamp(40px, 5vw, 56px);
+  justify-content: center;
+}
+.note-card {
+  position: relative;
+  flex: 1 1 260px;
+  max-width: 320px;
+  background: var(--cream);
+  border-radius: 4px;
+  padding: 26px 24px 24px;
+  box-shadow: 0 12px 26px rgba(58, 47, 34, 0.12);
+
+  .eyebrow { margin-bottom: 10px; }
+  h3 { font-size: 19px; margin: 0 0 12px; }
+  p { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); margin: 0; }
+}
+.note-pin {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--rust);
+  box-shadow: 0 3px 6px rgba(58, 47, 34, 0.3);
+}
+
+/* ============ CLOSING (quiet sign-off) ============ */
+.closing-section {
+  text-align: center;
+  padding: clamp(56px, 7vw, 90px) 24px clamp(64px, 8vw, 100px);
+}
+.closing-rule {
+  width: 60px;
+  border-top: 2px dashed var(--gold-soft);
+  margin: 0 auto 28px;
+}
+.closing-line {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: clamp(18px, 2.2vw, 22px);
+  color: var(--moss);
+  max-width: 440px;
+  margin: 0 auto 24px;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

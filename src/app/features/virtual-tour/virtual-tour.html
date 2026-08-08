@@ -1,108 +1,396 @@
-<!-- ============ HERO ============ -->
-<section class="hero">
-  <div class="hero-photo" [style.aspect-ratio]="heroPhoto.aspect">
-    <img *ngIf="heroPhoto.src" [src]="heroPhoto.src" [alt]="heroPhoto.alt">
-    <div class="photo-placeholder" *ngIf="!heroPhoto.src">
-      <span>{{ heroPhoto.label }}</span>
+<div class="virtual-tour">
+  <div class="container">
+    <h1 class="page-title">Interactive Virtual Tour</h1>
+    <p class="page-subtitle">Explore our park through an interactive map and 360° views</p>
+
+    <!-- Geofencing Configuration Button -->
+    <div class="geofence-config-header">
+      <button class="btn-geofence-config" (click)="showGeofenceConfig = !showGeofenceConfig">
+        @if (showGeofenceConfig) {
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> Close Configuration
+        } @else {
+          <i class="fa-solid fa-gear" aria-hidden="true"></i> Configure Geofencing
+        }
+      </button>
+      @if (zones.length > 0) {
+        <span class="zones-count">Active Zones: {{ zones.length }}</span>
+      }
     </div>
-  </div>
 
-  <div class="hero-copy">
-    <div class="eyebrow">Roorkee · Twenty acres, one gate</div>
-    <h1>Our Farm -<br>Best found by wandering</h1>
-    <!-- <p class="quote">"There's no wrong direction to walk in. Every path here leads somewhere worth stopping."</p> -->
-    <p class="lead">
-      Weekend Acres isn't landscaped to look like a farm — it <strong>is</strong> one, worked and
-      re-planted long before it was a place to stay. Below is a rough trail of where things are, to guide you —
-      but the best way to see it is to just start walking.
-    </p>
-    <div class="hero-ctas">
-      <a class="btn btn-primary" routerLink="/this-weekend">Plan your visit</a>
-      <a class="btn btn-ghost" routerLink="/education">See memberships</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ THE MAP ============ -->
-<!-- <section class="map-section">
-  <div class="eyebrow">Get your bearings</div>
-  <h2>The lay of the land</h2>
-  <div class="fine">Roorkee, Uttarakhand — via the Delhi–Dehradun Expressway</div>
-
-  <div class="map-wrap">
-    <svg class="farm-map" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg"> -->
-      <!-- loose, hand-drawn boundary -->
-      <!-- <path class="map-boundary"
-        d="M18,30 C60,6 220,4 296,26 C312,70 308,150 292,190 C220,214 70,212 22,188 C4,140 6,72 18,30Z" /> -->
-
-      <!-- the trail connecting each stop, in order -->
-      <!-- <path class="map-trail" [attr.d]="trailPath" /> -->
-
-      <!-- numbered pins -->
-      <!-- <g class="map-pin" *ngFor="let stop of trail">
-        <circle [attr.cx]="stop.pin.x" [attr.cy]="stop.pin.y" r="11" />
-        <text [attr.x]="stop.pin.x" [attr.y]="stop.pin.y">{{ stop.number }}</text>
-      </g>
-    </svg>
-  </div>
-
-  <ul class="map-legend">
-    <li *ngFor="let stop of trail">
-      <span class="legend-number">{{ stop.number }}</span>
-      <span class="legend-title">{{ stop.title }}</span>
-    </li>
-  </ul>
-</section> -->
-
-<!-- ============ THE TRAIL ============ -->
-<section class="trail-section">
-  <div class="eyebrow">Now walk it</div>
-  <h2>Six stops, no particular order</h2>
-
-  <div class="trail-line" aria-hidden="true"></div>
-
-  <div class="trail-stops">
-    <div class="trail-stop" *ngFor="let stop of trail; let i = index" [class.reverse]="i % 2 === 1">
-      <div class="stop-marker">{{ stop.number }}</div>
-
-      <div class="stop-photo" [style.aspect-ratio]="stop.photo.aspect" [style.transform]="'rotate(' + stop.photo.rotate + 'deg)'">
-        <img *ngIf="stop.photo.src" [src]="stop.photo.src" [alt]="stop.photo.alt">
-        <div class="photo-placeholder small" *ngIf="!stop.photo.src">
-          <span>{{ stop.photo.label }}</span>
+    <!-- Geofencing Configuration Form - Step by Step -->
+    @if (showGeofenceConfig) {
+      <div class="geofence-config-card">
+        <div class="config-steps-indicator">
+          <div class="step" [class.active]="configStep === 'location'" [class.completed]="centerLat && centerLon">
+            <span class="step-number">1</span>
+            <span class="step-label">Location</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" [class.active]="configStep === 'area'" [class.completed]="areaWidth && areaHeight">
+            <span class="step-number">2</span>
+            <span class="step-label">Area</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" [class.active]="configStep === 'divisions'" [class.completed]="divisionsX && divisionsY">
+            <span class="step-number">3</span>
+            <span class="step-label">Divisions</span>
+          </div>
         </div>
+
+        <!-- Step 1: Location -->
+        @if (configStep === 'location') {
+          <div class="config-step-content">
+            <h3><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Step 1: Set Center Location</h3>
+            <p class="config-description">Get your current location or enter coordinates manually. This will be the center point of your geofencing area.</p>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Guest Name (optional)</label>
+                <input
+                  type="text"
+                  [(ngModel)]="guestName"
+                  name="guestName"
+                  placeholder="Guest name for Eco Area"
+                  class="form-input">
+                <small>Used to label eco-friendly zones (e.g., \"{{ guestName || 'Guest' }}'s Eco Area 1\")</small>
+              </div>
+            </div>
+            
+            <div class="location-actions">
+              <button 
+                type="button" 
+                class="btn-get-location"
+                (click)="getCurrentLocation()"
+                [disabled]="isGettingLocation">
+                @if (isGettingLocation) {
+                  <span><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Getting Location...</span>
+                } @else {
+                  <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Get Current Location</span>
+                }
+              </button>
+              <span class="location-divider">OR</span>
+              <span class="manual-entry-text">Enter coordinates manually</span>
+            </div>
+            
+            @if (locationError) {
+              <div class="error-message">{{ locationError }}</div>
+            }
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Center Latitude *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="centerLat" 
+                  name="centerLat"
+                  (blur)="adjustCoordinates()"
+                  step="0.000001"
+                  placeholder="e.g., 19.0760"
+                  class="form-input">
+                <small>Example: 19.0760 (Mumbai)</small>
+                <div class="coordinate-adjust">
+                  <button type="button" class="btn-adjust" (click)="adjustCoordinates(0.0001, 0)">↑</button>
+                  <button type="button" class="btn-adjust" (click)="adjustCoordinates(-0.0001, 0)">↓</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Center Longitude *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="centerLon" 
+                  name="centerLon"
+                  (blur)="adjustCoordinates()"
+                  step="0.000001"
+                  placeholder="e.g., 72.8777"
+                  class="form-input">
+                <small>Example: 72.8777 (Mumbai)</small>
+                <div class="coordinate-adjust">
+                  <button type="button" class="btn-adjust" (click)="adjustCoordinates(0, 0.0001)">→</button>
+                  <button type="button" class="btn-adjust" (click)="adjustCoordinates(0, -0.0001)">←</button>
+                </div>
+              </div>
+            </div>
+            
+            @if (centerLat && centerLon) {
+              <div class="location-preview">
+                <strong><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Current Location:</strong> 
+                Lat: {{ centerLat | number:'1.6-6' }}, 
+                Lng: {{ centerLon | number:'1.6-6' }}
+              </div>
+            }
+
+            <div class="step-actions">
+              <button 
+                type="button" 
+                class="btn-next" 
+                (click)="proceedToAreaStep()"
+                [disabled]="!centerLat || !centerLon">
+                Next: Set Area →
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Area -->
+        @if (configStep === 'area') {
+          <div class="config-step-content">
+            <h3><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i> Step 2: Define Area Dimensions</h3>
+            <p class="config-description">You can either define a rectangular area (width × height) or a circular eco-friendly area using a radius.</p>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Area Width (meters) *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="areaWidth" 
+                  name="areaWidth"
+                  min="100"
+                  step="10"
+                  required
+                  class="form-input">
+                <small>Minimum: 100 meters</small>
+                <div class="area-preview">
+                  <strong>Total Area:</strong> {{ (areaWidth * areaHeight) | number:'1.0-0' }} m²
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Area Height (meters) *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="areaHeight" 
+                  name="areaHeight"
+                  min="100"
+                  step="10"
+                  required
+                  class="form-input">
+                <small>Minimum: 100 meters</small>
+              </div>
+            </div>
+
+            @if (areaWidth && areaHeight) {
+              <div class="area-info">
+                <p><strong>Area Preview:</strong></p>
+                <ul>
+                  <li>Total Area: {{ (areaWidth * areaHeight) | number:'1.0-0' }} square meters</li>
+                  <li>Width: {{ areaWidth | number:'1.0-0' }}m × Height: {{ areaHeight | number:'1.0-0' }}m</li>
+                  <li>Approx. {{ (areaWidth * areaHeight / 10000) | number:'1.2-2' }} hectares</li>
+                </ul>
+              </div>
+            }
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>OR Circular Eco Area Radius (meters)</label>
+                <input
+                  type="number"
+                  [(ngModel)]="radiusMeters"
+                  name="radiusMeters"
+                  min="0"
+                  step="10"
+                  class="form-input">
+                <small>If radius &gt; 0, the park will be divided into 6 equal eco-friendly sectors around the center point.</small>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="btn-back" (click)="backToLocationStep()">← Back</button>
+              <button 
+                type="button" 
+                class="btn-next" 
+                (click)="proceedToDivisionsStep()"
+                [disabled]="!areaWidth || !areaHeight || areaWidth < 100 || areaHeight < 100">
+                Next: Set Divisions →
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Step 3: Divisions -->
+        @if (configStep === 'divisions') {
+          <div class="config-step-content">
+            <h3><i class="fa-solid fa-border-all" aria-hidden="true"></i> Step 3: Set Zone Divisions</h3>
+            <p class="config-description">Divide the area into equal zones. Enter how many zones you want horizontally and vertically.</p>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Horizontal Divisions (X) *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="divisionsX" 
+                  name="divisionsX"
+                  min="1"
+                  max="10"
+                  required
+                  class="form-input">
+                <small>Number of zones horizontally (1-10)</small>
+              </div>
+              <div class="form-group">
+                <label>Vertical Divisions (Y) *</label>
+                <input 
+                  type="number" 
+                  [(ngModel)]="divisionsY" 
+                  name="divisionsY"
+                  min="1"
+                  max="10"
+                  required
+                  class="form-input">
+                <small>Number of zones vertically (1-10)</small>
+              </div>
+            </div>
+
+            @if (divisionsX && divisionsY) {
+              <div class="divisions-preview">
+                <p><strong>Zone Preview:</strong></p>
+                <ul>
+                  <li>Total Zones: <strong>{{ divisionsX * divisionsY }}</strong></li>
+                  <li>Zone Size: ~{{ (areaWidth * areaHeight / (divisionsX * divisionsY)) | number:'1.0-0' }} m² each</li>
+                  <li>Zone Dimensions: ~{{ (areaWidth / divisionsX) | number:'1.0-0' }}m × {{ (areaHeight / divisionsY) | number:'1.0-0' }}m</li>
+                </ul>
+                <div class="zones-grid-preview">
+                  <div class="grid-label">Zone Layout:</div>
+                  <div class="mini-grid" [style.grid-template-columns]="'repeat(' + divisionsX + ', 1fr)'">
+                    @for (zone of [].constructor(divisionsX * divisionsY); track $index) {
+                      <div class="mini-zone">{{ $index + 1 }}</div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div class="step-actions">
+              <button type="button" class="btn-back" (click)="backToAreaStep()">← Back</button>
+              <button 
+                type="button" 
+                class="btn-create-zones" 
+                (click)="initializeGeofencing()"
+                [disabled]="!divisionsX || !divisionsY || divisionsX < 1 || divisionsY < 1">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Create Geofencing Zones
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="tour-container">
+      <!-- Map Section -->
+      <div class="map-section">
+        <div class="map-header">
+          <h2>Park Map</h2>
+          <div class="map-controls">
+            @if (zones.length > 0) {
+              <span class="zones-active"
+                ><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Geofencing Active ({{ zones.length }} zones)</span
+              >
+            } @else {
+              <p class="info-text">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Configure geofencing to see zones on map
+              </p>
+            }
+          </div>
+        </div>
+        
+        <div class="map-container">
+          <div class="map-placeholder">
+            <!-- Leaflet map container -->
+            <div id="leafletMap" class="leaflet-map"></div>
+
+            <!-- SVG for zone visualization -->
+            @if (zones.length > 0) {
+              <svg class="zones-overlay" viewBox="0 0 800 500" preserveAspectRatio="none">
+                @for (zone of zones; track zone.id) {
+                  <g (click)="onZoneClick(zone)" style="cursor: pointer;">
+                    <path 
+                      [attr.d]="getZonePolygonPath(zone)"
+                      class="zone-polygon"
+                      [attr.data-zone-id]="zone.id"
+                      [title]="zone.name">
+                    </path>
+                    <circle 
+                      [attr.cx]="getZoneCenterPixel(zone).x"
+                      [attr.cy]="getZoneCenterPixel(zone).y"
+                      r="5"
+                      class="zone-center">
+                    </circle>
+                    <text 
+                      [attr.x]="getZoneCenterPixel(zone).x"
+                      [attr.y]="getZoneCenterPixel(zone).y - 10"
+                      class="zone-label"
+                      text-anchor="middle">
+                      {{ zone.name }}
+                    </text>
+                  </g>
+                }
+              </svg>
+            }
+            
+            <!-- Map Overlay (only if no zones) -->
+            <!-- @if (zones.length === 0) {
+              <div class="map-overlay">
+                <p>Interactive Map</p>
+                <p class="small-text">Click on hotspots to explore different zones</p>
+                <p class="small-text">Configure geofencing to divide the area into zones</p>
+              </div>
+            } -->
+          </div>
+        </div>
+
+        <!-- Zone Details Modal -->
+        @if (selectedZone) {
+          <div class="zone-modal">
+            <div class="zone-modal-content">
+              <button class="close-btn" (click)="closeZoneDetails()">×</button>
+              <h3>{{ selectedZone.name }}</h3>
+              <p class="zone-type">Type: {{ selectedZone.type }}</p>
+              @if (selectedZone.description) {
+                <p>{{ selectedZone.description }}</p>
+              }
+              <div class="zone-coordinates">
+                <p><strong>Center Coordinates:</strong></p>
+                <p>Latitude: {{ selectedZone.center.latitude | number:'1.6-6' }}</p>
+                <p>Longitude: {{ selectedZone.center.longitude | number:'1.6-6' }}</p>
+                @if (selectedZone.area.length > 0) {
+                  <p><strong>Boundary Points:</strong> {{ selectedZone.area.length - 1 }} points</p>
+                }
+              </div>
+            </div>
+          </div>
+        }
       </div>
 
-      <div class="stop-copy">
-        <h3>{{ stop.title }}</h3>
-        <p>{{ stop.copy }}</p>
-      </div>
     </div>
-  </div>
-</section>
 
-<!-- ============ FARM IN NUMBERS, SIGNPOST STYLE ============ -->
-<div class="signpost">
-  <div class="signpost-plank" *ngFor="let s of stats" [style.transform]="'rotate(' + s.rotate + 'deg)'">
-    <div class="plank-value">{{ s.value }}</div>
-    <div class="plank-label">{{ s.label }}</div>
+    <!-- Geofencing Info Section -->
+    <div class="geofencing-info">
+      <h3>Geofencing Zones</h3>
+      @if (zones.length > 0) {
+        <p>The park has been divided into {{ zones.length }} equal zones for better management and navigation.</p>
+        <div class="zones-stats">
+          <div class="stat-item">
+            <strong>Total Zones:</strong> {{ zones.length }}
+          </div>
+          <div class="stat-item">
+            <strong>Zone Size:</strong> ~{{ (areaWidth * areaHeight / (divisionsX * divisionsY)) | number:'1.0-0' }} m² each
+          </div>
+          <div class="stat-item">
+            <strong>Total Area:</strong> {{ (areaWidth * areaHeight) | number:'1.0-0' }} m²
+          </div>
+        </div>
+        <div class="zones-list">
+          @for (zone of zones.slice(0, 12); track zone.id) {
+            <div class="zone-card" (click)="onZoneClick(zone)">
+              <h4>{{ zone.name }}</h4>
+              <p>{{ zone.description }}</p>
+              <p class="zone-coords">Lat: {{ zone.center.latitude | number:'1.4-4' }}, Lng: {{ zone.center.longitude | number:'1.4-4' }}</p>
+            </div>
+          }
+          @if (zones.length > 12) {
+            <p class="more-zones">... and {{ zones.length - 12 }} more zones</p>
+          }
+        </div>
+      } @else {
+        <p class="info-text">No zones defined yet. Click "Configure Geofencing" above to initialize geofencing zones.</p>
+      }
+    </div>
   </div>
 </div>
-
-<!-- ============ CLOSING, LOOSE CLUSTER ============ -->
-<section class="closing-cluster">
-  <div class="cluster">
-    <div
-      class="cluster-photo"
-      *ngFor="let p of closingPhotos"
-      [style.aspect-ratio]="p.aspect"
-      [style.transform]="'rotate(' + p.rotate + 'deg)'">
-      <img *ngIf="p.src" [src]="p.src" [alt]="p.alt">
-      <div class="photo-placeholder small" *ngIf="!p.src">
-        <span>{{ p.label }}</span>
-      </div>
-    </div>
-  </div>
-
-  <p class="closing-line">The farm's easier to feel than to describe.</p>
-  <a class="btn btn-primary" routerLink="/this-weekend">Reserve a weekend</a>
-</section>

@@ -16,8 +16,20 @@ export const routes: Routes = [
       import('./features/landing/event-detail/event-detail').then(m => m.EventDetail),
   },
   {
+    path: 'our-farm',
+    loadComponent: () => import('./features/our-farm/our-farm').then(m => m.OurFarm)
+  },
+  {
+    path: 'this-weekend',
+    loadComponent: () => import('./features/this-weekend/this-weekend').then(m => m.ThisWeekend)
+  },
+  {
+    path: 'wa-team',
+    loadComponent: () => import('./features/wa-team/wa-team').then(m => m.WaTeam)
+  },
+  {
     path: 'virtual-tour',
-    loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.OurFarm)
+    loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.VirtualTour)
   },
   {
     path: 'activities',

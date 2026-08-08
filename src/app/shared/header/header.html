@@ -19,10 +19,10 @@
       <!-- Navigation Links -->
       <ul class="nav-menu" [class.active]="isMobileMenuOpen">  
         <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMenu()">Home</a></li>  
-        <li><a routerLink="/virtual-tour" routerLinkActive="active" (click)="closeMenu()">Our Farm</a></li>  
-        <li><a routerLink="/activities" routerLinkActive="active" (click)="closeMenu()">This Weekend</a></li>  
-        <li><a routerLink="/education" routerLinkActive="active" (click)="closeMenu()">Memberships</a></li>  
-        <li><a routerLink="/booking" routerLinkActive="active" (click)="closeMenu()">The WA Team</a></li>  
+        <li><a routerLink="/our-farm" routerLinkActive="active" (click)="closeMenu()">Our Farm</a></li>
+        <li><a routerLink="/this-weekend" routerLinkActive="active" (click)="closeMenu()">This Weekend</a></li>
+        <!-- <li><a routerLink="/activities" routerLinkActive="active" (click)="closeMenu()">Memberships</a></li>     -->
+        <li><a routerLink="/wa-team" routerLinkActive="active" (click)="closeMenu()">The WA Team</a></li>  
 
         @if (authService.isLoggedIn()) {  
           <li><a [routerLink]="getDashboardRoute()" routerLinkActive="active" (click)="closeMenu()">Dashboard</a></li>  
