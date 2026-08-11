@@ -28,6 +28,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/wa-team/wa-team').then(m => m.WaTeam)
   },
   {
+    path: 'farm-produce',
+    loadComponent: () => import('./features/farm-produce/farm-produce').then(m => m.FarmProduce)
+  },
+  {
     path: 'virtual-tour',
     loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.VirtualTour)
   },
