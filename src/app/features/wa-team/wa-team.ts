@@ -66,19 +66,19 @@ export class WaTeam {
  
   /** One photo/name/pin defined per person — teams below just reference these, so nobody's details drift out of sync. */
   private readonly members: Record<string, Member> = {
-    ashish: { name: 'Ashish Pundir', photo: { src: '', alt: 'Ashish Pundir', label: 'photo: Ashish, outdoors, in the fields', rotate: -2 }, pin: 'moss' },
+    ashish: { name: 'Ashish Pundir', photo: { src: 'assets/photos/ashish.png', alt: 'Ashish Pundir', label: 'photo: Ashish, outdoors, in the fields', rotate: -2 }, pin: 'moss' },
     ashutosh: { name: 'Ashutosh Tripathi', photo: { src: '', alt: 'Ashutosh Tripathi', label: 'photo: Ashutosh, candid', rotate: 2 }, pin: 'gold' },
-    pushkar: { name: 'Pushkar Barnwal', photo: { src: '', alt: 'Pushkar Barnwal', label: 'photo: Pushkar, candid', rotate: -2.5 }, pin: 'rust' },
-    paarin: { name: 'Paarin Pundir', photo: { src: '', alt: 'Paarin Pundir', label: 'photo: Paarin, candid', rotate: 3 }, pin: 'moss' },
-    pranav: { name: 'Pranav Saxena', photo: { src: '', alt: 'Pranav Saxena', label: 'photo: Pranav, candid', rotate: -2 }, pin: 'gold' },
-    mamta: { name: 'Mamta Pundir', photo: { src: '', alt: 'Mamta Pundir', label: 'photo: Mamta, kitchen or grounds', rotate: 2.5 }, pin: 'rust' },
+    pushkar: { name: 'Pushkar Barnwal', photo: { src: 'assets/photos/pushkar.jpeg', alt: 'Pushkar Barnwal', label: 'photo: Pushkar, candid', rotate: -2.5 }, pin: 'rust' },
+    paarin: { name: 'Paarin Pundir', photo: { src: 'assets/photos/paarin.jpeg', alt: 'Paarin Pundir', label: 'photo: Paarin, candid', rotate: 3 }, pin: 'moss' },
+    pranav: { name: 'Pranav Saxena', photo: { src: 'assets/photos/pranav.jpeg', alt: 'Pranav Saxena', label: 'photo: Pranav, candid', rotate: -2 }, pin: 'gold' },
+    mamta: { name: 'Mamta Pundir', photo: { src: 'assets/photos/mamta.png', alt: 'Mamta Pundir', label: 'photo: Mamta, kitchen or grounds', rotate: 2.5 }, pin: 'rust' },
     sarita: { name: 'Sarita Pundir', photo: { src: '', alt: 'Sarita Pundir', label: 'photo: Sarita, kitchen', rotate: -3 }, pin: 'gold' },
-    anusha: { name: 'Anusha Pundir', photo: { src: '', alt: 'Anusha Pundir', label: 'photo: Anusha, candid', rotate: 2 }, pin: 'moss' },
-    shivin: { name: 'Shivin Pundir', photo: { src: '', alt: 'Shivin Pundir', label: 'photo: Shivin, near the water or the hives', rotate: -2.5 }, pin: 'rust' },
+    anusha: { name: 'Anusha Pundir', photo: { src: 'assets/photos/anusha.png', alt: 'Anusha Pundir', label: 'photo: Anusha, candid', rotate: 2 }, pin: 'moss' },
+    shivin: { name: 'Shivin Pundir', photo: { src: 'assets/photos/shivin.png', alt: 'Shivin Pundir', label: 'photo: Shivin, near the water or the hives', rotate: -2.5 }, pin: 'rust' },
     vimlesh: { name: 'Vimlesh Yadav', photo: { src: '', alt: 'Vimlesh Yadav', label: 'photo: Vimlesh, workshop or at dusk', rotate: 3 }, pin: 'gold' },
-    rahul: { name: 'Rahul Bhavya', photo: { src: '', alt: 'Rahul Bhavya', label: 'photo: Rahul, workshop or at dusk', rotate: -2 }, pin: 'moss' },
-    riya: { name: 'Riya Pundir', photo: { src: '', alt: 'Riya Pundir', label: 'photo: Riya, candid, near her work', rotate: 2.5 }, pin: 'rust' },
-    tanishka: { name: 'Tanishka Saxena', photo: { src: '', alt: 'Tanishka Saxena', label: 'photo: Tanishka, candid', rotate: -3 }, pin: 'gold' }
+    rahul: { name: 'Rahul', photo: { src: '', alt: 'Rahul', label: 'photo: Rahul, workshop or at dusk', rotate: -2 }, pin: 'moss' },
+    riya: { name: 'Riya Pundir', photo: { src: 'assets/photos/riya.png', alt: 'Riya Pundir', label: 'photo: Riya, candid, near her work', rotate: 2.5 }, pin: 'rust' },
+    tanishka: { name: 'Tanishka Saxena', photo: { src: 'assets/photos/tanishka.jpeg', alt: 'Tanishka Saxena', label: 'photo: Tanishka, candid', rotate: -3 }, pin: 'gold' }
   };
  
   /** The lead of the farm, called out on their own above the team sections. */

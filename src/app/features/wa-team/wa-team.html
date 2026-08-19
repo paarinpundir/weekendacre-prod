@@ -21,25 +21,25 @@
   <p class="note">{{ leader.tagline }}</p>
 </section>
 
-<!-- ============ THE TEAMS ============ -->
+<!-- THE TEAMS -->
 <section class="teams">
-  <div class="team-block" *ngFor="let t of teams">
+  <div 
+    class="team-block" 
+    *ngFor="let t of teams"
+    [class.team-block--full]="t.members.length > 2">
     <div class="team-head">
       <h3>{{ t.title }}</h3>
       <p class="team-tagline" *ngIf="t.tagline">{{ t.tagline }}</p>
     </div>
-
     <div class="team-members">
       <div class="member" *ngFor="let m of t.members">
         <div class="pin" [class]="'pin--' + m.pin" aria-hidden="true"></div>
-
         <div class="member-photo" [style.transform]="'rotate(' + m.photo.rotate + 'deg)'">
           <img *ngIf="m.photo.src" [src]="m.photo.src" [alt]="m.photo.alt">
           <div class="photo-placeholder small" *ngIf="!m.photo.src">
             <span>{{ m.photo.label }}</span>
           </div>
         </div>
-
         <div class="member-name">{{ m.name }}</div>
       </div>
     </div>

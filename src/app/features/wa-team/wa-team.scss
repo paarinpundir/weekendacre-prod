@@ -143,69 +143,96 @@ h1, h2, h3 {
 }
 
 /* ---------- THE TEAMS ---------- */
+/* ---------- THE TEAMS ---------- */
 .teams {
   max-width: 980px;
   margin: 0 auto;
   padding: clamp(48px, 6vw, 72px) clamp(20px, 6vw, 72px) clamp(24px, 3vw, 40px);
-}
-.team-block {
-  padding: clamp(24px, 3vw, 36px) 0;
-  border-top: 1px dashed var(--line);
+  
+  /* Use CSS Grid layout to allow side-by-side positioning */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(24px, 4vw, 36px);
+  align-items: start;
 
-  &:first-child { border-top: none; padding-top: 0; }
-}
-.team-head {
-  margin-bottom: 22px;
+  .team-block {
+    padding: clamp(16px, 2vw, 24px) 0;
+    border-top: 1px dashed var(--line);
+    box-sizing: border-box;
 
-  h3 { font-size: clamp(19px, 2vw, 22px); }
-
-  .team-tagline {
-    font-style: italic;
-    font-size: 13.5px;
-    color: var(--ink-soft);
-    margin: 5px 0 0;
-    max-width: 480px;
+    /* Teams with 3+ members expand across the full width */
+    &.team-block--full {
+      grid-column: 1 / -1;
+    }
   }
-}
-.team-members {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px clamp(20px, 3vw, 32px);
-}
-.member {
-  position: relative;
-  width: 140px;
-  text-align: center;
-  padding-top: 10px;
-}
-.member .pin {
-  width: 9px;
-  height: 9px;
-}
-.member-photo {
-  aspect-ratio: 4 / 5;
-  border-radius: 4px;
-  overflow: hidden;
-  background: #fff;
-  padding: 6px 6px 12px;
-  box-shadow: 0 8px 16px rgba(58, 47, 34, 0.14);
-  box-sizing: border-box;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
-  img { width: 100%; height: 100%; object-fit: cover; display: block; }
-}
-.member:hover .member-photo {
-  transform: rotate(0deg) translateY(-3px);
-  box-shadow: 0 12px 20px rgba(58, 47, 34, 0.18);
-}
-.member:hover .pin {
-  transform: translateX(-50%) scale(1.15);
-}
-.member-name {
-  font-size: 12.5px;
-  color: var(--ink);
-  margin-top: 8px;
-  line-height: 1.3;
+  .team-head {
+    margin-bottom: 18px;
+
+    h3 { 
+      font-size: clamp(19px, 2vw, 22px); 
+    }
+
+    .team-tagline {
+      font-style: italic;
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin: 5px 0 0;
+      max-width: 480px;
+    }
+  }
+
+  .team-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px clamp(16px, 2vw, 24px);
+
+    .member {
+      position: relative;
+      width: 140px; /* Fixed member size maintained */
+      text-align: center;
+      padding-top: 10px;
+
+      .pin {
+        width: 9px;
+        height: 9px;
+      }
+
+      .member-photo {
+        aspect-ratio: 4 / 5;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+        padding: 6px 6px 12px;
+        box-shadow: 0 8px 16px rgba(58, 47, 34, 0.14);
+        box-sizing: border-box;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+        img { 
+          width: 100%; 
+          height: 100%; 
+          object-fit: cover; 
+          display: block; 
+        }
+      }
+
+      &:hover .member-photo {
+        transform: rotate(0deg) translateY(-3px);
+        box-shadow: 0 12px 20px rgba(58, 47, 34, 0.18);
+      }
+
+      &:hover .pin {
+        transform: translateX(-50%) scale(1.15);
+      }
+
+      .member-name {
+        font-size: 12.5px;
+        color: var(--ink);
+        margin-top: 8px;
+        line-height: 1.3;
+      }
+    }
+  }
 }
 
 /* ---------- STILL FINDING THE RIGHT HANDS ---------- */
