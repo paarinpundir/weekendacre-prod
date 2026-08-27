@@ -39,7 +39,7 @@ interface FarmStat {
 })
 export class OurFarm {
   readonly heroPhoto: PhotoSlot = {
-    src: 'assets/photos/DSC_6331.JPG',
+    src: 'assets/photos/shivin-pond.jpeg',
     alt: 'The farm at Weekend Acres, wide shot',
     label: 'photo: the whole spread, drone or from the water tank — this is the "you are here" shot',
     aspect: '16 / 9'
@@ -51,7 +51,7 @@ export class OurFarm {
       number: '01',
       title: 'The Fields',
       copy: 'Twenty acres of open land, worked the way it always has been — mustard in winter, wheat before the heat sets in.',
-      photo: { src: 'assets/photos/abc.jpeg', alt: 'Open fields at Weekend Acres', label: 'photo: fields, low light, someone walking the edge', aspect: '4 / 5', rotate: -2 },
+      photo: { src: 'assets/photos/planting-people.png', alt: 'Open fields at Weekend Acres', label: 'photo: fields, low light, someone walking the edge', aspect: '4 / 5', rotate: -2 },
       pin: { x: 42, y: 36 }
     },
     {
@@ -64,7 +64,7 @@ export class OurFarm {
     {
       number: '03',
       title: 'The Flora',
-      copy: 'Tree A, Species B, and  who run the place better than we do. Mornings start by watering them.',
+      copy: 'Neem, jamun, amaltas, and the old peepal — who run the place better than we do.',
       photo: { src: 'assets/photos/abc.jpeg', alt: 'trees', label: 'photo: tree, close-up, leaves or flowers', aspect: '4 / 5', rotate: -1.5 },
       pin: { x: 62, y: 108 }
     },
@@ -72,21 +72,21 @@ export class OurFarm {
       number: '04',
       title: 'The Kitchen Garden',
       copy: 'Whatever\'s in season goes straight from this patch to the plate — usually within the hour.',
-      photo: { src: 'assets/photos/maggi.jpeg', alt: 'Kitchen garden with vegetables', label: 'photo: hands in soil, vegetables in a basket', aspect: '1 / 1', rotate: 1.5 },
+      photo: { src: 'assets/photos/hut.png', alt: 'Kitchen garden with vegetables', label: 'photo: hands in soil, vegetables in a basket', aspect: '1 / 1', rotate: 1.5 },
       pin: { x: 222, y: 128 }
     },
     {
       number: '05',
       title: 'The Water\'s Edge',
       copy: 'A pond that fills up with the monsoon and empties out slow. Good for sitting, better for nothing at all.',
-      photo: { src: 'assets/photos/bird.JPG', alt: 'Pond at the edge of the farm', label: 'photo: pond, early morning mist if we get lucky', aspect: '4 / 5', rotate: -2.5 },
+      photo: { src: 'assets/photos/pond2.png', alt: 'Pond at the edge of the farm', label: 'photo: pond, early morning mist if we get lucky', aspect: '4 / 5', rotate: -2.5 },
       pin: { x: 68, y: 178 }
     },
     {
       number: '06',
       title: 'The Workshop',
       copy: 'Where the tractor gets fixed, the wood gets cut, and most of what you\'ll see around the farm gets made.',
-      photo: { src: 'assets/photos/ghi.jpeg', alt: 'The farm workshop and barn', label: 'photo: tools on a wall, or someone mid-repair', aspect: '1 / 1', rotate: 2 },
+      photo: { src: 'assets/photos/work.jpeg', alt: 'The farm workshop and barn', label: 'photo: tools on a wall, or someone mid-repair', aspect: '1 / 1', rotate: 2 },
       pin: { x: 238, y: 182 }
     }
   ];
@@ -106,8 +106,8 @@ export class OurFarm {
  
   /** A loose, unscripted handful for the closing cluster — not a strip, just what the day left behind. */
   readonly closingPhotos: PhotoSlot[] = [
-    { src: 'assets/photos/hero-field.jpeg', alt: 'Morning feed round', label: 'photo: feeding the animals, early light', aspect: '3 / 4', rotate: -4 },
-    { src: 'assets/photos/overview-pond.jpeg', alt: 'The pond at dusk', label: 'photo: pond, golden hour', aspect: '4 / 5', rotate: 3 },
-    { src: 'assets/photos/erk.jpeg', alt: 'Farm dog resting in the yard', label: 'photo: farm dog or cat, mid-nap', aspect: '1 / 1', rotate: -2 }
+    { src: 'assets/photos/pool1.jpeg', alt: 'Morning feed round', label: 'photo: feeding the animals, early light', aspect: '3 / 4', rotate: -4 },
+    { src: 'assets/photos/pond3.png', alt: 'The pond at dusk', label: 'photo: pond, golden hour', aspect: '4 / 5', rotate: 3 },
+    { src: 'assets/photos/food-prep.jpeg', alt: 'pool fun', label: 'photo: people in pool', aspect: '1 / 1', rotate: -2 }
   ];
 }

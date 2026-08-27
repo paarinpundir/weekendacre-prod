@@ -25,6 +25,8 @@
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+
+  scroll-behavior: smooth;
 }
 
 .farm {
@@ -106,9 +108,6 @@ h1, h2, h3 {
 
 /* ==========================================================================
    SIGNATURE MOTIF — the leaf trail
-   A quiet vine-and-leaf line between sections, tiled via SVG pattern so it
-   stretches cleanly at any width; soft rounded badges standing in for the
-   usual round numbered dot.
    ========================================================================== */
 .seam {
   --seam-a: var(--moss);
@@ -432,6 +431,16 @@ h1, h2, h3 {
   text-transform: uppercase;
 }
 
+.card__index {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--rust);
+  margin-bottom: 1.1rem;
+  opacity: 0.75;
+}
+
 @media (max-width: 900px) {
   .carry__grid {
     grid-template-columns: 1fr 1fr;
@@ -456,20 +465,26 @@ h1, h2, h3 {
 
 .steps {
   position: relative;
+
   display: flex;
   gap: 2.4rem;
+
   list-style: none;
   margin: 0 auto;
   padding: 0;
+
   max-width: 1180px;
 
   &::before {
     content: '';
+
     position: absolute;
-    top: 1.55rem;
-    left: 4%;
-    right: 4%;
-    border-top: 2px dashed var(--gold-soft);
+    top: 0.55rem;
+    left: 0;
+    right: 0;
+
+    border-top: 1.5px dashed var(--gold-soft);
+
     z-index: 0;
   }
 }
@@ -477,13 +492,41 @@ h1, h2, h3 {
 .step {
   position: relative;
   z-index: 1;
+
   flex: 1 1 0;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.9rem;
+
+  gap: 0.75rem;
+
+  /*
+   * Gives the dashed line some breathing room
+   * instead of letting text sit directly on it.
+   */
+  padding-top: 1.6rem;
+
   background: var(--cream-dim);
-  padding-right: 0.5rem;
+}
+
+/* Simple typographic number */
+.step__number {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+
+  color: var(--rust);
+
+  background: var(--cream-dim);
+
+  padding-right: 10px;
+  line-height: 1;
 }
 
 .step__title {
@@ -498,6 +541,9 @@ h1, h2, h3 {
   margin: 0;
 }
 
+
+/* ---------- MOBILE ---------- */
+
 @media (max-width: 860px) {
   .steps {
     flex-direction: column;
@@ -506,17 +552,28 @@ h1, h2, h3 {
     &::before {
       top: 0;
       bottom: 0;
-      left: 1.55rem;
+
+      left: 0.35rem;
       right: auto;
+
       width: 0;
+
       border-top: none;
-      border-left: 2px dashed var(--gold-soft);
+      border-left: 1.5px dashed var(--gold-soft);
     }
   }
 
   .step {
+    padding-top: 0;
+    padding-left: 1.6rem;
+  }
+
+  .step__number {
+    top: 0;
+    left: 0;
+
     padding-right: 0;
-    padding-left: 0.2rem;
+    padding-bottom: 8px;
   }
 }
 

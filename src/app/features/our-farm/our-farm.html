@@ -16,58 +16,45 @@
       re-planted long before it was a place to stay. Below is a rough trail of where things are, to guide you —
       but the best way to see it is to just start walking.
     </p>
-    <div class="hero-ctas">
+    <!-- <div class="hero-ctas">
       <a class="btn btn-primary" routerLink="/this-weekend">Plan your visit</a>
-      <a class="btn btn-ghost" routerLink="/education">See memberships</a>
-    </div>
+    </div> -->
   </div>
 </section>
 
-<!-- ============ THE MAP ============ -->
-<!-- <section class="map-section">
-  <div class="eyebrow">Get your bearings</div>
-  <h2>The lay of the land</h2>
-  <div class="fine">Roorkee, Uttarakhand — via the Delhi–Dehradun Expressway</div>
-
-  <div class="map-wrap">
-    <svg class="farm-map" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg"> -->
-      <!-- loose, hand-drawn boundary -->
-      <!-- <path class="map-boundary"
-        d="M18,30 C60,6 220,4 296,26 C312,70 308,150 292,190 C220,214 70,212 22,188 C4,140 6,72 18,30Z" /> -->
-
-      <!-- the trail connecting each stop, in order -->
-      <!-- <path class="map-trail" [attr.d]="trailPath" /> -->
-
-      <!-- numbered pins -->
-      <!-- <g class="map-pin" *ngFor="let stop of trail">
-        <circle [attr.cx]="stop.pin.x" [attr.cy]="stop.pin.y" r="11" />
-        <text [attr.x]="stop.pin.x" [attr.y]="stop.pin.y">{{ stop.number }}</text>
-      </g>
-    </svg>
-  </div>
-
-  <ul class="map-legend">
-    <li *ngFor="let stop of trail">
-      <span class="legend-number">{{ stop.number }}</span>
-      <span class="legend-title">{{ stop.title }}</span>
-    </li>
-  </ul>
-</section> -->
-
 <!-- ============ THE TRAIL ============ -->
 <section class="trail-section">
-  <div class="eyebrow">Now walk it</div>
-  <h2>Six stops, no particular order</h2>
-
-  <div class="trail-line" aria-hidden="true"></div>
+  <div class="trail-intro">
+    <div class="eyebrow">Now walk it</div>
+    <h2>Six stops, no particular order</h2>
+  </div>
 
   <div class="trail-stops">
-    <div class="trail-stop" *ngFor="let stop of trail; let i = index" [class.reverse]="i % 2 === 1">
-      <div class="stop-marker">{{ stop.number }}</div>
+    <div class="trail-line" aria-hidden="true"></div>
 
-      <div class="stop-photo" [style.aspect-ratio]="stop.photo.aspect" [style.transform]="'rotate(' + stop.photo.rotate + 'deg)'">
-        <img *ngIf="stop.photo.src" [src]="stop.photo.src" [alt]="stop.photo.alt">
-        <div class="photo-placeholder small" *ngIf="!stop.photo.src">
+    <div
+      class="trail-stop"
+      *ngFor="let stop of trail; let i = index"
+      [class.reverse]="i % 2 === 1"
+    >
+      <div class="stop-marker">
+        {{ stop.number }}
+      </div>
+
+      <div
+        class="stop-photo"
+        [style.transform]="'rotate(' + stop.photo.rotate + 'deg)'"
+      >
+        <img
+          *ngIf="stop.photo.src"
+          [src]="stop.photo.src"
+          [alt]="stop.photo.alt"
+        />
+
+        <div
+          class="photo-placeholder small"
+          *ngIf="!stop.photo.src"
+        >
           <span>{{ stop.photo.label }}</span>
         </div>
       </div>
@@ -104,5 +91,5 @@
   </div>
 
   <p class="closing-line">The farm's easier to feel than to describe.</p>
-  <a class="btn btn-primary" routerLink="/this-weekend">Reserve a weekend</a>
+  <a class="btn btn-ghost" routerLink="/education">See memberships</a>
 </section>

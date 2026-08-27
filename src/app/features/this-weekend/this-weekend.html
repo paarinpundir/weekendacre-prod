@@ -7,24 +7,34 @@
       Stay for a while. Twenty guests at a time, spread across the huge space —
       <strong>never crowded, never rushed.</strong>
     </p>
-    <div class="hero-ctas">
-      <a class="btn btn-primary" routerLink="/booking">Request your weekend</a>
-      <a class="btn btn-ghost" routerLink="/our-farm">Meet the farm</a>
+    <div class="hero-note">
+      <div class="eyebrow">A note from the acres</div>
+      <p>No wifi in the fields — just long tables, open fires, and coffee that's always on.</p>
     </div>
   </div>
 
-  <div class="hero-polaroid" [style.transform]="'rotate(' + heroPhoto.rotate + 'deg)'">
-    <div class="polaroid-photo" [style.aspect-ratio]="heroPhoto.aspect">
-      <img *ngIf="heroPhoto.src" [src]="heroPhoto.src" [alt]="heroPhoto.alt">
-      <div class="photo-placeholder small" *ngIf="!heroPhoto.src">
-        <span>{{ heroPhoto.label }}</span>
+  <div class="hero-cluster">
+    <div class="cluster-pin" aria-hidden="true"></div>
+    <div
+      class="cluster-photo"
+      *ngFor="let p of heroPhotos; let i = index"
+      [class.cluster-photo--0]="i === 0"
+      [class.cluster-photo--1]="i === 1"
+      [class.cluster-photo--2]="i === 2"
+      [style.transform]="'rotate(' + p.rotate + 'deg)'"
+    >
+      <div class="cluster-photo-frame" [style.aspect-ratio]="p.aspect">
+        <img *ngIf="p.src" [src]="p.src" [alt]="p.alt">
+        <div class="photo-placeholder small" *ngIf="!p.src">
+          <span>{{ p.label }}</span>
+        </div>
       </div>
     </div>
-    <div class="polaroid-caption">{{ heroPhoto.caption }}</div>
   </div>
+  <div class="wall-hint" aria-hidden="true">swipe for more &#8594;</div>
 </section>
 
-<!-- ============ THE DAY, LOOSELY (numbered list + one photo) ============ -->
+<!-- ============ THE DAY, LOOSELY (numbered list + photo scatter) ============ -->
 <section class="day-section">
   <div class="day-list-col">
     <div class="eyebrow">Roughly in order</div>
@@ -42,12 +52,22 @@
     </div>
   </div>
 
-  <div class="day-photo" [style.aspect-ratio]="dayPhoto.aspect" [style.transform]="'rotate(' + dayPhoto.rotate + 'deg)'">
-    <img *ngIf="dayPhoto.src" [src]="dayPhoto.src" [alt]="dayPhoto.alt">
-    <div class="photo-placeholder small" *ngIf="!dayPhoto.src">
-      <span>{{ dayPhoto.label }}</span>
+  <div class="day-photos">
+    <div
+      class="day-photo-card"
+      *ngFor="let p of dayPhotos"
+      [style.transform]="'rotate(' + p.rotate + 'deg)'"
+    >
+      <div class="day-photo-frame" [style.aspect-ratio]="p.aspect">
+        <img *ngIf="p.src" [src]="p.src" [alt]="p.alt">
+        <div class="photo-placeholder small" *ngIf="!p.src">
+          <span>{{ p.label }}</span>
+        </div>
+      </div>
+      <div class="day-photo-note" *ngIf="p.caption">{{ p.caption }}</div>
     </div>
   </div>
+  <div class="wall-hint" aria-hidden="true">swipe for more &#8594;</div>
 </section>
 
 <!-- ============ NO CROWD (typographic statement) ============ -->
@@ -86,5 +106,5 @@
 <section class="closing-section">
   <div class="closing-rule" aria-hidden="true"></div>
   <p class="closing-line">First come, first held — a few days' notice is all we ask.</p>
-  <a class="btn btn-primary" routerLink="/booking">Join the WhatsApp group</a>
+  <a class="btn btn-primary" routerLink="/booking">Request your weekend</a>
 </section>

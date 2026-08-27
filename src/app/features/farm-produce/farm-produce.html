@@ -22,10 +22,15 @@
         We eat a meal there. We meet the family. We share what we find &mdash; including when things change.
       </p>
 
-      <div class="hero__cta">
-        <button type="button" class="btn btn--primary">Build My Farm Bag</button>
-        <a href="#how-it-works" class="hero__link">See how it works &rarr;</a>
-      </div>
+      <!-- <div class="hero__cta">
+        <button type="button" class="btn btn--primary" routerLink="/">
+        Build My Farm Bag
+        </button>
+
+        <a routerLink="." fragment="how-it-works" class="hero__link">
+          See how it works &rarr;
+        </a>
+      </div> -->
     </div>
   </section>
 
@@ -92,31 +97,40 @@
 
   <!-- ============ WHAT WE CURRENTLY CARRY ============ -->
   <section class="section carry">
-    <div class="section__head reveal" #reveal>
-      <p class="kicker">02 &mdash; Right now, in season</p>
-      <h2 class="section__title">What we currently carry</h2>
-      <p class="section__text">
-        Our range moves with the season. This is a general guide &mdash; exact availability is
-        always shown at ordering.
-      </p>
-    </div>
+  <div class="section__head reveal" #reveal>
+    <p class="kicker">02 &mdash; Right now, in season</p>
 
-    <div class="carry__grid">
-      <article
-        class="card"
-        [class.card--alt]="i % 2 === 1"
-        *ngFor="let cat of categories; let i = index"
-        #reveal
-      >
-        <span class="badge-diamond badge-diamond--leaf">
-          <span class="badge-diamond__inner">{{ cat.glyph }}</span>
-        </span>
-        <h3 class="card__title">{{ cat.title }}</h3>
-        <p class="card__text">{{ cat.items }}</p>
-        <p class="card__note">{{ cat.note }}</p>
-      </article>
-    </div>
-  </section>
+    <h2 class="section__title">What we currently carry</h2>
+
+    <p class="section__text">
+      Our range moves with the season. This is a general guide &mdash; exact availability is
+      always shown at ordering.
+    </p>
+  </div>
+
+  <div class="carry__grid">
+    <article
+      class="card"
+      [class.card--alt]="i % 2 === 1"
+      *ngFor="let cat of categories; let i = index"
+      #reveal
+    >
+      <span class="card__index">
+        {{ (i + 1).toString().padStart(2, '0') }}
+      </span>
+
+      <h3 class="card__title">{{ cat.title }}</h3>
+
+      <p class="card__text">
+        {{ cat.items }}
+      </p>
+
+      <p class="card__note">
+        {{ cat.note }}
+      </p>
+    </article>
+  </div>
+</section>
 
   <!-- ============ SEAM ============ -->
   <div class="seam seam--a" aria-hidden="true">
@@ -135,25 +149,37 @@
 
   <!-- ============ INTRODUCING THE FARM BAG ============ -->
   <section class="section farmbag" id="how-it-works">
-    <div class="section__head section__head--center reveal" #reveal>
-      <p class="kicker">03 &mdash; How members get produce</p>
-      <h2 class="section__title section__title--lg">The Farm Bag</h2>
-      <p class="section__text section__text--wide">
-        Your fortnightly box. Your choices. Delivered to your door. No surprises, no guesswork &mdash;
-        just the produce you actually want, from farms you can actually trace.
-      </p>
-    </div>
+  <div class="section__head section__head--center reveal" #reveal>
+    <p class="kicker">03 &mdash; How members get produce</p>
 
-    <ol class="steps">
-      <li class="step reveal" #reveal *ngFor="let step of steps">
-        <span class="badge-diamond badge-diamond--num">
-          <span class="badge-diamond__inner">{{ step.number }}</span>
-        </span>
-        <h3 class="step__title">{{ step.title }}</h3>
-        <p class="step__text">{{ step.description }}</p>
-      </li>
-    </ol>
-  </section>
+    <h2 class="section__title section__title--lg">The Farm Bag</h2>
+
+    <p class="section__text section__text--wide">
+      Your fortnightly box. Your choices. Delivered to your door. No surprises, no guesswork &mdash;
+      just the produce you actually want, from farms you can actually trace.
+    </p>
+  </div>
+
+  <ol class="steps">
+    <li
+      class="step reveal"
+      #reveal
+      *ngFor="let step of steps"
+    >
+      <span class="step__number">
+        {{ step.number }}
+      </span>
+
+      <h3 class="step__title">
+        {{ step.title }}
+      </h3>
+
+      <p class="step__text">
+        {{ step.description }}
+      </p>
+    </li>
+  </ol>
+</section>
 
   <!-- ============ SEAM ============ -->
   <div class="seam seam--b" aria-hidden="true">
@@ -171,7 +197,7 @@
   </div>
 
   <!-- ============ FULL TRACEABILITY ============ -->
-  <section class="section trace">
+  <section id="how-it-works" class="section trace">
     <div class="section__head reveal" #reveal>
       <p class="kicker">04 &mdash; Full traceability</p>
       <h2 class="section__title">How the trail works</h2>

@@ -8,21 +8,21 @@ interface PhotoSlot {
   label: string;
   aspect: string;
   rotate?: number;
-  caption?: string; // used by the hero polaroid only
+  caption?: string; // small Space Mono label under day photos, tying a shot to a moment
 }
- 
+
 interface DayItem {
   number: string; // '01', '02'...
   time: string;
   title: string;
   copy: string;
 }
- 
+
 interface CrowdFact {
   value: string;
   label: string;
 }
- 
+
 interface PracticalNote {
   eyebrow: string;
   title: string;
@@ -39,23 +39,59 @@ interface PracticalNote {
   styleUrl: './this-weekend.scss',
 })
 export class ThisWeekend {
-  readonly heroPhoto: PhotoSlot = {
-    src: 'assets/photos/hero-field.jpeg',
-    alt: 'Guests gathered on the farm over a weekend',
-    label: 'photo: candid, guests mid-weekend',
-    aspect: '4 / 5',
-    rotate: 4,
-    caption: 'a weekend, roughly',
-  };
- 
-  readonly dayPhoto: PhotoSlot = {
-    src: 'assets/photos/people.jpeg',
-    alt: 'The long table set for dinner under the trees',
-    label: 'photo: long table or fire, one strong supporting shot',
-    aspect: '4 / 5',
-    rotate: -3,
-  };
- 
+  // small fanned cluster in the hero — keep to 3, any more and it starts to feel busy
+  readonly heroPhotos: PhotoSlot[] = [
+    {
+      src: 'assets/photos/hero-field.jpeg',
+      alt: 'Guests gathered on the farm over a weekend',
+      label: 'photo: candid, guests mid-weekend',
+      aspect: '4 / 5',
+      rotate: -4,
+    },
+    {
+      src: 'assets/photos/people.jpeg',
+      alt: 'Guests at the long table',
+      label: 'photo: long table, candid',
+      aspect: '1 / 1',
+      rotate: 5,
+    },
+    {
+      src: 'assets/photos/cousins.png',
+      alt: 'A quiet detail from the farm',
+      label: 'photo: a quiet detail — the walk, the fire, a hand at work',
+      aspect: '4 / 5',
+      rotate: -2,
+    },
+  ];
+
+  // loose scatter next to the day list — each one echoes a specific moment via `caption`
+  readonly dayPhotos: PhotoSlot[] = [
+    {
+      src: 'assets/photos/dinner.jpeg',
+      alt: 'The long table set for dinner under the trees',
+      label: 'photo: long table or fire',
+      aspect: '4 / 5',
+      rotate: -3,
+      caption: 'lunch| dinner',
+    },
+    {
+      src: 'assets/photos/pond1.png',
+      alt: 'Open fires in the evening',
+      label: 'photo: chulha, grill, or tandoor at dusk',
+      aspect: '1 / 1',
+      rotate: 2,
+      caption: 'open waters',
+    },
+    {
+      src: 'assets/photos/walk.jpeg',
+      alt: 'A slow morning on the farm',
+      label: 'photo: coffee, a walk, quiet',
+      aspect: '4 / 5',
+      rotate: -1.5,
+      caption: 'slow mornings',
+    },
+  ];
+
   readonly moments: DayItem[] = [
     { number: '01', time: 'Afternoon', title: 'Arrival', copy: 'You arrive by afternoon and settle into simple rooms, a short walk from the fields.' },
     { number: '02', time: 'Before dinner', title: 'The Walk', copy: 'A walk through what\u2019s growing, so you\u2019ve seen where the meal came from before it reaches you.' },
@@ -65,13 +101,13 @@ export class ThisWeekend {
     { number: '06', time: 'Afternoon', title: 'Slow Afternoons', copy: 'Naps, books, and crafty activities of your choosing \u2014 the day asks nothing of you.' },
     { number: '07', time: 'All day', title: 'For the Little Ones', copy: 'A patch to dig in, something to sow, room to run, and games to play.' },
   ];
- 
+
   readonly crowdFacts: CrowdFact[] = [
     { value: 'Twenty', label: 'guests' },
     { value: 'One', label: 'acre' },
     { value: 'No', label: 'fixed table' },
   ];
- 
+
   /* ---- unchanged from before: keep exactly as is ---- */
   readonly practicalNotes: PracticalNote[] = [
     {

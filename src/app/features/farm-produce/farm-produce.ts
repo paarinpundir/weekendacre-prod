@@ -112,19 +112,19 @@ export class FarmProduce implements AfterViewInit {
  
   readonly traceFeatures: TraceFeature[] = [
     {
-      glyph: '📦',
+      glyph: '',
       title: 'What\u2019s in every box',
       description:
         'A farm card with the farm name, the farmer\u2019s name, the harvest date, and a QR code linking to their profile on Weekend Acres.',
     },
     {
-      glyph: '📍',
+      glyph: '',
       title: 'Track your food online',
       description:
         'Scan the QR to see the farm\u2019s full profile \u2014 photos, the farmer\u2019s story, growing practices, and upcoming farm-stay dates.',
     },
     {
-      glyph: '🤝',
+      glyph: '',
       title: 'Members who stay, also eat',
       description:
         'Done a farm stay with us? Your produce order always carries a note from that same farm \u2014 closing the loop between the visit and the meal.',
