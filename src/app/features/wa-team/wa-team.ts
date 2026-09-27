@@ -84,7 +84,7 @@ export class WaTeam {
  
   /** The lead of the farm, called out on their own above the team sections. */
   readonly leader = {
-    role: 'Chief Executive Gardener (CEG)',
+    role: 'Chief Operations Officer (COO)',
     tagline: 'Keeping it natural.',
     member: this.members['ashish']
   };

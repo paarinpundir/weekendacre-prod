@@ -389,11 +389,7 @@ nav {
   .w5 { grid-column: 1/3; grid-row: 4/6; }
 }
 
-/* ---------- DESTINATION / MAP ----------
-   The map's own visual language (dashed route, distance tags)
-   already seeded the "waypoint" device above — here it gets its
-   own moment as the trail's destination, framed like a page taped
-   into a journal rather than a flat card or a full section slab. */
+/* ---------- DESTINATION / MAP ----------*/
 .destination {
   padding: clamp(28px, 4vw, 44px) clamp(20px, 6vw, 72px) clamp(40px, 6vw, 64px);
   text-align: center;
@@ -435,10 +431,12 @@ nav {
     display: block;
     width: 100%;
     border-radius: 2px;
-    aspect-ratio: 3 / 2;
   }
 
-  img { object-fit: cover; }
+  img {
+    height: auto;
+    object-fit: contain;
+  }
 }
 .destination-caption {
   font-family: 'Space Mono', monospace;

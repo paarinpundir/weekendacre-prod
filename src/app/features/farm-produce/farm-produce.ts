@@ -6,6 +6,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
+import { RouterLink } from '@angular/router'
 import { CommonModule } from '@angular/common';
  
 interface ProduceCategory {
@@ -37,7 +38,7 @@ interface OtherWay {
   selector: 'app-farm-produce',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './farm-produce.html',
   styleUrl: './farm-produce.scss',
 })

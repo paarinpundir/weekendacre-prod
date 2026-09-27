@@ -118,7 +118,7 @@ export class Home {
 
   /** The hand-illustrated route map — the trail's destination. */
   readonly mapPhoto: PhotoSlot = {
-    src: 'assets/photos/map.png',
+    src: 'assets/photos/map-final.jpeg',
     alt: 'Illustrated map showing the route to Weekend Acres: 1 hour from Rishikesh, 30 minutes from Dehradun',
     label: 'map: route illustration, Rishikesh & Dehradun to the farm',
     aspect: '3 / 2'

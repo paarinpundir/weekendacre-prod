@@ -34,10 +34,10 @@ export class Login implements OnDestroy {
         return 'Member email or ID';
     }
   }
-  
+
   private destroy$ = new Subject<void>();
   private store = inject(Store);
-  
+
   constructor(private router: Router) {
     // Subscribe to auth state
     this.store.select((state: any) => state.auth)
@@ -63,7 +63,7 @@ export class Login implements OnDestroy {
         }
       });
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -72,16 +72,16 @@ export class Login implements OnDestroy {
   onSubmit() {
     this.errorMessage = '';
     this.infoMessage = '';
-    
+
     if (!this.email || !this.password) {
       this.errorMessage = 'Please fill in all fields.';
       return;
     }
-    
+
     this.isLoading = true;
-    this.store.dispatch(AuthActions.login({ 
-      email: this.email, 
-      password: this.password 
+    this.store.dispatch(AuthActions.login({
+      email: this.email,
+      password: this.password
     }));
   }
 
@@ -97,4 +97,3 @@ export class Login implements OnDestroy {
     return (value ?? '').trim().length > 0;
   }
 }
-

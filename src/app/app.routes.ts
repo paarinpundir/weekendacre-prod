@@ -32,6 +32,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/farm-produce/farm-produce').then(m => m.FarmProduce)
   },
   {
+    path: 'farm-bag',
+    loadComponent: () => import('./features/farm-bag/farm-bag').then(m => m.FarmBag)
+  },
+  {
     path: 'virtual-tour',
     loadComponent: () => import('./features/virtual-tour/virtual-tour').then(m => m.VirtualTour)
   },

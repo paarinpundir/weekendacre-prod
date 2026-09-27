@@ -1,26 +1,33 @@
-<div class="auth-split-page">
-  <div class="auth-split">
-    <aside class="auth-split__form-side" aria-label="Sign in">
-      <div class="auth-glass">
-        <div class="auth-brand-row">
-          <a routerLink="/" class="auth-brand-mark">WeekendAcres</a>
+<div class="auth-page">
+  <div class="auth-shell">
+    <!-- Form side -->
+    <section class="auth-panel" aria-label="Sign in">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <a routerLink="/" class="auth-brand__mark">Weekend Acres</a>
+          <span class="auth-brand__tag">Rurality Club</span>
+        </div>
+
+        <div class="waypoint" aria-hidden="true">
+          <span class="waypoint__line"></span>
+          <span class="waypoint__label">Sign in</span>
         </div>
 
         <h1 class="auth-title">Welcome back</h1>
         <p class="auth-lead">Sign in to the Rurality Club — simple, beautifully made.</p>
 
-        <form (ngSubmit)="onSubmit()" class="login-form">
+        <form (ngSubmit)="onSubmit()" class="auth-form">
           @if (errorMessage) {
-            <div class="auth-error" role="alert">{{ errorMessage }}</div>
+            <div class="auth-note auth-note--error" role="alert">{{ errorMessage }}</div>
           }
           @if (infoMessage) {
-            <div class="auth-info" role="status">{{ infoMessage }}</div>
+            <div class="auth-note auth-note--info" role="status">{{ infoMessage }}</div>
           }
 
-          <div class="auth-role-toggle" role="group" aria-label="Sign in as">
+          <div class="role-toggle" role="group" aria-label="Sign in as">
             <button
               type="button"
-              class="auth-role-pill"
+              class="role-pill"
               [class.is-selected]="userType === 'user'"
               (click)="userType = 'user'">
               Member
@@ -28,7 +35,7 @@
             </button>
             <button
               type="button"
-              class="auth-role-pill"
+              class="role-pill"
               [class.is-selected]="userType === 'partner'"
               (click)="userType = 'partner'">
               Farm Partner
@@ -36,7 +43,7 @@
             </button>
             <button
               type="button"
-              class="auth-role-pill"
+              class="role-pill"
               [class.is-selected]="userType === 'admin'"
               (click)="userType = 'admin'">
               Staff
@@ -44,7 +51,7 @@
             </button>
           </div>
 
-          <div class="auth-field" [class.auth-field--filled]="isFilled(email)">
+          <div class="field" [class.field--filled]="isFilled(email)">
             <input
               id="email"
               type="email"
@@ -56,7 +63,7 @@
             <label for="email">{{ emailFieldLabel }}</label>
           </div>
 
-          <div class="auth-field auth-field--password" [class.auth-field--filled]="isFilled(password)">
+          <div class="field field--password" [class.field--filled]="isFilled(password)">
             <input
               id="password"
               [type]="showPassword ? 'text' : 'password'"
@@ -68,7 +75,7 @@
             <label for="password">Password</label>
             <button
               type="button"
-              class="auth-password-toggle"
+              class="field__toggle"
               (click)="showPassword = !showPassword"
               [attr.aria-pressed]="showPassword"
               [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
@@ -76,35 +83,48 @@
             </button>
           </div>
 
-          <div class="auth-row-inline">
-            <label class="auth-checkbox">
+          <div class="auth-row">
+            <label class="checkbox">
               <input type="checkbox" [(ngModel)]="rememberMe" name="remember" />
               <span>Remember my login</span>
             </label>
-            <a href="#" class="auth-link-gold" (click)="onForgotPasswordClick($event)">Forgot password?</a>
+            <a href="#" class="link-rust" (click)="onForgotPasswordClick($event)">Forgot password?</a>
           </div>
 
-          <button type="submit" class="auth-btn-forest" [disabled]="isLoading">
+          <button type="submit" class="btn-gold" [disabled]="isLoading">
             @if (isLoading) {
-              <span>Signing in…</span>
+              <span>Signing in&hellip;</span>
             } @else {
               <span>[ Sign In ]</span>
             }
           </button>
 
-          <div class="auth-footer-copy">
+          <p class="auth-footer">
             Interested in joining our founding community?
-            <a routerLink="/partner/signup" class="auth-link-gold">Sign up as a Partner</a>
-          </div>
+            <a routerLink="/partner/signup" class="link-rust">Sign up as a Partner</a>
+          </p>
 
-          <p class="auth-testimonial">“A subscription to the soul.” — Delhi founding member</p>
+          <p class="auth-testimonial">
+            &ldquo;A subscription to the soul.&rdquo;
+            <span class="auth-testimonial__cite">— Delhi founding member</span>
+          </p>
         </form>
       </div>
-    </aside>
+    </section>
 
-    <div class="auth-split__visual" aria-hidden="true">
-      <p class="auth-split__visual-kicker">6 seasons of rural life. One monthly habit.</p>
-      <p class="auth-split__visual-quote">Don’t just visit the land. Belong to it.</p>
-    </div>
+    <!-- Visual side -->
+    <aside class="auth-visual" aria-hidden="true">
+      <p class="auth-visual__kicker">
+        <span class="pin"></span>
+        Six seasons of rural life. One monthly habit.
+      </p>
+      <p class="auth-visual__statement">
+        <span class="auth-visual__statement-small">Don&rsquo;t just</span>
+        <em class="auth-visual__statement-mid">visit</em>
+        <span class="auth-visual__statement-small">the land.</span><br />
+        <span class="auth-visual__statement-big">Belong</span>
+        <span class="auth-visual__statement-small">to it.</span>
+      </p>
+    </aside>
   </div>
 </div>
