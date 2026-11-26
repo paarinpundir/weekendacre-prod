@@ -92,6 +92,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/property/property-onboarding/property-onboarding').then(m => m.PropertyOnboarding)
   },
   {
+    path: 'properties/:id/rooms/:roomId',
+    loadComponent: () => import('./features/property/room-detail/room-detail').then(m => m.RoomDetail)
+  },
+  {
+    path: 'properties/:id/book',
+    loadComponent: () => import('./features/property/stay-booking/stay-booking').then(m => m.StayBooking)
+  },
+  {
+    path: 'bookings/:bookingId',
+    loadComponent: () => import('./features/property/stay-booking/stay-booking').then(m => m.StayBooking)
+  },
+  {
     path: 'properties/:id',
     loadComponent: () => import('./features/property/property-detail/property-detail').then(m => m.PropertyDetail)
   },

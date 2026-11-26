@@ -1,29 +1,57 @@
 <div class="property-onboarding">
   <!-- Sidebar Navigation Component -->
-  <app-onboarding-sidebar [currentStep]="currentStep" [steps]="stepsList" [hasSavedProgress]="hasSavedProgress()"
-    (stepSelected)="onStepSelected($event)" (clearProgress)="onClearProgress()"></app-onboarding-sidebar>
+  <app-onboarding-sidebar
+    [currentStep]="currentStep"
+    [steps]="stepsList"
+    [progressPercent]="getProgressPercent()"
+    [hasSavedProgress]="hasSavedProgress()"
+    (stepSelected)="onStepSelected($event)"
+    (clearProgress)="onClearProgress()">
+  </app-onboarding-sidebar>
 
   <!-- Main Content Area -->
   <div class="onboarding-main">
+    <header class="onboarding-topbar">
+      <div class="topbar-left">
+        <a routerLink="/partner/dashboard" class="back-link">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          Partner dashboard
+        </a>
+        <div class="topbar-meta">
+          <span class="eyebrow">{{ getStepLabel() }}</span>
+          <div class="mini-progress" aria-hidden="true">
+            <div class="mini-progress-fill" [style.width.%]="((currentStep + 1) / totalSteps) * 100"></div>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="autosave-pill"><i class="fa-solid fa-cloud" aria-hidden="true"></i> Draft saves as you go</span>
+      </div>
+    </header>
+
+    <div class="onboarding-scroll">
     <!-- Resume Notice -->
     @if (hasSavedProgress()) {
     <div class="resume-notice">
-      <span><i class="fa-solid fa-file-pen" aria-hidden="true"></i> You have a saved draft. Continuing from where you left off...</span>
+      <span><i class="fa-solid fa-file-pen" aria-hidden="true"></i> You have a saved draft. Continuing from where you left off.</span>
       <button type="button" class="btn-clear" (click)="clearSavedProgressAndRestart()">Start Fresh</button>
     </div>
     }
 
     <!-- Step Content -->
     <div class="step-content">
-      <h2 class="step-title">{{ getStepTitle() }}</h2>
-      <p class="step-description">{{ getStepDescription() }}</p>
+      <div class="step-heading">
+        <span class="eyebrow">Farm onboarding</span>
+        <h2 class="step-title">{{ getStepTitle() }}</h2>
+        <p class="step-description">{{ getStepDescription() }}</p>
+      </div>
 
-      <form [formGroup]="propertyForm" (ngSubmit)="nextStep()">
+      <form [formGroup]="propertyForm" (ngSubmit)="nextStep()" class="onboarding-form">
         <!-- Step 0: Basic Information -->
         @if (currentStep === 0) {
         <div class="form-section">
           <div class="form-group">
-            <label for="property_name">Farm Name / Property Name *</label>
+            <label for="property_name">Farm Name / Property Name <span class="req">*</span></label>
             <input type="text" id="property_name" formControlName="property_name"
               placeholder="e.g., Green Valley Organic Farm"
               [class.error]="propertyForm.get('property_name')?.invalid && propertyForm.get('property_name')?.touched" />
@@ -961,17 +989,28 @@
 
     <!-- Navigation Buttons -->
     <div class="form-actions">
-      @if (currentStep > 0) {
-      <button type="button" class="btn-secondary" (click)="prevStep()">Previous</button>
-      }
-      @if (currentStep < totalSteps - 1) { <button type="submit" class="btn-primary">Next</button>
-        } @else {
-        <button type="button" class="btn-primary" (click)="submitOnboarding()" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+      <div class="actions-left">
+        @if (currentStep > 0) {
+        <button type="button" class="btn-secondary" (click)="prevStep()">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous
         </button>
         }
+      </div>
+      <div class="actions-right">
+        <span class="actions-hint">{{ getStepLabel() }}</span>
+        @if (currentStep < totalSteps - 1) {
+        <button type="submit" class="btn-primary">
+          Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+        } @else {
+        <button type="button" class="btn-primary" (click)="submitOnboarding()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Submitting…' : 'Submit for review' }}
+        </button>
+        }
+      </div>
     </div>
     </form>
+  </div>
   </div>
 </div>
 </div>

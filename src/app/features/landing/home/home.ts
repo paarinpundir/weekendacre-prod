@@ -1,19 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DualCarousel, CarouselSlide } from '../dual-carousel/dual-carousel';
-import { ExperienceCards, ExperienceCard } from '../experience-cards/experience-cards';
-import { MembershipSection } from '../membership-section/membership-section';
-import { AttractionsSection, Attraction } from '../attractions-section/attractions-section';
-import { EventsSection, Event } from '../events-section/events-section';
-import { MembershipRegistration, MembershipType } from '../membership-registration/membership-registration';
-import { ContactSection } from '../contact-section/contact-section';
-import { GallerySection, GalleryPhoto } from '../gallery-section/gallery-section';
+import { Subject, takeUntil } from 'rxjs';
 import { PropertyCard } from '../../property/property-card/property-card';
 import { PropertyService } from '../../../core/services/property.service';
 import { Property } from '../../../core/models/property.model';
-import { themeCss } from '../../../core/theme-css-vars';
 
 interface PhotoSlot {
   /** Real image path once you have it, e.g. 'assets/photos/hero-field.jpg'. Empty = show placeholder. */
@@ -37,18 +29,60 @@ interface TrailStop {
   imports: [
     RouterLink,
     CommonModule,
-    FormsModule
+    FormsModule,
+    PropertyCard
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
+export class Home implements OnInit, OnDestroy {
+  private readonly propertyService = inject(PropertyService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroy$ = new Subject<void>();
+
   readonly contactEmail = 'weekendacres@gmail.com';
   readonly contactPhone = '0123456789';
 
   contactName = '';
   contactFrom = '';
   contactMessage = '';
+
+  liveFarms: Property[] = [];
+  liveFarmsLoading = true;
+  liveFarmsError: string | null = null;
+
+  ngOnInit(): void {
+    this.loadLiveFarms();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadLiveFarms(): void {
+    this.liveFarmsLoading = true;
+    this.liveFarmsError = null;
+
+    this.propertyService.getAllProperties()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const farms = Array.isArray(response?.data) ? response.data : [];
+          // Public API already returns Live (605); keep a client-side guard.
+          this.liveFarms = farms.filter((farm) => farm.state === 605);
+          this.liveFarmsLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to load live farms:', err);
+          this.liveFarms = [];
+          this.liveFarmsError = 'Live farms could not be loaded right now.';
+          this.liveFarmsLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
 
   get mailtoHref(): string {
     return `mailto:${this.contactEmail}`;

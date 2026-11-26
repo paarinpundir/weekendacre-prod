@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil, filter, distinctUntilChanged, firstValueFrom, debounceTime, take } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-property-onboarding',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, OnboardingSidebar],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, OnboardingSidebar],
   templateUrl: './property-onboarding.html',
   styleUrl: './property-onboarding.scss',
   encapsulation: ViewEncapsulation.None
@@ -232,7 +232,9 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         distinctUntilChanged((prev, curr) =>
           prev.createSuccess === curr.createSuccess &&
           prev.createError === curr.createError &&
-          prev.createdProperty?.id === curr.createdProperty?.id
+          prev.createdProperty?.id === curr.createdProperty?.id &&
+          prev.updateSuccess === curr.updateSuccess &&
+          prev.updateError === curr.updateError
         )
       )
       .subscribe((propertyState: any) => {
@@ -240,6 +242,8 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
           isSubmitting: this.isSubmitting,
           createSuccess: propertyState.createSuccess,
           createError: propertyState.createError,
+          updateSuccess: propertyState.updateSuccess,
+          updateError: propertyState.updateError,
           hasCreatedProperty: !!propertyState.createdProperty
         });
 
@@ -250,9 +254,15 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
             // Once property is created, we're no longer in 'new' mode
             this.isNewPropertyMode = false;
             this.handlePropertyCreated(propertyState.createdProperty);
+          } else if (propertyState.updateSuccess) {
+            console.log('PropertyOnboarding: Property submitted for review');
+            this.handlePropertySubmitted();
           } else if (propertyState.createError) {
             console.log('PropertyOnboarding: Property creation failed:', propertyState.createError);
             this.handlePropertyError(propertyState.createError);
+          } else if (propertyState.updateError) {
+            console.log('PropertyOnboarding: Property update failed:', propertyState.updateError);
+            this.handlePropertyError(propertyState.updateError);
           }
         }
       });
@@ -453,6 +463,13 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
     queueMicrotask(() => this.cdr.detectChanges());
   }
 
+  handlePropertySubmitted() {
+    this.isSubmitting = false;
+    this.store.dispatch(PropertyActions.resetPropertySuccessStates());
+    alert('Farm submitted for review! An admin will approve it before it goes live on the home page.');
+    this.router.navigate(['/partner/onboarding/confirmation']);
+  }
+
   handlePropertyError(error: string) {
     console.error('Error creating property:', error);
     this.errorMessage = error;
@@ -504,6 +521,12 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       const backendData = this.sanitizePatchPayload({
         ...this.buildStepPayload(this.currentStep),
         onboarding_step: this.maxStepReached,
+        // Keep multi-select drafts in the JSON snapshot so resume works even before replace APIs run
+        selectedWaterSources: this.selectedWaterSources,
+        selectedIrrigationSystems: this.selectedIrrigationSystems,
+        selectedPestManagement: this.selectedPestManagement,
+        selectedSafetyEquipment: this.selectedSafetyEquipment,
+        selectedFacilities: this.selectedFacilities,
       });
 
       // Persist relational data only when explicitly requested (e.g., Next/Previous).
@@ -788,6 +811,8 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
 
         // Reset and rebuild facilities selection to avoid duplicates on multiple loads
         this.selectedFacilities = [];
+        if (property.crop_rotation_system) this.selectedFacilities.push(701);
+        if (property.is_soil_tested) this.selectedFacilities.push(702);
         if (property.farm_boundary) this.selectedFacilities.push(703);
         if (property.parking_space_available) this.selectedFacilities.push(704);
         if (property.shelter_shade_area) this.selectedFacilities.push(705);
@@ -799,6 +824,26 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
         if (property.electricity_connection) this.selectedFacilities.push(711);
         if (property.backup_power) this.selectedFacilities.push(712);
         if (property.waste_management_system) this.selectedFacilities.push(713);
+
+        // Fallback: restore multi-selects from onboarding_data snapshot if relation tables are empty
+        const od: any = typeof propertyAny?.onboarding_data === 'string'
+          ? (() => { try { return JSON.parse(propertyAny.onboarding_data); } catch { return {}; } })()
+          : (propertyAny?.onboarding_data || {});
+        if ((!property.water_sources || property.water_sources.length === 0) && Array.isArray(od.selectedWaterSources)) {
+          this.selectedWaterSources = od.selectedWaterSources;
+        }
+        if ((!property.irrigation_systems || property.irrigation_systems.length === 0) && Array.isArray(od.selectedIrrigationSystems)) {
+          this.selectedIrrigationSystems = od.selectedIrrigationSystems;
+        }
+        if ((!property.pest_management || property.pest_management.length === 0) && Array.isArray(od.selectedPestManagement)) {
+          this.selectedPestManagement = od.selectedPestManagement;
+        }
+        if ((!property.safety_equipment || property.safety_equipment.length === 0) && Array.isArray(od.selectedSafetyEquipment)) {
+          this.selectedSafetyEquipment = od.selectedSafetyEquipment;
+        }
+        if (this.selectedFacilities.length === 0 && Array.isArray(od.selectedFacilities)) {
+          this.selectedFacilities = od.selectedFacilities;
+        }
 
         // Restore images from normalized table
         if (property.images && property.images.length > 0) {
@@ -1614,6 +1659,9 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
       concerns: formValue.concerns || '',
       previous_partnership: formValue.previous_partnership || '',
       farm_owner_suggestions: formValue.farm_owner_suggestions || '',
+      constraints: formValue.constraints || '',
+      limitations: formValue.limitations || '',
+      price_per_day: formValue.price_per_day || null,
       farm_type_code: formValue.farm_type_code || null,
       full_time_staff_count: formValue.full_time_staff_count || 0,
       part_time_staff_count: formValue.part_time_staff_count || 0,
@@ -1671,27 +1719,21 @@ export class PropertyOnboarding implements OnInit, OnDestroy {
   }
 
   getStepTitle(): string {
-    const titles = [
-      "Basic Information",
-      "Land Details",
-      "Business Details",
-      "Facilities & Amenities",
-      "Water Sources & Irrigation",
-      "Review & Submit"
-    ];
-    return titles[this.currentStep] || '';
+    return this.stepsList[this.currentStep]?.title || `Step ${this.currentStep + 1}`;
   }
 
   getStepDescription(): string {
-    const descriptions = [
-      "Tell us about your property",
-      "Share details about your land",
-      "Add business registration details (optional)",
-      "Select available facilities and amenities",
-      "Add water sources and irrigation systems",
-      "Review your information and submit"
-    ];
-    return descriptions[this.currentStep] || '';
+    return this.stepsList[this.currentStep]?.description || '';
+  }
+
+  getProgressPercent(): number {
+    if (!this.totalSteps) return 0;
+    const completed = this.stepsList.filter(s => s.completed).length;
+    return Math.round((completed / this.totalSteps) * 100);
+  }
+
+  getStepLabel(): string {
+    return `Step ${this.currentStep + 1} of ${this.totalSteps}`;
   }
 
   initializeSteps() {

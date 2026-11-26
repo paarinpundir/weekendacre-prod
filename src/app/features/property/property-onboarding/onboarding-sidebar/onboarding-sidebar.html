@@ -1,39 +1,59 @@
-<div class="onboarding-sidebar">
-  <div class="sidebar-header">
-    <h2>Property Onboarding</h2>
-    <p class="sidebar-subtitle">Complete all steps to finish</p>
+<aside class="onboarding-sidebar">
+  <div class="sidebar-brand">
+    <a routerLink="/" class="brand-link" aria-label="WeekendAcres home">
+      <img src="assets/photos/WA-logo.png" alt="" class="brand-logo" />
+      <div class="brand-copy">
+        <strong>WeekendAcres</strong>
+        <span>Partner trail</span>
+      </div>
+    </a>
   </div>
-  
-  <div class="sidebar-steps">
+
+  <div class="sidebar-header">
+    <p class="eyebrow">Farm onboarding</p>
+    <h2>Your listing path</h2>
+    <div class="progress-block">
+      <div class="progress-meta">
+        <span>{{ progressPercent }}% complete</span>
+        <span>Step {{ currentStep + 1 }}/{{ steps.length }}</span>
+      </div>
+      <div class="progress-track" role="progressbar" [attr.aria-valuenow]="progressPercent" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-steps" aria-label="Onboarding steps">
     @for (step of steps; track step.index) {
-      <div 
-        class="sidebar-step" 
+      <button
+        type="button"
+        class="sidebar-step"
         [class.active]="currentStep === step.index"
         [class.completed]="step.completed"
         [class.disabled]="!step.accessible"
+        [disabled]="!step.accessible"
         (click)="goToStep(step.index)"
       >
         <div class="step-indicator">
-          @if (step.completed) {
-            <span class="check-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+          @if (step.completed && currentStep !== step.index) {
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
           } @else {
-            <span class="step-number">{{ step.index + 1 }}</span>
+            <span>{{ step.index + 1 }}</span>
           }
         </div>
         <div class="step-info">
           <div class="step-title">{{ step.title }}</div>
           <div class="step-desc">{{ step.description }}</div>
         </div>
-      </div>
+      </button>
     }
-  </div>
-  
+  </nav>
+
   @if (hasSavedProgress) {
     <div class="sidebar-footer">
       <button type="button" class="btn-clear-sidebar" (click)="onClearProgress()">
-        Start Fresh
+        Start fresh
       </button>
     </div>
   }
-</div>
-
+</aside>

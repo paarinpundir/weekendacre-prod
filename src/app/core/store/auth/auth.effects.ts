@@ -65,15 +65,8 @@ export class AuthEffects {
         this.redirectBasedOnUserType(userType);
       }),
       mergeMap(({ user }) => {
-        // Load user permissions
-        return this.authService.getUserPermissions(user.id).pipe(
-          map(permissions => 
-            AuthActions.loadCurrentUserSuccess({ user, permissions })
-          ),
-          catchError(() => 
-            of(AuthActions.loadCurrentUserSuccess({ user, permissions: [] }))
-          )
-        );
+        // Permissions endpoint is not implemented yet — keep login flowing.
+        return of(AuthActions.loadCurrentUserSuccess({ user, permissions: [] }));
       })
     )
   );

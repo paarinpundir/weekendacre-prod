@@ -19,6 +19,7 @@
       <!-- Navigation Links -->
       <ul class="nav-menu" [class.active]="isMobileMenuOpen">  
         <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMenu()">Home</a></li>  
+        <li><a routerLink="/farms" routerLinkActive="active" (click)="closeMenu()">Live Farms</a></li>
         <li><a routerLink="/our-farm" routerLinkActive="active" (click)="closeMenu()">Our Farm</a></li>
         <li><a routerLink="/this-weekend" routerLinkActive="active" (click)="closeMenu()">This Weekend</a></li>
         <!-- <li><a routerLink="/activities" routerLinkActive="active" (click)="closeMenu()">Memberships</a></li>     -->

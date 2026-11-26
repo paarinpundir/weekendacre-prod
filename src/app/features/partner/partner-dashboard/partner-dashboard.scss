@@ -1,40 +1,57 @@
 .partner-dashboard {
+  --cream: #faf3e6;
+  --cream-dim: #f2e8d3;
+  --ink: #3a2f22;
+  --ink-soft: rgba(58, 47, 34, 0.72);
+  --gold: #c98a3c;
+  --gold-soft: #e6c07f;
+  --rust: #b5652e;
+  --moss: #7c8a54;
+  --line: rgba(58, 47, 34, 0.16);
+
   display: flex;
   min-height: 100vh;
-  background: var(--color-surface-wash);
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Newsreader', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
   
   // Left Sidebar
   .dashboard-sidebar {
     width: 260px;
-    background: white;
-    border-right: 1px solid var(--color-border-light);
+    background: var(--cream-dim);
+    border-right: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
     z-index: 100;
     
     .sidebar-header {
       padding: 1.5rem;
-      border-bottom: 1px solid var(--color-border-light);
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+      border-bottom: 1px dashed var(--line);
+      background: transparent;
       
       .logo {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: white;
+        color: var(--ink);
+        text-decoration: none;
         
-        .logo-icon {
-          font-size: 2rem;
+        .logo-img {
+          width: 36px;
+          height: 36px;
+          object-fit: contain;
         }
         
         .logo-text {
-          font-size: 1.5rem;
-          font-weight: 700;
+          font-family: 'Fraunces', Georgia, serif;
+          font-size: 1.25rem;
+          font-weight: 500;
+          font-style: italic;
         }
       }
     }
@@ -57,32 +74,37 @@
             align-items: center;
             gap: 1rem;
             padding: 0.875rem 1.5rem;
-            color: var(--color-text-primary);
+            color: var(--ink-soft);
             text-decoration: none;
             cursor: pointer;
             transition: all 0.2s;
             border-left: 3px solid transparent;
             
             .nav-icon {
-              font-size: 1.25rem;
+              font-size: 1.1rem;
               width: 24px;
               text-align: center;
+              color: var(--moss);
             }
             
             .nav-text {
-              font-weight: 500;
-              font-size: 0.95rem;
+              font-family: 'Space Mono', monospace;
+              font-weight: 400;
+              font-size: 0.78rem;
+              letter-spacing: 0.06em;
+              text-transform: uppercase;
             }
             
             &:hover {
-              background: var(--color-bg-secondary);
+              background: rgba(201, 138, 60, 0.08);
+              color: var(--ink);
             }
           }
           
           &.active .nav-link {
-            background: var(--color-bg-tertiary);
-            border-left-color: var(--color-primary);
-            color: var(--color-primary);
+            background: rgba(201, 138, 60, 0.12);
+            border-left-color: var(--rust);
+            color: var(--ink);
             font-weight: 600;
           }
         }
@@ -122,12 +144,13 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            color: white;
+            background: var(--moss);
+            color: var(--cream);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 500;
             font-size: 0.95rem;
           }
         }
@@ -231,37 +254,58 @@
         color: var(--color-text-secondary);
       }
       
+      .eyebrow {
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--rust);
+        margin-bottom: 0.75rem;
+      }
+
       .empty-properties {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 3rem 2rem;
         gap: 3rem;
+        border: 1px dashed var(--line);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.35);
         
         .empty-content {
           flex: 1;
           text-align: left;
           
           .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--moss);
           }
           
           h2 {
-            font-size: 1.75rem;
-            color: var(--color-text-primary);
+            font-family: 'Fraunces', Georgia, serif;
+            font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+            font-weight: 500;
+            font-style: italic;
+            color: var(--ink);
             margin-bottom: 0.75rem;
+            line-height: 1.25;
           }
           
           p {
-            color: var(--color-text-secondary);
+            color: var(--ink-soft);
             margin-bottom: 1rem;
             font-size: 1rem;
+            max-width: 34rem;
+            line-height: 1.5;
           }
           
           .user-info-text {
-            font-size: 0.9rem;
-            color: var(--color-text-tertiary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            color: var(--ink-soft);
             margin-top: 0.5rem;
           }
         }
@@ -270,13 +314,16 @@
           flex-shrink: 0;
           
           .btn-primary {
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            color: white;
+            padding: 0.95rem 1.6rem;
+            background: var(--rust);
+            color: var(--cream);
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 2px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             white-space: nowrap;

@@ -2,10 +2,10 @@
   <!-- Left Sidebar -->
   <div class="dashboard-sidebar">
     <div class="sidebar-header">
-      <div class="logo">
-        <span class="logo-icon" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
-        <span class="logo-text">GreenTrail</span>
-      </div>
+      <a routerLink="/" class="logo" aria-label="WeekendAcres home">
+        <img src="assets/photos/WA-logo.png" alt="WeekendAcres" class="logo-img" />
+        <span class="logo-text">WeekendAcres</span>
+      </a>
     </div>
     
     <nav class="sidebar-nav">
@@ -76,21 +76,22 @@
     <!-- Content Area -->
     <div class="dashboard-content">
       @if (activeMenu === 'properties') {
-        @if (false) {
+        @if (loading) {
           <div class="loading-state">
-            <p>Loading properties...</p>
+            <p>Loading your farms…</p>
           </div>
         } @else if (properties.length === 0) {
           <div class="empty-properties">
             <div class="empty-content">
-              <div class="empty-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney-window"></i></div>
-              <h2>You haven't onboarded any property yet, {{ getUserName() }}</h2>
-              <p>Get started by onboarding your first property to begin managing your farm listings</p>
-              <p class="user-info-text">Logged in as: {{ getUserName() }} ({{ currentUser?.email }})</p>
+              <div class="eyebrow">Partner trail</div>
+              <div class="empty-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></div>
+              <h2>No farms onboarded yet, {{ getUserName() }}</h2>
+              <p>Start the onboarding trail — your draft saves as you go, and Live farms appear on the home page after admin approval.</p>
+              <p class="user-info-text">Signed in as {{ getUserName() }} · {{ currentUser?.email }}</p>
             </div>
             <div class="empty-action-right">
-              <button class="btn-primary" (click)="addNewProperty()">
-                + Onboard a Property
+              <button class="btn-primary" type="button" (click)="addNewProperty()">
+                + Onboard a farm
               </button>
             </div>
           </div>

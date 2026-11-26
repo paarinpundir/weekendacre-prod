@@ -81,6 +81,8 @@ export class PartnerOnboarding implements OnInit {
   ) {}
   
   ngOnInit() {
+    // Canonical onboarding path is /property/onboard (API-backed).
+    this.router.navigate(['/property/onboard'], { queryParams: { new: true }, replaceUrl: true });
     this.initializeForms();
   }
   

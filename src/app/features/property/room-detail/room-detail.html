@@ -1,0 +1,106 @@
+<div class="room-page">
+  @if (loading) {
+  <div class="room-state">
+    <div class="spinner"></div>
+    <p>Loading this room...</p>
+  </div>
+  } @else if (error || !room || !property) {
+  <div class="room-state">
+    <h1>Room unavailable</h1>
+    <p>{{ error || 'This room could not be opened.' }}</p>
+    <a class="back-link" [routerLink]="['/properties', propertyId]">Back to the farm</a>
+  </div>
+  } @else {
+  <article>
+    <a class="back-link" [routerLink]="['/properties', property.id]">← {{ property.property_name }}</a>
+    <div class="room-hero">
+      <img [src]="roomPhoto(room)" [alt]="room.room_type" />
+    </div>
+    <header class="room-heading">
+      <p class="eyebrow">Where you'll sleep</p>
+      <h1>{{ room.room_type || 'Room' }}</h1>
+      <p class="lede">{{ room.description }}</p>
+      @if (room.bed_setup) {
+      <p class="bed"><i class="fa-solid fa-bed" aria-hidden="true"></i> {{ room.bed_setup }}</p>
+      }
+    </header>
+
+    <section>
+      <h2>Bathroom</h2>
+      <dl class="fact-grid">
+        @for (fact of bathroomFacts(room); track fact.label) {
+        <div>
+          <dt>{{ fact.label }}</dt>
+          <dd>{{ fact.value }}</dd>
+        </div>
+        }
+      </dl>
+    </section>
+
+    <section>
+      <h2>This stay</h2>
+      <dl class="fact-grid">
+        <div>
+          <dt>Rooms</dt>
+          <dd>{{ room.number_of_rooms || 1 }}</dd>
+        </div>
+        @if (room.max_guest_capacity) {
+        <div>
+          <dt>Sleeps</dt>
+          <dd>{{ room.max_guest_capacity }} each</dd>
+        </div>
+        }
+        <div>
+          <dt>Check-in</dt>
+          <dd>After {{ clock(room.check_in_time) }}</dd>
+        </div>
+        <div>
+          <dt>Checkout</dt>
+          <dd>Before {{ clock(room.check_out_time) }}</dd>
+        </div>
+      </dl>
+      <ul class="included">
+        @if (room.hot_water_available) {
+        <li><i class="fa-solid fa-fire-flame-curved" aria-hidden="true"></i> Hot water</li>
+        }
+        @if (room.cctv_available) {
+        <li><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> CCTV in common areas</li>
+        }
+        @if (room.first_aid_kit_available) {
+        <li><i class="fa-solid fa-kit-medical" aria-hidden="true"></i> First-aid kit on site</li>
+        }
+        @for (amenity of roomAmenities(room); track amenity) {
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i> {{ amenity }}</li>
+        }
+      </ul>
+    </section>
+
+    @if (roomRatings(room).length) {
+    <section>
+      <h2>Stay ratings</h2>
+      <ul class="ratings">
+        @for (rating of roomRatings(room); track rating.label) {
+        <li>
+          <span>{{ rating.label }}</span>
+          <strong>{{ rating.value }} / 5</strong>
+        </li>
+        }
+      </ul>
+    </section>
+    }
+
+    @if (room.animal_safety_measures) {
+    <section>
+      <h2>Around animals</h2>
+      <p>{{ room.animal_safety_measures }}</p>
+    </section>
+    }
+    @if (room.emergency_plans) {
+    <section>
+      <h2>If something goes wrong</h2>
+      <p>{{ room.emergency_plans }}</p>
+    </section>
+    }
+  </article>
+  }
+</div>

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 export interface StepInfo {
   index: number;
@@ -11,13 +12,14 @@ export interface StepInfo {
 
 @Component({
   selector: 'app-onboarding-sidebar',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './onboarding-sidebar.html',
   styleUrl: './onboarding-sidebar.scss'
 })
 export class OnboardingSidebar {
   @Input() currentStep: number = 0;
   @Input() steps: StepInfo[] = [];
+  @Input() progressPercent: number = 0;
   @Input() hasSavedProgress: boolean = false;
   @Output() stepSelected = new EventEmitter<number>();
   @Output() clearProgress = new EventEmitter<void>();

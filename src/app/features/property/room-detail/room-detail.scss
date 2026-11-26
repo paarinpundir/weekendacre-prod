@@ -1,0 +1,133 @@
+.room-page {
+  min-height: 100vh;
+  background: white;
+  color: var(--color-text-primary);
+}
+
+.room-state,
+article {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 72px;
+}
+
+.room-state {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  font-weight: 650;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+.room-hero {
+  margin-top: 18px;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: #f3f1ec;
+
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+.room-heading {
+  margin: 22px 0 8px;
+
+  .eyebrow {
+    margin: 0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+  }
+
+  h1 { margin: 6px 0 10px; font-size: clamp(2rem, 4vw, 2.8rem); }
+  .lede { margin: 0; font-size: 1.05rem; line-height: 1.6; color: var(--color-text-secondary); max-width: 68ch; }
+}
+
+.bed {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 14px 0 0;
+  font-weight: 650;
+
+  i { color: var(--color-primary); }
+}
+
+section { margin-top: 2rem; }
+
+h2 { margin: 0 0 0.9rem; font-size: 1.25rem; }
+
+p { line-height: 1.6; color: var(--color-text-secondary); }
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  div {
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    background: #f8f5ee;
+  }
+
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  dd { margin: 0.25rem 0 0; font-weight: 700; font-size: 1.05rem; }
+}
+
+.included,
+.ratings {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.included li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i { width: 1.1rem; color: var(--color-primary); }
+}
+
+.ratings li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--color-border-hairline);
+}

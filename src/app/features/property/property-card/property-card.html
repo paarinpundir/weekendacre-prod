@@ -1,40 +1,32 @@
-<div class="property-card" [routerLink]="['/properties', property.id]">
-  <div class="property-image">
+<article class="property-card">
+  <a class="property-image" [routerLink]="['/properties', property.id]">
     <img [src]="getPropertyImage()" [alt]="property.property_name" />
-    @if (property.state === 601) {
-      <span class="status-badge draft">Draft</span>
-    } @else {
-      <span class="status-badge active">Active</span>
-    }
-  </div>
+    <span class="status-badge" [ngClass]="getStatusClass()">{{ getPropertyStatus() }}</span>
+  </a>
   <div class="property-content">
-    <div class="property-header">
-      <h3 class="property-title">{{ property.property_name }}</h3>
-      @if (property.property_code) {
-        <span class="property-code">{{ property.property_code }}</span>
-      }
-    </div>
     <p class="property-location">{{ getPropertyLocation() }}</p>
+    <h3 class="property-title">{{ property.property_name }}</h3>
+    @if (property.short_description) {
+      <p class="property-blurb">{{ property.short_description }}</p>
+    }
     <div class="property-details">
-      <div class="detail-item">
-        <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-ruler-combined"></i></span>
-        <span class="detail-text">{{ property.total_land_area }} acres</span>
-      </div>
-      @if (property.years_in_operation) {
-        <div class="detail-item">
-          <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-clock-rotate-left"></i></span>
-          <span class="detail-text">{{ property.years_in_operation }} years</span>
-        </div>
+      @if (property.total_land_area) {
+        <span class="detail-item">{{ property.total_land_area }} {{ property.land_area_unit || 'acres' }}</span>
       }
-      <div class="detail-item">
-        <span class="detail-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
-        <span class="detail-text">{{ property.ownership_type || 'N/A' }}</span>
-      </div>
+      @if (property.years_in_operation) {
+        <span class="detail-item">{{ property.years_in_operation }} years farming</span>
+      }
     </div>
     <div class="property-footer">
-      <span class="property-type">Farm Property</span>
-      <button class="view-details-btn">View Details →</button>
+      @if (priceLabel()) {
+        <p class="property-price"><strong>{{ priceLabel() }}</strong><span> a night</span></p>
+      } @else {
+        <p class="property-price"><span>Stay details on the farm</span></p>
+      }
+      <span class="card-actions">
+        <a [routerLink]="['/properties', property.id, 'book']">Book stay</a>
+        <a [routerLink]="['/properties', property.id]">View farm</a>
+      </span>
     </div>
   </div>
-</div>
-
+</article>

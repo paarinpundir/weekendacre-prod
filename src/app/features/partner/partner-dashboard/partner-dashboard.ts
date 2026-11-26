@@ -8,9 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { PropertyService } from '../../../core/services/property.service';
 import { Property } from '../../../core/models/property.model';
-import * as PropertyActions from '../../../core/store/property/property.actions';
 import * as AuthActions from '../../../core/store/auth/auth.actions';
-import { selectAllProperties, selectPropertyLoading } from '../../../core/store/property/property.selectors';
 
 @Component({
   selector: 'app-partner-dashboard',
@@ -60,28 +58,6 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   ngOnInit() {
     this.currentUser = this.authService.getStoredUser();
     this.isOnboarding = this.router.url.includes('/property/onboard');
-    
-    // Subscribe to raw state and extract properties
-    this.store.select((state: any) => {
-      const propertyState = state.property;
-      if (!propertyState) return [];
-      
-      const entities = propertyState.entities || {};
-      const ids = propertyState.ids || [];
-      return ids.map((id: string) => entities[id]).filter((p: Property) => p !== undefined) as Property[];
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((properties: Property[]) => {
-        this.properties = properties || [];
-        this.cdr.detectChanges();
-      });
-    
-    this.store.select((state: any) => state.property?.loading)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((loading: boolean) => {
-        this.loading = loading || false;
-      });
-    
     this.loadProperties();
   }
 
@@ -235,11 +211,30 @@ export class PartnerDashboard implements OnInit, OnDestroy {
   
   loadProperties() {
     this.loading = true;
+    this.cdr.detectChanges();
+
     if (!this.authService.isLoggedIn()) {
       this.loading = false;
+      this.properties = [];
+      this.cdr.detectChanges();
       return;
     }
-    this.store.dispatch(PropertyActions.getMyProperties());
+
+    this.propertyService.getMyProperties()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.properties = Array.isArray(response?.data) ? response.data : [];
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to load partner properties:', err);
+          this.properties = [];
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
   
   getUserInitials(): string {

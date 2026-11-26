@@ -77,6 +77,35 @@
   <div class="wp-label">arriving</div>
 </div>
 
+<!-- ============ LIVE FARMS — onboarded marketplace ============ -->
+<section class="live-farms" id="live-farms">
+  <div class="live-farms-head">
+    <div class="eyebrow">On the platform</div>
+    <h2>Live farms you can visit</h2>
+    <p>Farms that have completed onboarding and been approved go live here.</p>
+  </div>
+
+  @if (liveFarmsLoading) {
+    <div class="live-farms-state">Loading live farms…</div>
+  } @else if (liveFarmsError) {
+    <div class="live-farms-state">{{ liveFarmsError }}</div>
+  } @else if (liveFarms.length === 0) {
+    <div class="live-farms-state">
+      No live farms yet. Partner farms appear here after admin approval.
+      <a routerLink="/partner/signup" class="live-farms-cta">Become a partner</a>
+    </div>
+  } @else {
+    <div class="live-farms-grid">
+      @for (farm of liveFarms; track farm.id) {
+        <app-property-card [property]="farm"></app-property-card>
+      }
+    </div>
+    <div class="live-farms-more">
+      <a routerLink="/farms" class="btn btn-primary">Browse all live farms</a>
+    </div>
+  }
+</section>
+
 <!-- ============ A PEEK AT THE FARM — scattered wall ============ -->
 <section class="peek">
   <div class="peek-head">

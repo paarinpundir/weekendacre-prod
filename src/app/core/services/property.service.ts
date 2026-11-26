@@ -294,10 +294,18 @@ export class PropertyService {
   }
 
   updateProperty(propertyId: string, updates: Partial<Property>): Observable<Property> {
-    return this.http.put<Property>(
+    return this.http.put<{ success: boolean; data: Property; message: string }>(
       `${this.apiUrl}/${propertyId}`,
       updates,
       { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(response => {
+        const property = response.data;
+        if (!property) {
+          throw new Error(response.message || 'Property update returned no data');
+        }
+        return property;
+      })
     );
   }
 
@@ -336,9 +344,11 @@ export class PropertyService {
   }
 
   getDailyRates(propertyId: string, startDate: string, endDate: string): Observable<{ success: boolean; data: any[]; message: string }> {
+    // Public Live-farm rates. The old /properties/daily-rates path matched the
+    // authenticated /properties/:id route and a 401 sent guests to the login page.
     return this.http.get<{ success: boolean; data: any[]; message: string }>(
-      `${this.apiUrl}/daily-rates?propertyId=${propertyId}&startDate=${startDate}&endDate=${endDate}`,
-      { headers: this.getAuthHeaders() }
+      `${environment.apiUrl}/api/v1/properties/public/${propertyId}/daily-rates`,
+      { params: { startDate, endDate } }
     );
   }
 }

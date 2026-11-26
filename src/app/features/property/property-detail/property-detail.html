@@ -25,17 +25,12 @@
         <div class="gallery-grid">
           <div class="main-image-large" (click)="openGallery(0)">
             <img [src]="getMainImage()" [alt]="property.property_name" />
-            @if (getAllImages().length > 0) {
-            <span class="image-type-badge main-badge">{{ getImageTypeName(getAllImages()[0]?.typeCode,
-              getAllImages()[0]?.type) }}</span>
-            }
           </div>
           <div class="thumbnail-grid-right">
             @for (imgData of getDisplayImages(); track $index) {
             <div class="thumbnail" [class.last-thumbnail]="$index === 3"
               (click)="imgData.isOverlay ? openGallery(0) : openGallery($index + 1); $event.stopPropagation()">
               <img [src]="imgData.url" [alt]="property.property_name" />
-              <span class="image-type-badge">{{ getImageTypeName(imgData.typeCode, imgData.type) }}</span>
               @if (imgData.isOverlay) {
               <div class="thumbnail-overlay">
                 <button class="show-all-photos-btn-inline" (click)="openGallery(0); $event.stopPropagation()">
@@ -84,9 +79,16 @@
       </div>
       <div class="gallery-scroll-body">
         @for (img of getAllImages(); track $index) {
-        <div class="gallery-scroll-item" [class.gallery-item-large]="$index % 3 === 0" (click)="openLightbox($index)">
-          <img [src]="img.url" [alt]="'Photo ' + ($index + 1)" loading="lazy" />
-          <span class="gallery-scroll-label">{{ getImageTypeName(img.typeCode, img.type) }}</span>
+        <div class="gallery-scroll-item"
+          [class.gallery-item-large]="isGalleryHero($index)"
+          [class.gallery-item-span]="isGallerySpan($index)"
+          (click)="openLightbox($index)">
+          <div class="gallery-scroll-frame">
+            <img [src]="img.url" [alt]="img.alt || ('Photo ' + ($index + 1))" loading="lazy" />
+          </div>
+          @if (img.alt) {
+          <span class="gallery-scroll-label">{{ img.alt }}</span>
+          }
         </div>
         }
       </div>
@@ -124,329 +126,286 @@
     <!-- Main Content -->
     <div class="content-wrapper">
       <div class="main-content">
-        <!-- Title and Actions -->
+        <!-- Title -->
         <div class="title-section">
           <div class="title-left">
+            <div class="title-eyebrow">
+              @if (getFarmTypeLabel()) {
+              <span class="eyebrow-chip"><i class="fa-solid fa-seedling" aria-hidden="true"></i> {{ getFarmTypeLabel() }} farm</span>
+              }
+              <span class="live-status-badge" [class.is-live]="isLive()">{{ getStateLabel() }}</span>
+            </div>
             <h1 class="property-title">{{ property.property_name }}</h1>
             <div class="property-location">
-              <span class="location-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
-              <span>{{ getPropertyLocation() }}</span>
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <span>{{ property.address }}</span>
             </div>
           </div>
           <div class="title-actions">
-            <button class="action-btn share-btn">
-              <span>Share</span>
+            <button class="action-btn" type="button" (click)="shareFarm()">
+              <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> Share
             </button>
-            <button class="action-btn save-btn">
-              <span>Save</span>
+            <button class="action-btn" type="button" [class.saved]="isSaved" (click)="isSaved = !isSaved">
+              <i [class]="isSaved ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" aria-hidden="true"></i> {{ isSaved ? 'Saved' : 'Save' }}
             </button>
           </div>
         </div>
 
-        <!-- Property Type and Details -->
-        <div class="property-type-badge">
-          <span>Entire farm property</span>
-          <span class="separator">·</span>
-          <span>{{ property.total_land_area }} acres</span>
+        <!-- Quick facts -->
+        <div class="fact-strip">
+          <div class="fact">
+            <i class="fa-solid fa-ruler-combined" aria-hidden="true"></i>
+            <div><strong>{{ property.total_land_area }} {{ property.land_area_unit || 'acres' }}</strong><span>Farm land</span></div>
+          </div>
           @if (property.years_in_operation) {
-          <span class="separator">·</span>
-          <span>{{ property.years_in_operation }} years in operation</span>
+          <div class="fact">
+            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+            <div><strong>{{ property.years_in_operation }} years</strong><span>Farming here</span></div>
+          </div>
+          }
+          @if (getTotalRooms() > 0) {
+          <div class="fact">
+            <i class="fa-solid fa-bed" aria-hidden="true"></i>
+            <div><strong>{{ getTotalRooms() }} rooms</strong><span>Up to {{ getMaxGuests() }} guests</span></div>
+          </div>
+          }
+          @if (getStaffCount() > 0) {
+          <div class="fact">
+            <i class="fa-solid fa-people-group" aria-hidden="true"></i>
+            <div><strong>{{ getStaffCount() }} people</strong><span>On the farm team</span></div>
+          </div>
           }
         </div>
 
-        <!-- Key Features -->
-        <div class="key-features">
-          <div class="feature-item">
-            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-ruler-combined"></i></span>
-            <span class="feature-text">{{ property.total_land_area }} acres</span>
+        <!-- Host -->
+        @if (property.owner_name) {
+        <div class="host-card">
+          <div class="host-avatar">{{ getHostInitials() }}</div>
+          <div class="host-info">
+            <h3>Hosted by {{ property.owner_name }}</h3>
+            <p>
+              Farmer &amp; host
+              @if (property.years_in_operation) { · {{ property.years_in_operation }} years on this land }
+              @if (property.english_speaking_guide) { · Speaks English &amp; Hindi }
+            </p>
           </div>
-          <div class="feature-item">
-            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-house-chimney"></i></span>
-            <span class="feature-text">{{ property.ownership_type || 'Owned' }}</span>
-          </div>
-          @if (property.years_in_operation) {
-          <div class="feature-item">
-            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span class="feature-text">{{ property.years_in_operation }} years</span>
-          </div>
+          @if (property.whatsapp_number) {
+          <a class="host-whatsapp" [href]="getWhatsappLink()" target="_blank" rel="noopener">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Message
+          </a>
           }
-          <div class="feature-item">
-            <span class="feature-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></span>
-            <span class="feature-text">Farm Property</span>
-          </div>
         </div>
+        }
+
+        <!-- Highlights -->
+        @if (getHighlights().length > 0) {
+        <ul class="highlights">
+          @for (h of getHighlights(); track h) {
+          <li><i class="fa-solid fa-star" aria-hidden="true"></i><span>{{ h }}</span></li>
+          }
+        </ul>
+        }
 
         <div class="divider"></div>
 
-        <!-- Description Section -->
-        <section class="description-section">
-          <h2>About this property</h2>
+        <!-- About -->
+        <section class="detail-section">
+          <h2>About this farm</h2>
           @if (property.short_description) {
-          <p class="description-text">{{ property.short_description }}</p>
-          } @else if (property.long_description) {
-          <p class="description-text">{{ property.long_description }}</p>
-          } @else {
-          <p class="description-text">
-            {{ property.property_name }} is a beautiful farm property located in {{ getPropertyLocation() }}.
-            This {{ property.total_land_area }}{{ property.land_area_unit ? ' ' + property.land_area_unit : ' acres' }}
-            property offers a unique opportunity to experience farm life
-            and connect with nature.
-          </p>
+          <p class="lead-text">{{ property.short_description }}</p>
           }
-          @if (property.long_description && property.short_description) {
-          <p class="description-text">{{ property.long_description }}</p>
+          @if (property.long_description) {
+          <p class="description-text" [class.clamped]="!showFullDescription">{{ property.long_description }}</p>
+          <button class="link-btn" type="button" (click)="showFullDescription = !showFullDescription">
+            {{ showFullDescription ? 'Show less' : 'Read more' }} <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+          </button>
           }
-          @if (property.years_in_operation) {
+          @if (!property.short_description && !property.long_description) {
           <p class="description-text">
-            With {{ property.years_in_operation }} years of operation, this property has been well-maintained
-            and offers excellent facilities for visitors.
-          </p>
-          }
-          @if (property.owner_name) {
-          <p class="description-text">
-            <strong>Owner:</strong> {{ property.owner_name }}
-          </p>
-          }
-          @if (property.contact_person && property.contact_person !== property.owner_name) {
-          <p class="description-text">
-            <strong>Contact Person:</strong> {{ property.contact_person }}
-          </p>
-          }
-          @if (property.phone_number) {
-          <p class="description-text">
-            <strong>Phone:</strong> {{ property.phone_number }}
-          </p>
-          }
-          @if (property.email_id) {
-          <p class="description-text">
-            <strong>Email:</strong> {{ property.email_id }}
+            {{ property.property_name }} is a {{ property.total_land_area }} {{ property.land_area_unit || 'acre' }} working farm in
+            {{ getPropertyLocation() }}. Come for the fresh air, stay for the food.
           </p>
           }
         </section>
 
+        <!-- Rooms -->
+        @if (property.stay_facilities && property.stay_facilities.length > 0) {
         <div class="divider"></div>
-
-        <!-- Amenities Section -->
-        <section class="amenities-section">
-          <h2>What this place offers</h2>
-          <div class="amenities-grid">
-            @if (property.crop_rotation_system) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-wheat-awn"></i></span>
-              <span>Crop Rotation System</span>
-            </div>
-            }
-            @if (property.is_soil_tested) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-seedling"></i></span>
-              <span>Soil Tested</span>
-            </div>
-            }
-            @if (property.farm_boundary) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-mountain-sun"></i></span>
-              <span>Farm Boundary</span>
-            </div>
-            }
-            @if (property.parking_space_available) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-car"></i></span>
-              <span>Parking available</span>
-            </div>
-            }
-            @if (property.shelter_shade_area) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-umbrella-beach"></i></span>
-              <span>Shelter/Shade Area</span>
-            </div>
-            }
-            @if (property.cold_storage) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-snowflake"></i></span>
-              <span>Cold Storage</span>
-            </div>
-            }
-            @if (property.storage_room) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-box"></i></span>
-              <span>Storage Room</span>
-            </div>
-            }
-            @if (property.kitchen_facility) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-kitchen-set"></i></span>
-              <span>Kitchen facility</span>
-            </div>
-            }
-            @if (property.toilet_available) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-toilet"></i></span>
-              <span>Toilet available</span>
-            </div>
-            }
-            @if (property.toilet_drinking_water) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-droplet"></i></span>
-              <span>Drinking Water</span>
-            </div>
-            }
-            @if (property.electricity_connection) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
-              <span>Electricity</span>
-            </div>
-            }
-            @if (property.backup_power) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-car-battery"></i></span>
-              <span>Backup Power</span>
-            </div>
-            }
-            @if (property.waste_management_system) {
-            <div class="amenity-item">
-              <span class="amenity-icon" aria-hidden="true"><i class="fa-solid fa-recycle"></i></span>
-              <span>Waste Management</span>
-            </div>
+        <section class="detail-section">
+          <h2>Where you'll sleep</h2>
+          <div class="room-grid">
+            @for (facility of property.stay_facilities; track facility.id || $index) {
+            <a class="room-card" [routerLink]="['/properties', property.id, 'rooms', facility.id]" target="_blank" rel="noopener">
+              <div class="room-photo">
+                <img [src]="roomPhoto(facility, $index)" [alt]="facility.room_type" loading="lazy" />
+                <span class="room-count">{{ facility.number_of_rooms || 1 }} {{ (facility.number_of_rooms || 1) === 1 ? 'room' : 'rooms' }}</span>
+              </div>
+              <div class="room-body">
+                <h3>{{ facility.room_type || 'Room' }}</h3>
+                <ul class="room-meta">
+                  @if (facility.max_guest_capacity) {
+                  <li><i class="fa-solid fa-user-group" aria-hidden="true"></i> Sleeps {{ facility.max_guest_capacity }}</li>
+                  }
+                  @if (facility.bathrooms_attached) {
+                  <li><i class="fa-solid fa-bath" aria-hidden="true"></i> Attached bath</li>
+                  } @else if (facility.bathrooms_shared) {
+                  <li><i class="fa-solid fa-restroom" aria-hidden="true"></i> Shared bath</li>
+                  }
+                  @if (facility.hot_water_available) {
+                  <li><i class="fa-solid fa-fire-flame-curved" aria-hidden="true"></i> Hot water</li>
+                  }
+                  @if (facility.cctv_available) {
+                  <li><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> CCTV secured</li>
+                  }
+                </ul>
+                <span class="room-open">View details</span>
+              </div>
+            </a>
             }
           </div>
         </section>
+        }
 
-        <!-- Crops Section -->
+        <!-- Amenities -->
+        @if (getAmenities().length > 0) {
+        <div class="divider"></div>
+        <section class="detail-section">
+          <h2>What this farm offers</h2>
+          <div class="amenities-grid">
+            @for (a of (showAllAmenities ? getAmenities() : getAmenities().slice(0, 10)); track a.label) {
+            <div class="amenity-item">
+              <i [class]="'fa-solid ' + a.icon" aria-hidden="true"></i>
+              <span>{{ a.label }}</span>
+            </div>
+            }
+          </div>
+          @if (getAmenities().length > 10) {
+          <button class="outline-btn" type="button" (click)="showAllAmenities = !showAllAmenities">
+            {{ showAllAmenities ? 'Show fewer' : 'Show all ' + getAmenities().length + ' amenities' }}
+          </button>
+          }
+        </section>
+        }
+
+        <!-- Experiences -->
+        @if (experienceList().length > 0) {
+        <div class="divider"></div>
+        <section class="detail-section">
+          <h2>Things to do on the farm</h2>
+          <div class="experience-grid">
+            @for (exp of experienceList(); track exp.id || $index) {
+            <article class="experience-card">
+              <div class="experience-icon"><i [class]="'fa-solid ' + getExperienceIcon(exp.experience_type)" aria-hidden="true"></i></div>
+              <div class="experience-body">
+                <h3>{{ exp.name || exp.experience_type }}</h3>
+                @if (exp.description) {
+                <p>{{ exp.description }}</p>
+                }
+                <div class="experience-meta">
+                  @if (exp.duration_hours) {
+                  <span><i class="fa-regular fa-clock" aria-hidden="true"></i> {{ formatDuration(exp.duration_hours) }}</span>
+                  }
+                  @if (exp.max_participants) {
+                  <span><i class="fa-solid fa-users" aria-hidden="true"></i> Up to {{ exp.max_participants }}</span>
+                  }
+                  <span class="experience-price">{{ exp.price_per_person ? '₹' + (exp.price_per_person | number:'1.0-0') + ' / person' : 'Included' }}</span>
+                </div>
+              </div>
+            </article>
+            }
+          </div>
+        </section>
+        }
+
+        <!-- Produce -->
         @if (property.crops && property.crops.length > 0) {
         <div class="divider"></div>
-        <section class="crops-section">
-          <h2>Crops & Produce</h2>
-          <div class="crops-grid">
+        <section class="detail-section">
+          <h2>Fresh from this farm</h2>
+          <p class="section-sub">Buy straight from the farmer — take it home after your stay or get it delivered.</p>
+          <div class="produce-grid">
             @for (crop of property.crops; track crop.id || $index) {
-            <div class="crop-item">
-              <div class="crop-header">
+            <article class="produce-card">
+              <div class="produce-head">
                 <h3>{{ crop.crop_name }}</h3>
-                <button class="btn-buy-produce" (click)="buyProduce(crop.crop_name)">Buy / Contact</button>
+                @if (crop.current_selling_price) {
+                <span class="produce-price">₹{{ crop.current_selling_price | number:'1.0-0' }}<small>/kg</small></span>
+                }
               </div>
-              @if (crop.area_under_cultivation) {
-              <p><strong>Area:</strong> {{ crop.area_under_cultivation }} {{ property.land_area_unit || 'acres' }}</p>
-              }
-              @if (crop.expected_monthly_quantity) {
-              <p><strong>Monthly Quantity:</strong> {{ crop.expected_monthly_quantity }}</p>
-              }
-              @if (crop.current_selling_price) {
-              <p><strong>Price:</strong> ₹{{ crop.current_selling_price }}</p>
-              }
-              @if (crop.seasonal_availability) {
-              <p><strong>Availability:</strong> {{ crop.seasonal_availability }}</p>
-              }
-            </div>
+              <ul class="produce-meta">
+                @if (crop.seasonal_availability) {
+                <li><i class="fa-regular fa-calendar" aria-hidden="true"></i> {{ crop.seasonal_availability }}</li>
+                }
+                @if (crop.can_deliver && crop.delivery_centre) {
+                <li><i class="fa-solid fa-truck" aria-hidden="true"></i> Delivers to {{ crop.delivery_centre }}</li>
+                }
+                @if (crop.minimum_quantity_commitment) {
+                <li><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Min. {{ crop.minimum_quantity_commitment }} kg</li>
+                }
+              </ul>
+              <button class="produce-btn" type="button" (click)="buyProduce(crop.crop_name)">Order from farm</button>
+            </article>
             }
           </div>
         </section>
         }
 
-        <!-- Experiences Section -->
-        @if (property.experiences) {
+        <!-- Location -->
         <div class="divider"></div>
-        <section class="experiences-section">
-          <h2>Experiences & Activities</h2>
-          <div class="experiences-grid">
-            @if (isExperienceEnabled(property.experiences, 'experience_farm_walk')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-person-walking"></i></span>
-              <span>Farm Walk</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_vegetable_harvesting')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-carrot"></i></span>
-              <span>Vegetable Harvesting</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_animal_interaction')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-cow"></i></span>
-              <span>Animal Interaction</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_organic_farming_workshop')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
-              <span>Organic Farming Workshop</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_composting_demo')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-recycle"></i></span>
-              <span>Composting Demo</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_pottery')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-mortar-pestle"></i></span>
-              <span>Pottery</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_nature_trail')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-tree"></i></span>
-              <span>Nature Trail</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_rural_games')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-chess-pawn"></i></span>
-              <span>Rural Games</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_bonfire')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-fire"></i></span>
-              <span>Bonfire</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_outdoor_seating')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-chair"></i></span>
-              <span>Outdoor Seating</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_picnic_spots')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i></span>
-              <span>Picnic Spots</span>
-            </div>
-            }
-            @if (isExperienceEnabled(property.experiences, 'experience_kids_activities')) {
-            <div class="experience-item">
-              <span class="experience-icon" aria-hidden="true"><i class="fa-solid fa-child"></i></span>
-              <span>Kids Activities</span>
-            </div>
-            }
-          </div>
-        </section>
-        }
-
-        <div class="divider"></div>
-
-        <!-- Location Section -->
-        @if (property.latitude && property.longitude) {
-        <section class="location-section">
+        <section class="detail-section">
           <h2>Where you'll be</h2>
-          <p class="location-text">{{ property.address }}</p>
-          <div class="map-placeholder">
-            <p>Map view coming soon</p>
-            <small>Coordinates: {{ property.latitude }}, {{ property.longitude }}</small>
+          <p class="location-text"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ property.address }}</p>
+          @if (mapUrl) {
+          <div class="map-frame">
+            <iframe [src]="mapUrl" title="Farm location map" loading="lazy"></iframe>
+          </div>
+          <a class="link-btn" [href]="getDirectionsLink()" target="_blank" rel="noopener">
+            Get directions <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          </a>
+          }
+        </section>
+
+        <!-- Things to know -->
+        <div class="divider"></div>
+        <section class="detail-section">
+          <h2>Things to know</h2>
+          <div class="know-grid">
+            <div>
+              <h4>House rules</h4>
+              <p>Check-in after {{ getCheckInTime() }}</p>
+              <p>Check-out before {{ getCheckOutTime() }}</p>
+              <p>No loud music after 10 pm</p>
+            </div>
+            <div>
+              <h4>Safety</h4>
+              @if (hasFirstAid()) { <p>First-aid kit on site</p> }
+              @if (hasCctv()) { <p>CCTV in common areas</p> }
+              @if (property.farm_boundary) { <p>Fully fenced farm boundary</p> }
+              @if (property.backup_power) { <p>Power backup available</p> }
+            </div>
+            <div>
+              <h4>Food</h4>
+              @if (property.cooking_staff_available) { <p>Home-cooked farm meals by our cooks</p> }
+              @if (property.kitchen_facility) { <p>Guest kitchen access</p> }
+              @if (property.toilet_drinking_water) { <p>RO drinking water</p> }
+            </div>
           </div>
         </section>
-        }
       </div>
 
       <!-- Booking Widget (Right Sidebar) -->
       <div class="booking-widget">
         <div class="booking-card">
           <div class="price-section">
-            <span class="price-label">Price per day</span>
+            @if (getPropertyPrice()) {
             <div class="price-amount">
-              <span class="currency">₹</span>
-              <span class="amount">{{ getPropertyPrice() ? getPropertyPrice() : 'Contact for pricing' }}</span>
+              <span class="amount">₹{{ getPropertyPrice() | number:'1.0-0' }}</span>
+              <span class="per-night">/ night</span>
             </div>
+            <span class="price-label">Weekend nights may cost more · prices shown in calendar</span>
+            } @else {
+            <div class="price-amount"><span class="amount">Contact for pricing</span></div>
+            }
           </div>
           <div class="booking-form">
             <div class="date-inputs-wrapper">
@@ -564,7 +523,7 @@
               </div>
               }
             </div>
-            <button class="reserve-btn" (click)="reserve()">Reserve</button>
+            <button class="reserve-btn" (click)="reserve()">Book this farm</button>
 
             @if (numberOfNights > 0) {
             <div class="price-breakdown">

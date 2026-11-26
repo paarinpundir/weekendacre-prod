@@ -22,6 +22,7 @@ export interface Property {
   pan_number?: string;
   aadhar_number?: string;
   short_description?: string;
+  price_per_day?: number;
   long_description?: string;
   water_availability_issues?: string;
   labour_shortage?: boolean;
@@ -192,6 +193,14 @@ export interface PropertyStayFacility {
   pathway_safety_rating?: number; // 1-5
   animal_safety_measures?: string;
   emergency_plans?: string;
+  description?: string;
+  bed_setup?: string;
+  bathroom_type?: string;
+  shower_type?: string;
+  towels_provided?: boolean;
+  toiletries_provided?: boolean;
+  running_water?: boolean;
+  geyser?: boolean;
   first_aid_kit_available?: boolean;
   cctv_available?: boolean;
   // Normalized relations as returned by GET .../:id (see PropertyImage/PropertyStayFacilityAmenity).

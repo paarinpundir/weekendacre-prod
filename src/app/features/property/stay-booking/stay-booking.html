@@ -1,0 +1,176 @@
+<div class="stay-booking">
+  @if (loading) {
+    <div class="state">
+      <div class="spinner"></div>
+      <p>Opening this farm…</p>
+    </div>
+  } @else if (error && !property && !saved) {
+    <div class="state">
+      <h1>{{ error }}</h1>
+      <a routerLink="/farms">Back to live farms</a>
+    </div>
+  } @else if (saved) {
+    <article>
+      <a class="back" [routerLink]="['/properties', saved.property_id]">← {{ saved.property_name || property?.property_name }}</a>
+      <p class="eyebrow">Booking saved</p>
+      <h1>{{ saved.property_name || property?.property_name }}</h1>
+      <p class="place">{{ place() }}</p>
+      <p class="lede">This stay is stored against the farm, with the room and produce you chose. The host still has to confirm it.</p>
+
+      <section>
+        <h2>Your stay</h2>
+        <dl>
+          <div><dt>When</dt><dd>{{ saved.check_in | date:'d MMM y':'UTC' }} – {{ saved.check_out | date:'d MMM y':'UTC' }}</dd></div>
+          <div><dt>Nights</dt><dd>{{ saved.nights }}</dd></div>
+          <div><dt>Guests</dt><dd>{{ saved.adults }} adults@if (saved.children) {, {{ saved.children }} children}@if (saved.infants) {, {{ saved.infants }} infants}@if (saved.pets) {, {{ saved.pets }} pets}</dd></div>
+          <div><dt>Room</dt><dd>{{ saved.stay_name || 'No specific room yet' }}</dd></div>
+          <div><dt>Stay</dt><dd>{{ money(saved.stay_amount) }}</dd></div>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Farm produce you designed</h2>
+        @if (savedProduce().length === 0) {
+          <p>No produce was added to this stay.</p>
+        } @else {
+          <ul class="lines">
+            @for (line of savedProduce(); track line.crop_id) {
+              <li>
+                <span>{{ line.crop_name }} · {{ line.quantity_kg }} kg · {{ fulfilmentLabel(line.fulfilment) }}</span>
+                <strong>{{ money(line.line_total) }}</strong>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section>
+        <h2>Booked by</h2>
+        <dl>
+          <div><dt>Name</dt><dd>{{ saved.guest_name }}</dd></div>
+          <div><dt>Phone</dt><dd>{{ saved.guest_phone }}</dd></div>
+          @if (saved.guest_email) {
+            <div><dt>Email</dt><dd>{{ saved.guest_email }}</dd></div>
+          }
+          @if (saved.notes) {
+            <div><dt>Note</dt><dd>{{ saved.notes }}</dd></div>
+          }
+        </dl>
+      </section>
+
+      <p class="total">Total saved <strong>{{ money(saved.total_amount) }}</strong></p>
+      <p class="ref">Reference {{ saved.id }}</p>
+    </article>
+  } @else if (property) {
+    <article>
+      <a class="back" [routerLink]="['/properties', property.id]">← {{ property.property_name }}</a>
+      @if (photo()) {
+        <img class="hero" [src]="photo()" [alt]="property.property_name" />
+      }
+      <p class="eyebrow">Book this farm</p>
+      <h1>{{ property.property_name }}</h1>
+      <p class="place">{{ place() }}</p>
+      @if (property.short_description) {
+        <p class="lede">{{ property.short_description }}</p>
+      }
+
+      <section>
+        <h2>When and who</h2>
+        <div class="dates">
+          <label>Check-in
+            <input type="date" name="checkIn" [(ngModel)]="checkIn" (ngModelChange)="refreshRates()" [min]="today" />
+          </label>
+          <label>Check-out
+            <input type="date" name="checkOut" [(ngModel)]="checkOut" (ngModelChange)="refreshRates()" [min]="checkIn || today" />
+          </label>
+        </div>
+        <div class="counts">
+          <label>Adults <input type="number" name="adults" min="1" [(ngModel)]="adults" /></label>
+          <label>Children <input type="number" name="children" min="0" [(ngModel)]="children" /></label>
+          <label>Infants <input type="number" name="infants" min="0" [(ngModel)]="infants" /></label>
+          <label>Pets <input type="number" name="pets" min="0" [(ngModel)]="pets" /></label>
+        </div>
+        @if (property.stay_facilities?.length) {
+          <label class="room">Room
+            <select name="room" [(ngModel)]="stayFacilityId">
+              <option value="">No specific room yet</option>
+              @for (room of property.stay_facilities; track room.id) {
+                <option [value]="room.id">{{ room.room_type }}@if (room.bed_setup) { · {{ room.bed_setup }}}</option>
+              }
+            </select>
+          </label>
+        }
+      </section>
+
+      <section>
+        <h2>Design the farm produce</h2>
+        <p class="hint">Add what you want from this farm. Take it home after the stay, or have it delivered where the farm already delivers.</p>
+        @if (produce.length === 0) {
+          <p>This farm has not listed produce yet.</p>
+        } @else {
+          <ul class="produce">
+            @for (line of produce; track line.crop.id) {
+              <li>
+                <div>
+                  <strong>{{ line.crop.crop_name }}</strong>
+                  <span>
+                    @if (line.crop.current_selling_price) { {{ money(line.crop.current_selling_price) }}/kg }
+                    @if (line.crop.seasonal_availability) { · {{ line.crop.seasonal_availability }} }
+                    @if (line.crop.minimum_quantity_commitment) { · from {{ line.crop.minimum_quantity_commitment }} kg }
+                  </span>
+                </div>
+                <div class="qty">
+                  <button type="button" (click)="bump(line, -1)" [disabled]="line.qty === 0">−</button>
+                  <span>{{ line.qty }} kg</span>
+                  <button type="button" (click)="bump(line, 1)">+</button>
+                </div>
+                @if (line.qty > 0) {
+                  <div class="fulfil">
+                    <label><input type="radio" [name]="'fulfil-' + line.crop.id" value="take_home" [(ngModel)]="line.fulfilment" /> Take home</label>
+                    @if (line.crop.can_deliver) {
+                      <label><input type="radio" [name]="'fulfil-' + line.crop.id" value="deliver" [(ngModel)]="line.fulfilment" /> Deliver@if (line.crop.delivery_centre) { to {{ line.crop.delivery_centre }}}</label>
+                    }
+                    <strong>{{ money(lineTotal(line)) }}</strong>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section>
+        <h2>Your details</h2>
+        <div class="details">
+          <label>Name <input name="guestName" [(ngModel)]="guestName" autocomplete="name" /></label>
+          <label>Phone <input name="guestPhone" [(ngModel)]="guestPhone" autocomplete="tel" /></label>
+          <label>Email <input name="guestEmail" [(ngModel)]="guestEmail" autocomplete="email" /></label>
+          <label class="wide">Note for the farm
+            <textarea name="notes" rows="3" [(ngModel)]="notes"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="summary">
+        <h2>What will be saved</h2>
+        <ul class="lines">
+          <li><span>{{ nights || 0 }} nights at {{ property.property_name }}</span><strong>{{ money(stayAmount) }}</strong></li>
+          @if (selectedRoom) {
+            <li><span>Room · {{ selectedRoom.room_type }}</span><strong></strong></li>
+          }
+          @for (line of chosenProduce; track line.crop.id) {
+            <li>
+              <span>{{ line.crop.crop_name }} · {{ line.qty }} kg · {{ fulfilmentLabel(line.fulfilment) }}</span>
+              <strong>{{ money(lineTotal(line)) }}</strong>
+            </li>
+          }
+        </ul>
+        <p class="total">Total <strong>{{ money(total) }}</strong></p>
+        @if (error) { <p class="form-error">{{ error }}</p> }
+        <button type="button" class="save" (click)="submit()" [disabled]="saving">
+          {{ saving ? 'Saving…' : 'Save this booking' }}
+        </button>
+      </section>
+    </article>
+  }
+</div>

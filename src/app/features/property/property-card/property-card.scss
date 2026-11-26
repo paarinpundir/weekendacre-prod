@@ -1,179 +1,162 @@
 .property-card {
-  background: white;
-  border-radius: 12px;
+  background: #fff;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(40, 32, 16, 0.06), 0 8px 24px rgba(40, 32, 16, 0.06);
   display: flex;
   flex-direction: column;
   height: 100%;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(40, 32, 16, 0.12);
+
+    .card-actions a {
+      text-decoration: underline;
+    }
+
+    img {
+      transform: scale(1.04);
+    }
   }
 
   .property-image {
     position: relative;
+    display: block;
     width: 100%;
-    height: 240px;
+    aspect-ratio: 16 / 10;
     overflow: hidden;
     background: var(--color-surface-wash);
+    text-decoration: none;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      display: block;
+      transition: transform 0.35s ease;
     }
 
     .status-badge {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      top: 14px;
+      left: 14px;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--color-text-primary);
 
-      &.draft {
-        color: var(--color-badge-warning-text);
-        background: rgba(255, 243, 205, 0.95);
+      &.live {
+        color: #0f5132;
       }
 
-      &.active {
-        color: var(--color-badge-success-text);
-        background: rgba(209, 231, 221, 0.95);
+      &.rejected {
+        color: #842029;
       }
-    }
-
-    &:hover img {
-      transform: scale(1.05);
     }
   }
 
   .property-content {
-    padding: 1.25rem;
+    padding: 1.1rem 1.2rem 1.15rem;
     display: flex;
     flex-direction: column;
+    gap: 0.45rem;
     flex: 1;
-    gap: 0.75rem;
+  }
 
-    .property-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.5rem;
+  .property-location {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-primary);
+  }
 
-      .property-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--color-text-primary);
-        margin: 0;
-        flex: 1;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
+  .property-title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
 
-      .property-code {
-        font-size: 0.75rem;
-        color: var(--color-text-secondary);
-        background: var(--color-surface-wash);
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        white-space: nowrap;
-      }
+  .property-blurb {
+    margin: 0.15rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .property-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
+
+    .detail-item {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-strong, #3a2e1e);
+      background: var(--color-bg-secondary);
+      border-radius: 999px;
+      padding: 0.28rem 0.65rem;
+    }
+  }
+
+  .property-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 0.85rem;
+  }
+
+  .property-price {
+    margin: 0;
+    color: var(--color-text-primary);
+
+    strong {
+      font-size: 1.15rem;
+      font-weight: 700;
     }
 
-    .property-location {
-      font-size: 0.9rem;
+    span {
+      font-size: 0.85rem;
       color: var(--color-text-secondary);
-      margin: 0;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.85rem;
+    white-space: nowrap;
+
+    a {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-decoration: none;
     }
 
-    .property-details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 0.5rem;
-
-      .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.85rem;
-        color: var(--color-text-faint);
-
-        .detail-icon {
-          font-size: 1rem;
-        }
-
-        .detail-text {
-          font-weight: 500;
-        }
-      }
-    }
-
-    .property-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: auto;
-      padding-top: 0.75rem;
-      border-top: 1px solid var(--color-border-hairline);
-
-      .property-type {
-        font-size: 0.85rem;
-        color: var(--color-text-secondary);
-        font-weight: 500;
-      }
-
-      .view-details-btn {
-        background: transparent;
-        border: none;
-        color: var(--color-primary);
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        transition: color 0.3s ease;
-
-        &:hover {
-          color: var(--color-primary-light);
-        }
-      }
+    a:hover {
+      text-decoration: underline;
     }
   }
 }
 
-@media (max-width: 768px) {
-  .property-card {
-    .property-image {
-      height: 200px;
-    }
-
-    .property-content {
-      padding: 1rem;
-
-      .property-header .property-title {
-        font-size: 1rem;
-      }
-
-      .property-details {
-        gap: 0.75rem;
-      }
-    }
+@media (max-width: 640px) {
+  .property-card .property-title {
+    font-size: 1.1rem;
   }
 }
-

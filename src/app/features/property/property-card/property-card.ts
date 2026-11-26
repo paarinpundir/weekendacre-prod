@@ -35,18 +35,39 @@ export class PropertyCard {
   }
 
   getPropertyLocation(): string {
-    if (this.property.address) {
-      // Extract city/area from address if possible
-      const parts = this.property.address.split(',');
-      return parts[parts.length - 1]?.trim() || this.property.address;
+    const parts = (this.property.address || '')
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[parts.length - 2]}, ${parts[parts.length - 1]}`;
     }
-    return 'Location not specified';
+    return parts[0] || 'Location not specified';
+  }
+
+  priceLabel(): string {
+    const amount = Number(this.property.price_per_day);
+    if (!amount) return '';
+    return `₹${Math.round(amount).toLocaleString('en-IN')}`;
   }
 
   getPropertyStatus(): string {
-    if (this.property.state === 601) {
-      return 'Draft';
+    switch (this.property.state) {
+      case 601: return 'Draft';
+      case 602: return 'Submitted';
+      case 603: return 'Under Review';
+      case 604: return 'Approved';
+      case 605: return 'Live';
+      case 606: return 'Rejected';
+      case 607: return 'Suspended';
+      default: return 'Active';
     }
-    return 'Active';
+  }
+
+  getStatusClass(): string {
+    if (this.property.state === 605) return 'live';
+    if (this.property.state === 601) return 'draft';
+    if (this.property.state === 606 || this.property.state === 607) return 'rejected';
+    return 'active';
   }
 }

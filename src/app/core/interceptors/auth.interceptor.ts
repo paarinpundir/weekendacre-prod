@@ -39,6 +39,10 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError(error => {
         // Only handle 401 errors for authenticated endpoints
         if (error instanceof HttpErrorResponse && error.status === 401 && !this.isPublicEndpoint(request.url)) {
+          // Guests have no session. A 401 on a public page must not send them to login.
+          if (!request.headers.has('Authorization')) {
+            return throwError(() => error);
+          }
           return this.handle401Error(request, next);
         }
         return throwError(() => error);
